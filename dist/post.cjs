@@ -19116,7 +19116,7 @@ async function post() {
     }
   });
   if (res.ok) {
-    debug("Token revoked");
+    info("Token revoked");
   } else {
     warning(`Failed to revoke token: ${res.status} ${await res.text()}`);
   }

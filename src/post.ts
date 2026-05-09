@@ -21,7 +21,7 @@ export async function post(): Promise<void> {
     },
   });
   if (res.ok) {
-    core.debug("Token revoked");
+    core.info("Token revoked");
   } else {
     core.warning(`Failed to revoke token: ${res.status} ${await res.text()}`);
   }
