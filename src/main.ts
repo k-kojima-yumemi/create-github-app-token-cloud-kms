@@ -1,27 +1,33 @@
 import * as core from "@actions/core";
-import { wait } from "./wait";
+import { createInstallationToken, getInstallationId } from "./github";
+import { buildJwtMessage, signWithKms } from "./kms";
 
-/**
- * The main function for the action.
- *
- * @returns Resolves when the action is complete.
- */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput("milliseconds");
+    const appId = core.getInput("app-id", { required: true });
+    const kmsKeyName = core.getInput("kms-key-name", { required: true });
+    const repository = process.env["GITHUB_REPOSITORY"];
+    if (!repository) throw new Error("GITHUB_REPOSITORY is not set");
+    const repo = repository.split("/")[1];
+    if (!repo) throw new Error("Invalid GITHUB_REPOSITORY format");
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`);
+    const message = buildJwtMessage(appId);
+    const jwt = await signWithKms(kmsKeyName, message);
+    core.debug("GitHub App JWT created");
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString());
-    await wait(Number.parseInt(ms, 10));
-    core.debug(new Date().toTimeString());
+    const installationId = await getInstallationId(repository, jwt);
+    core.debug(`Installation ID: ${installationId}`);
 
-    // Set outputs for other workflow steps to use
-    core.setOutput("time", new Date().toTimeString());
+    const { token, expiresAt } = await createInstallationToken(
+      installationId,
+      jwt,
+      [repo]
+    );
+
+    core.setSecret(token);
+    core.setOutput("token", token);
+    core.setOutput("expires-at", expiresAt);
   } catch (error) {
-    // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
   }
 }
