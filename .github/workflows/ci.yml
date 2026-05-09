@@ -79,6 +79,7 @@ jobs:
         env:
           TOKEN: ${{ steps.test-action.outputs.token }}
           REPOSITORY: ${{ github.repository }}
+          EXPECTED_STATUS: "200"
         run: node .github/scripts/verify-token-readme.mjs
 
       - name: Verify Token (private demo repository)
@@ -86,4 +87,52 @@ jobs:
         env:
           TOKEN: ${{ steps.test-action.outputs.token }}
           REPOSITORY: k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
+          EXPECTED_STATUS: "200"
+        run: node .github/scripts/verify-token-readme.mjs
+
+  test-action-default-repositories:
+    name: GitHub Actions Test (default repositories)
+    runs-on: ubuntu-slim
+    environment:
+      name: demo
+      deployment: false
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v6
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+
+      - name: Test Local Action
+        id: test-action
+        uses: ./
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          kms-key-name: ${{ secrets.KMS_KEY_NAME }}
+          permission-contents: read
+
+      - name: Verify Token (current repository)
+        id: verify-current-repo
+        env:
+          TOKEN: ${{ steps.test-action.outputs.token }}
+          REPOSITORY: ${{ github.repository }}
+          EXPECTED_STATUS: "200"
+        run: node .github/scripts/verify-token-readme.mjs
+
+      - name: Verify Token cannot read private demo (404)
+        id: verify-private-demo-inaccessible
+        env:
+          TOKEN: ${{ steps.test-action.outputs.token }}
+          REPOSITORY: k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
+          EXPECTED_STATUS: "404"
         run: node .github/scripts/verify-token-readme.mjs
