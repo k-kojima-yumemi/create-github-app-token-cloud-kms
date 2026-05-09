@@ -1,6 +1,6 @@
 # create-github-app-token-cloud-kms
 
-A GitHub Action that creates a GitHub App installation access token, signing the JWT with a private key stored in [Google Cloud KMS](https://cloud.google.com/kms) instead of handling the key directly.
+A GitHub Action that creates a GitHub App installation access token, signing the JWT with a private key stored in [Google Cloud KMS](https://cloud.google.com/security/products/security-key-management) instead of handling the key directly.
 
 ## Usage
 
@@ -9,7 +9,6 @@ jobs:
   example:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
       id-token: write   # required for Workload Identity Federation
 
     steps:
