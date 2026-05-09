@@ -2,10 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const coreMock = vi.hoisted(() => ({
   debug: vi.fn(),
-  getInput: vi.fn<() => string>(),
   setFailed: vi.fn(),
   setOutput: vi.fn(),
   setSecret: vi.fn(),
+  saveState: vi.fn(),
+}));
+
+const inputsMock = vi.hoisted(() => ({
+  resolveInputs: vi.fn(),
 }));
 
 const kmsMock = vi.hoisted(() => ({
@@ -15,12 +19,12 @@ const kmsMock = vi.hoisted(() => ({
 
 const githubMock = vi.hoisted(() => ({
   getInstallationId: vi.fn<() => Promise<number>>(),
-  createInstallationToken: vi.fn<
-    () => Promise<{ token: string; expiresAt: string }>
-  >(),
+  createInstallationToken:
+    vi.fn<() => Promise<{ token: string; expiresAt: string }>>(),
 }));
 
 vi.mock("@actions/core", () => coreMock);
+vi.mock("../src/inputs", () => inputsMock);
 vi.mock("../src/kms", () => kmsMock);
 vi.mock("../src/github", () => githubMock);
 
@@ -28,12 +32,12 @@ const { run } = await import("../src/main");
 
 describe("main.ts", () => {
   beforeEach(() => {
-    vi.stubEnv("GITHUB_REPOSITORY", "owner/repo");
-    coreMock.getInput.mockImplementation((name: string) => {
-      if (name === "app-id") return "123456";
-      if (name === "kms-key-name")
-        return "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1";
-      return "";
+    inputsMock.resolveInputs.mockReturnValue({
+      clientId: "Iv1.abc123",
+      kmsKeyName:
+        "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1",
+      owner: "myorg",
+      repositories: ["myrepo"],
     });
     kmsMock.buildJwtMessage.mockReturnValue("header.payload");
     kmsMock.signWithKms.mockResolvedValue("header.payload.sig");
@@ -46,47 +50,57 @@ describe("main.ts", () => {
 
   afterEach(() => {
     vi.resetAllMocks();
-    vi.unstubAllEnvs();
   });
 
-  it("outputs token and expires-at on success", async () => {
+  it("outputs token on success", async () => {
     await run();
 
     expect(coreMock.setSecret).toHaveBeenCalledWith("ghs_token");
     expect(coreMock.setOutput).toHaveBeenCalledWith("token", "ghs_token");
-    expect(coreMock.setOutput).toHaveBeenCalledWith(
-      "expires-at",
-      "2024-01-01T00:00:00Z",
-    );
     expect(coreMock.setFailed).not.toHaveBeenCalled();
   });
 
-  it("passes repo name to createInstallationToken", async () => {
+  it("saves token and expiresAt to state for post step", async () => {
+    await run();
+
+    expect(coreMock.saveState).toHaveBeenCalledWith("token", "ghs_token");
+    expect(coreMock.saveState).toHaveBeenCalledWith(
+      "expiresAt",
+      "2024-01-01T00:00:00Z",
+    );
+  });
+
+  it("looks up installation by owner and first repository", async () => {
+    await run();
+
+    expect(githubMock.getInstallationId).toHaveBeenCalledWith(
+      "myorg/myrepo",
+      "header.payload.sig",
+    );
+  });
+
+  it("passes all resolved repositories to createInstallationToken", async () => {
+    inputsMock.resolveInputs.mockReturnValue({
+      clientId: "Iv1.abc123",
+      kmsKeyName: "projects/p/...",
+      owner: "acme",
+      repositories: ["frontend", "backend"],
+    });
+
     await run();
 
     expect(githubMock.createInstallationToken).toHaveBeenCalledWith(
       42,
       "header.payload.sig",
-      ["repo"],
+      ["frontend", "backend"],
     );
   });
 
-  it("calls setFailed on error", async () => {
-    kmsMock.signWithKms.mockRejectedValue(new Error("KMS signing failed"));
+  it("propagates errors thrown by resolveInputs", async () => {
+    inputsMock.resolveInputs.mockImplementation(() => {
+      throw new Error("GITHUB_REPOSITORY is not set");
+    });
 
-    await run();
-
-    expect(coreMock.setFailed).toHaveBeenCalledWith("KMS signing failed");
-    expect(coreMock.setOutput).not.toHaveBeenCalled();
-  });
-
-  it("calls setFailed when GITHUB_REPOSITORY is not set", async () => {
-    vi.unstubAllEnvs();
-
-    await run();
-
-    expect(coreMock.setFailed).toHaveBeenCalledWith(
-      "GITHUB_REPOSITORY is not set",
-    );
+    await expect(run()).rejects.toThrow("GITHUB_REPOSITORY is not set");
   });
 });

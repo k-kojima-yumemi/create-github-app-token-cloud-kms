@@ -7,21 +7,26 @@ branding:
   color: blue
 
 inputs:
-  app-id:
-    description: GitHub App ID
+  client-id:
+    description: GitHub App Client ID
     required: true
   kms-key-name:
     description: >-
       Cloud KMS key version resource name
       (projects/.../keyRings/.../cryptoKeys/.../cryptoKeyVersions/...)
     required: true
+  repositories:
+    description: >-
+      Comma or newline-separated list of repositories to grant access to.
+      Defaults to the current repository.
+    required: false
 
 outputs:
   token:
     description: GitHub App installation access token
-  expires-at:
-    description: Token expiration timestamp (ISO 8601)
 
 runs:
   using: node24
   main: dist/index.js
+  post: dist/index.js
+  post-if: always()

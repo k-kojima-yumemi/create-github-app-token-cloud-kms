@@ -1,8 +1,19 @@
-/**
- * The entrypoint for the action. This file simply imports and runs the action's
- * main logic.
- */
+import * as core from "@actions/core";
 import { run } from "./main";
+import { post } from "./post";
 
 /* v8 ignore next */
-run();
+if (core.getState("isPost") === "true") {
+  post().catch((error) => {
+    if (error instanceof Error) {
+      core.warning(`Failed to revoke token: ${error.message}`);
+    }
+  });
+} else {
+  core.saveState("isPost", "true");
+  run().catch((error) => {
+    if (error instanceof Error) {
+      core.setFailed(error);
+    }
+  });
+}

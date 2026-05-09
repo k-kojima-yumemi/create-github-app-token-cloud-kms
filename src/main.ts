@@ -1,33 +1,29 @@
 import * as core from "@actions/core";
 import { createInstallationToken, getInstallationId } from "./github";
+import { resolveInputs } from "./inputs";
 import { buildJwtMessage, signWithKms } from "./kms";
 
 export async function run(): Promise<void> {
-  try {
-    const appId = core.getInput("app-id", { required: true });
-    const kmsKeyName = core.getInput("kms-key-name", { required: true });
-    const repository = process.env["GITHUB_REPOSITORY"];
-    if (!repository) throw new Error("GITHUB_REPOSITORY is not set");
-    const repo = repository.split("/")[1];
-    if (!repo) throw new Error("Invalid GITHUB_REPOSITORY format");
+  const { clientId, kmsKeyName, owner, repositories } = resolveInputs();
 
-    const message = buildJwtMessage(appId);
-    const jwt = await signWithKms(kmsKeyName, message);
-    core.debug("GitHub App JWT created");
+  const message = buildJwtMessage(clientId);
+  const jwt = await signWithKms(kmsKeyName, message);
+  core.debug("GitHub App JWT created");
 
-    const installationId = await getInstallationId(repository, jwt);
-    core.debug(`Installation ID: ${installationId}`);
+  const installationId = await getInstallationId(
+    `${owner}/${repositories[0]}`,
+    jwt,
+  );
+  core.debug(`Installation ID: ${installationId}`);
 
-    const { token, expiresAt } = await createInstallationToken(
-      installationId,
-      jwt,
-      [repo]
-    );
+  const { token, expiresAt } = await createInstallationToken(
+    installationId,
+    jwt,
+    repositories,
+  );
 
-    core.setSecret(token);
-    core.setOutput("token", token);
-    core.setOutput("expires-at", expiresAt);
-  } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message);
-  }
+  core.setSecret(token);
+  core.setOutput("token", token);
+  core.saveState("token", token);
+  core.saveState("expiresAt", expiresAt);
 }

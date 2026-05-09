@@ -17,8 +17,7 @@
   "scripts": {
     "bundle": "npm run package",
     "ci-test": "vitest run --coverage",
-    "format:write": "biome format --write .",
-    "format:check": "biome format .",
+    "format": "biome check --write --unsafe",
     "lint": "biome lint .",
     "check": "biome check .",
     "package": "esbuild src/index.ts --bundle --platform=node --target=node24 --format=esm --sourcemap --outfile=dist/index.js",
