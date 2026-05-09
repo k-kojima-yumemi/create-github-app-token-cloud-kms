@@ -74,25 +74,16 @@ jobs:
             ${{ github.repository }}
             k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
 
-      - name: Verify Token
-        id: verify
+      - name: Verify Token (current repository)
+        id: verify-current-repo
         env:
           TOKEN: ${{ steps.test-action.outputs.token }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          PRIVATE_DEMO_REPOSITORY: k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
-        run: |
-          node --input-type=module << 'EOF'
-          const { TOKEN, GITHUB_REPOSITORY, PRIVATE_DEMO_REPOSITORY } = process.env;
+          REPOSITORY: ${{ github.repository }}
+        run: node .github/scripts/verify-token-readme.mjs
 
-          async function readReadme(repo) {
-            const res = await fetch(`https://api.github.com/repos/${repo}/contents/README.md`, {
-              headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github+json' },
-            });
-            if (!res.ok) throw new Error(`Failed to read README.md in ${repo}: ${res.status}`);
-            const { content, encoding } = await res.json();
-            console.log(`[${repo}]`, Buffer.from(content, encoding).toString('utf-8').trim().slice(0, 100));
-          }
-
-          await readReadme(GITHUB_REPOSITORY);
-          await readReadme(PRIVATE_DEMO_REPOSITORY);
-          EOF
+      - name: Verify Token (private demo repository)
+        id: verify-private-demo
+        env:
+          TOKEN: ${{ steps.test-action.outputs.token }}
+          REPOSITORY: k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
+        run: node .github/scripts/verify-token-readme.mjs
