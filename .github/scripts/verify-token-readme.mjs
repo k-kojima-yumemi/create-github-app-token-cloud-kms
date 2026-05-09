@@ -16,15 +16,26 @@ if (Number.isNaN(expectedStatus)) {
 }
 
 async function readReadme(repo, token, expectedStatus) {
-  const res = await fetch(`https://api.github.com/repos/${repo}/contents/README.md`, {
-    headers: { Authorization: `token ${token}`, Accept: "application/vnd.github+json" },
-  });
+  const res = await fetch(
+    `https://api.github.com/repos/${repo}/contents/README.md`,
+    {
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: "application/vnd.github+json",
+      },
+    },
+  );
   if (res.status !== expectedStatus) {
-    throw new Error(`Expected status ${expectedStatus} for ${repo}, got ${res.status}`);
+    throw new Error(
+      `Expected status ${expectedStatus} for ${repo}, got ${res.status}`,
+    );
   }
   if (expectedStatus === 200) {
     const { content, encoding } = await res.json();
-    console.log(`[${repo}]`, Buffer.from(content, encoding).toString("utf-8").trim().slice(0, 100));
+    console.log(
+      `[${repo}]`,
+      Buffer.from(content, encoding).toString("utf-8").trim().slice(0, 100),
+    );
   } else {
     console.log(`[${repo}] OK (HTTP ${res.status} as expected)`);
   }
