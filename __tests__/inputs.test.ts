@@ -1,14 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const coreMock = vi.hoisted(() => ({
-  getInput: vi.fn<() => string>(),
+  getInput: vi.fn<(name: string) => string>(),
 }));
 
 vi.mock("@actions/core", () => coreMock);
 
-const { resolveOwner, resolveRepositories, resolveInputs } = await import(
-  "../src/inputs"
-);
+const { resolveOwner, resolveRepositories, resolveInputs, resolvePermissions } =
+  await import("../src/inputs");
 
 const KMS_KEY =
   "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1";
@@ -64,6 +63,39 @@ describe("resolveRepositories", () => {
   it("throws when input is empty and GITHUB_REPOSITORY is not set", () => {
     expect(() => resolveRepositories("")).toThrow(
       "GITHUB_REPOSITORY is not set",
+    );
+  });
+});
+
+describe("resolvePermissions", () => {
+  it("collects INPUT_PERMISSION-* env vars into a permissions object", () => {
+    const result = resolvePermissions({
+      INPUT_PERMISSION_CONTENTS: "irrelevant",
+      "INPUT_PERMISSION-CONTENTS": "read",
+      "INPUT_PERMISSION-ISSUES": "write",
+      "INPUT_PERMISSION-PULL-REQUESTS": "read",
+      OTHER_VAR: "ignored",
+    });
+
+    expect(result).toEqual({
+      contents: "read",
+      issues: "write",
+      pull_requests: "read",
+    });
+  });
+
+  it("skips empty values", () => {
+    const result = resolvePermissions({
+      "INPUT_PERMISSION-CONTENTS": "read",
+      "INPUT_PERMISSION-ISSUES": "",
+    });
+
+    expect(result).toEqual({ contents: "read" });
+  });
+
+  it("throws when no permission inputs are set", () => {
+    expect(() => resolvePermissions({})).toThrow(
+      "At least one permission-* input must be set",
     );
   });
 });

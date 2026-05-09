@@ -26,13 +26,14 @@ export async function createInstallationToken(
   installationId: number,
   jwt: string,
   repositories: string[],
+  permissions: Record<string, string>,
 ): Promise<{ token: string; expiresAt: string }> {
   const res = await fetch(
     `https://api.github.com/app/installations/${installationId}/access_tokens`,
     {
       method: "POST",
       headers: githubHeaders(jwt),
-      body: JSON.stringify({ repositories }),
+      body: JSON.stringify({ repositories, permissions }),
     },
   );
   if (!res.ok)

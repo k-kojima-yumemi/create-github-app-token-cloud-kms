@@ -32,6 +32,27 @@ export function resolveRepositories(repositoriesInput: string): string[] {
   return [githubRepository.split("/")[1]];
 }
 
+export function resolvePermissions(
+  env: Record<string, string | undefined> = process.env,
+): Record<string, string> {
+  const permissions: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(env)) {
+    if (!key.startsWith("INPUT_PERMISSION-") || !value) continue;
+    const name = key
+      .slice("INPUT_PERMISSION-".length)
+      .toLowerCase()
+      .replaceAll("-", "_");
+    permissions[name] = value;
+  }
+
+  if (Object.keys(permissions).length === 0) {
+    throw new Error("At least one permission-* input must be set");
+  }
+
+  return permissions;
+}
+
 export function resolveInputs(): ResolvedInputs {
   const clientId = core.getInput("client-id", { required: true });
   const kmsKeyName = core.getInput("kms-key-name", { required: true });

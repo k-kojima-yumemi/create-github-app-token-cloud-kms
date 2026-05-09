@@ -10,6 +10,7 @@ const coreMock = vi.hoisted(() => ({
 
 const inputsMock = vi.hoisted(() => ({
   resolveInputs: vi.fn(),
+  resolvePermissions: vi.fn(),
 }));
 
 const kmsMock = vi.hoisted(() => ({
@@ -39,6 +40,7 @@ describe("main.ts", () => {
       owner: "myorg",
       repositories: ["myrepo"],
     });
+    inputsMock.resolvePermissions.mockReturnValue({ contents: "read" });
     kmsMock.buildJwtMessage.mockReturnValue("header.payload");
     kmsMock.signWithKms.mockResolvedValue("header.payload.sig");
     githubMock.getInstallationId.mockResolvedValue(42);
@@ -79,12 +81,16 @@ describe("main.ts", () => {
     );
   });
 
-  it("passes all resolved repositories to createInstallationToken", async () => {
+  it("passes repositories and permissions to createInstallationToken", async () => {
     inputsMock.resolveInputs.mockReturnValue({
       clientId: "Iv1.abc123",
       kmsKeyName: "projects/p/...",
       owner: "acme",
       repositories: ["frontend", "backend"],
+    });
+    inputsMock.resolvePermissions.mockReturnValue({
+      contents: "read",
+      issues: "write",
     });
 
     await run();
@@ -93,6 +99,7 @@ describe("main.ts", () => {
       42,
       "header.payload.sig",
       ["frontend", "backend"],
+      { contents: "read", issues: "write" },
     );
   });
 
@@ -102,5 +109,15 @@ describe("main.ts", () => {
     });
 
     await expect(run()).rejects.toThrow("GITHUB_REPOSITORY is not set");
+  });
+
+  it("propagates errors thrown by resolvePermissions", async () => {
+    inputsMock.resolvePermissions.mockImplementation(() => {
+      throw new Error("At least one permission-* input must be set");
+    });
+
+    await expect(run()).rejects.toThrow(
+      "At least one permission-* input must be set",
+    );
   });
 });

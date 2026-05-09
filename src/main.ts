@@ -1,10 +1,11 @@
 import * as core from "@actions/core";
 import { createInstallationToken, getInstallationId } from "./github";
-import { resolveInputs } from "./inputs";
+import { resolveInputs, resolvePermissions } from "./inputs";
 import { buildJwtMessage, signWithKms } from "./kms";
 
 export async function run(): Promise<void> {
   const { clientId, kmsKeyName, owner, repositories } = resolveInputs();
+  const permissions = resolvePermissions();
 
   const message = buildJwtMessage(clientId);
   const jwt = await signWithKms(kmsKeyName, message);
@@ -20,6 +21,7 @@ export async function run(): Promise<void> {
     installationId,
     jwt,
     repositories,
+    permissions,
   );
 
   core.setSecret(token);
