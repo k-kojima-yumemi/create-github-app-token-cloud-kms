@@ -30,7 +30,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^3.0.0",
+    "@actions/core": "^3.0.1",
     "@google-cloud/kms": "^5.5.0",
     "google-auth-library": "^10.6.2"
   },
