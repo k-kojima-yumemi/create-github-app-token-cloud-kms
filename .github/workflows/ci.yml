@@ -43,6 +43,9 @@ jobs:
   test-action:
     name: GitHub Actions Test
     runs-on: ubuntu-slim
+    environment:
+      name: demo
+      deployment: false
 
     permissions:
       contents: read
