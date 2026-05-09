@@ -26,7 +26,7 @@ export async function createInstallationToken(
   installationId: number,
   jwt: string,
   repositories: string[],
-  permissions: Record<string, string>,
+  permissions: Record<string, string> | undefined,
 ): Promise<{ token: string; expiresAt: string }> {
   const res = await fetch(
     `https://api.github.com/app/installations/${installationId}/access_tokens`,

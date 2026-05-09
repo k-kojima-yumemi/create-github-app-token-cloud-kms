@@ -103,6 +103,19 @@ describe("main.ts", () => {
     );
   });
 
+  it("passes undefined permissions when no permission inputs are set", async () => {
+    inputsMock.resolvePermissions.mockReturnValue(undefined);
+
+    await run();
+
+    expect(githubMock.createInstallationToken).toHaveBeenCalledWith(
+      42,
+      "header.payload.sig",
+      ["myrepo"],
+      undefined,
+    );
+  });
+
   it("propagates errors thrown by resolveInputs", async () => {
     inputsMock.resolveInputs.mockImplementation(() => {
       throw new Error("GITHUB_REPOSITORY is not set");

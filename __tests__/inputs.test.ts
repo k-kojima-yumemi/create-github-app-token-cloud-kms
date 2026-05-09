@@ -17,8 +17,12 @@ afterEach(() => {
 });
 
 describe("resolveOwner", () => {
-  it("parses owner from owner/repo format", () => {
+  it("parses owner from comma-separated owner/repo format", () => {
     expect(resolveOwner("acme/frontend,acme/backend", {})).toBe("acme");
+  });
+
+  it("parses owner from newline-separated owner/repo format", () => {
+    expect(resolveOwner("acme/frontend\nacme/backend", {})).toBe("acme");
   });
 
   it("reads GITHUB_REPOSITORY_OWNER when no owner prefix", () => {
@@ -45,8 +49,15 @@ describe("resolveOwner", () => {
 });
 
 describe("resolveRepositories", () => {
-  it("strips owner prefix from owner/repo format", () => {
+  it("strips owner prefix from comma-separated owner/repo format", () => {
     expect(resolveRepositories("acme/frontend,acme/backend", {})).toEqual([
+      "frontend",
+      "backend",
+    ]);
+  });
+
+  it("strips owner prefix from newline-separated owner/repo format", () => {
+    expect(resolveRepositories("acme/frontend\nacme/backend", {})).toEqual([
       "frontend",
       "backend",
     ]);
@@ -98,10 +109,8 @@ describe("resolvePermissions", () => {
     expect(result).toEqual({ contents: "read" });
   });
 
-  it("throws when no permission inputs are set", () => {
-    expect(() => resolvePermissions({})).toThrow(
-      "At least one permission-* input must be set",
-    );
+  it("returns undefined when no permission inputs are set", () => {
+    expect(resolvePermissions({})).toBeUndefined();
   });
 });
 

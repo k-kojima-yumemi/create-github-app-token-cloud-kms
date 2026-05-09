@@ -41,7 +41,7 @@ export function resolveRepositories(
 
 export function resolvePermissions(
   env: Record<string, string | undefined> = process.env,
-): Record<string, string> {
+): Record<string, string> | undefined {
   const permissions: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(env)) {
@@ -53,11 +53,7 @@ export function resolvePermissions(
     permissions[name] = value;
   }
 
-  if (Object.keys(permissions).length === 0) {
-    throw new Error("At least one permission-* input must be set");
-  }
-
-  return permissions;
+  return Object.keys(permissions).length > 0 ? permissions : undefined;
 }
 
 export function resolveInputs(): ResolvedInputs {

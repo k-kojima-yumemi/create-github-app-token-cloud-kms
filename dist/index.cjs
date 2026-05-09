@@ -129995,10 +129995,7 @@ function resolvePermissions(env = process.env) {
     const name = key.slice("INPUT_PERMISSION-".length).toLowerCase().replaceAll("-", "_");
     permissions[name] = value;
   }
-  if (Object.keys(permissions).length === 0) {
-    throw new Error("At least one permission-* input must be set");
-  }
-  return permissions;
+  return Object.keys(permissions).length > 0 ? permissions : void 0;
 }
 function resolveInputs() {
   const clientId = getInput("client-id", { required: true });
