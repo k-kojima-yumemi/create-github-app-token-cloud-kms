@@ -61939,13 +61939,13 @@ var require_oauth2client = __commonJS({
           },
           url: this.endpoints.tokenInfoUrl.toString()
         });
-        const info2 = Object.assign({
+        const info = Object.assign({
           expiry_date: (/* @__PURE__ */ new Date()).getTime() + data.expires_in * 1e3,
           scopes: data.scope.split(" ")
         }, data);
-        delete info2.expires_in;
-        delete info2.scope;
-        return info2;
+        delete info.expires_in;
+        delete info.scope;
+        return info;
       }
       getFederatedSignonCerts(callback) {
         if (callback) {
@@ -80859,13 +80859,13 @@ var require_from = __commonJS({
     "use strict";
     function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
       try {
-        var info2 = gen[key](arg);
-        var value = info2.value;
+        var info = gen[key](arg);
+        var value = info.value;
       } catch (error2) {
         reject(error2);
         return;
       }
-      if (info2.done) {
+      if (info.done) {
         resolve(value);
       } else {
         Promise.resolve(value).then(_next, _throw);
@@ -129927,21 +129927,12 @@ function debug(message) {
 function error(message, properties = {}) {
   issueCommand("error", toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
-function warning(message, properties = {}) {
-  issueCommand("warning", toCommandProperties(properties), message instanceof Error ? message.toString() : message);
-}
-function info(message) {
-  process.stdout.write(message + os4.EOL);
-}
 function saveState(name, value) {
   const filePath = process.env["GITHUB_STATE"] || "";
   if (filePath) {
     return issueFileCommand("STATE", prepareKeyValueMessage(name, value));
   }
   issueCommand("save-state", { name }, toCommandValue(value));
-}
-function getState(name) {
-  return process.env[`STATE_${name}`] || "";
 }
 
 // src/github.ts
@@ -130060,53 +130051,12 @@ async function run() {
   saveState("expiresAt", expiresAt);
 }
 
-// src/post.ts
-async function post() {
-  const token = getState("token");
-  if (!token) {
-    debug("No token to revoke");
-    return;
-  }
-  const expiresAt = getState("expiresAt");
-  if (expiresAt && tokenExpiresIn(expiresAt) < 0) {
-    info("Token expired, skipping token revocation");
-    return;
-  }
-  const res = await fetch("https://api.github.com/installation/token", {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28"
-    }
-  });
-  if (res.ok) {
-    debug("Token revoked");
-  } else {
-    warning(`Failed to revoke token: ${res.status} ${await res.text()}`);
-  }
-}
-function tokenExpiresIn(expiresAt) {
-  const now = /* @__PURE__ */ new Date();
-  const expiresAtDate = new Date(expiresAt);
-  return Math.round((expiresAtDate.getTime() - now.getTime()) / 1e3);
-}
-
 // src/index.ts
-if (getState("isPost") === "true") {
-  post().catch((error2) => {
-    if (error2 instanceof Error) {
-      warning(`Failed to revoke token: ${error2.message}`);
-    }
-  });
-} else {
-  saveState("isPost", "true");
-  run().catch((error2) => {
-    if (error2 instanceof Error) {
-      setFailed(error2);
-    }
-  });
-}
+run().catch((error2) => {
+  if (error2 instanceof Error) {
+    setFailed(error2);
+  }
+});
 /*! Bundled license information:
 
 undici/lib/web/fetch/body.js:
@@ -130175,4 +130125,3 @@ node-domexception/index.js:
 safe-buffer/index.js:
   (*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> *)
 */
-//# sourceMappingURL=index.js.map

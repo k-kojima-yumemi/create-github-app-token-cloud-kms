@@ -33,3 +33,10 @@ function tokenExpiresIn(expiresAt: string): number {
 
   return Math.round((expiresAtDate.getTime() - now.getTime()) / 1000);
 }
+
+/* v8 ignore next */
+post().catch((error) => {
+  if (error instanceof Error) {
+    core.setFailed(error);
+  }
+});
