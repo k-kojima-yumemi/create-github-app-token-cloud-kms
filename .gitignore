@@ -53,8 +53,8 @@ typings/
 # Optional npm cache directory
 .npm
 
-# Optional eslint cache
-.eslintcache
+# Biome cache
+.biome-cache
 
 # Optional REPL history
 .node_repl_history

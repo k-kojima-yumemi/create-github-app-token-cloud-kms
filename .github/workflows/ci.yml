@@ -25,20 +25,16 @@ jobs:
         id: setup-node
         uses: actions/setup-node@v6
         with:
-          node-version-file: .node-version
+          node-version-file: 'package.json'
           cache: npm
 
       - name: Install Dependencies
         id: npm-ci
         run: npm ci
 
-      - name: Check Format
-        id: npm-format-check
-        run: npm run format:check
-
-      - name: Lint
-        id: npm-lint
-        run: npm run lint
+      - name: Check Format & Lint
+        id: npm-check
+        run: npm run check
 
       - name: Test
         id: npm-ci-test
