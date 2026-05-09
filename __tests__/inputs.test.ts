@@ -14,54 +14,59 @@ const KMS_KEY =
 
 afterEach(() => {
   vi.resetAllMocks();
-  vi.unstubAllEnvs();
 });
 
 describe("resolveOwner", () => {
   it("parses owner from owner/repo format", () => {
-    expect(resolveOwner("acme/frontend,acme/backend")).toBe("acme");
+    expect(resolveOwner("acme/frontend,acme/backend", {})).toBe("acme");
   });
 
   it("reads GITHUB_REPOSITORY_OWNER when no owner prefix", () => {
-    vi.stubEnv("GITHUB_REPOSITORY_OWNER", "myorg");
-    expect(resolveOwner("repo-a")).toBe("myorg");
+    expect(resolveOwner("repo-a", { GITHUB_REPOSITORY_OWNER: "myorg" })).toBe(
+      "myorg",
+    );
   });
 
   it("throws when no owner prefix and GITHUB_REPOSITORY_OWNER is not set", () => {
-    expect(() => resolveOwner("repo-a")).toThrow(
+    expect(() => resolveOwner("repo-a", {})).toThrow(
       "GITHUB_REPOSITORY_OWNER is not set",
     );
   });
 
   it("reads owner from GITHUB_REPOSITORY when input is empty", () => {
-    vi.stubEnv("GITHUB_REPOSITORY", "myorg/myrepo");
-    expect(resolveOwner("")).toBe("myorg");
+    expect(resolveOwner("", { GITHUB_REPOSITORY: "myorg/myrepo" })).toBe(
+      "myorg",
+    );
   });
 
   it("throws when input is empty and GITHUB_REPOSITORY is not set", () => {
-    expect(() => resolveOwner("")).toThrow("GITHUB_REPOSITORY is not set");
+    expect(() => resolveOwner("", {})).toThrow("GITHUB_REPOSITORY is not set");
   });
 });
 
 describe("resolveRepositories", () => {
   it("strips owner prefix from owner/repo format", () => {
-    expect(resolveRepositories("acme/frontend,acme/backend")).toEqual([
+    expect(resolveRepositories("acme/frontend,acme/backend", {})).toEqual([
       "frontend",
       "backend",
     ]);
   });
 
   it("returns repo names as-is when no owner prefix", () => {
-    expect(resolveRepositories("repo-a\nrepo-b")).toEqual(["repo-a", "repo-b"]);
+    expect(resolveRepositories("repo-a\nrepo-b", {})).toEqual([
+      "repo-a",
+      "repo-b",
+    ]);
   });
 
   it("reads repo from GITHUB_REPOSITORY when input is empty", () => {
-    vi.stubEnv("GITHUB_REPOSITORY", "myorg/myrepo");
-    expect(resolveRepositories("")).toEqual(["myrepo"]);
+    expect(
+      resolveRepositories("", { GITHUB_REPOSITORY: "myorg/myrepo" }),
+    ).toEqual(["myrepo"]);
   });
 
   it("throws when input is empty and GITHUB_REPOSITORY is not set", () => {
-    expect(() => resolveRepositories("")).toThrow(
+    expect(() => resolveRepositories("", {})).toThrow(
       "GITHUB_REPOSITORY is not set",
     );
   });
@@ -108,6 +113,10 @@ describe("resolveInputs", () => {
       return "";
     });
     vi.stubEnv("GITHUB_REPOSITORY", "myorg/myrepo");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("returns all resolved fields", () => {

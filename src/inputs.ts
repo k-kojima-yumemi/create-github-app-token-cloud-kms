@@ -7,27 +7,34 @@ export type ResolvedInputs = {
   repositories: string[];
 };
 
-export function resolveOwner(repositoriesInput: string): string {
+export function resolveOwner(
+  repositoriesInput: string,
+  env: Record<string, string | undefined> = process.env,
+): string {
   if (repositoriesInput) {
     const first = repositoriesInput.split(/[\n,]/)[0].trim();
     if (first.includes("/")) return first.split("/")[0];
-    const owner = process.env.GITHUB_REPOSITORY_OWNER;
+    const owner = env.GITHUB_REPOSITORY_OWNER;
     if (!owner) throw new Error("GITHUB_REPOSITORY_OWNER is not set");
     return owner;
   }
-  const githubRepository = process.env.GITHUB_REPOSITORY;
+  const githubRepository = env.GITHUB_REPOSITORY;
   if (!githubRepository) throw new Error("GITHUB_REPOSITORY is not set");
   return githubRepository.split("/")[0];
 }
 
-export function resolveRepositories(repositoriesInput: string): string[] {
+export function resolveRepositories(
+  repositoriesInput: string,
+  env: Record<string, string | undefined> = process.env,
+): string[] {
   if (repositoriesInput) {
     return repositoriesInput
       .split(/[\n,]/)
       .map((r) => r.trim())
+      .filter(Boolean)
       .map((r) => (r.includes("/") ? r.split("/")[1] : r));
   }
-  const githubRepository = process.env.GITHUB_REPOSITORY;
+  const githubRepository = env.GITHUB_REPOSITORY;
   if (!githubRepository) throw new Error("GITHUB_REPOSITORY is not set");
   return [githubRepository.split("/")[1]];
 }

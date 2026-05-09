@@ -129973,23 +129973,23 @@ async function createInstallationToken(installationId, jwt, repositories, permis
 }
 
 // src/inputs.ts
-function resolveOwner(repositoriesInput) {
+function resolveOwner(repositoriesInput, env = process.env) {
   if (repositoriesInput) {
     const first = repositoriesInput.split(/[\n,]/)[0].trim();
     if (first.includes("/")) return first.split("/")[0];
-    const owner = process.env.GITHUB_REPOSITORY_OWNER;
+    const owner = env.GITHUB_REPOSITORY_OWNER;
     if (!owner) throw new Error("GITHUB_REPOSITORY_OWNER is not set");
     return owner;
   }
-  const githubRepository = process.env.GITHUB_REPOSITORY;
+  const githubRepository = env.GITHUB_REPOSITORY;
   if (!githubRepository) throw new Error("GITHUB_REPOSITORY is not set");
   return githubRepository.split("/")[0];
 }
-function resolveRepositories(repositoriesInput) {
+function resolveRepositories(repositoriesInput, env = process.env) {
   if (repositoriesInput) {
-    return repositoriesInput.split(/[\n,]/).map((r2) => r2.trim()).map((r2) => r2.includes("/") ? r2.split("/")[1] : r2);
+    return repositoriesInput.split(/[\n,]/).map((r2) => r2.trim()).filter(Boolean).map((r2) => r2.includes("/") ? r2.split("/")[1] : r2);
   }
-  const githubRepository = process.env.GITHUB_REPOSITORY;
+  const githubRepository = env.GITHUB_REPOSITORY;
   if (!githubRepository) throw new Error("GITHUB_REPOSITORY is not set");
   return [githubRepository.split("/")[1]];
 }
