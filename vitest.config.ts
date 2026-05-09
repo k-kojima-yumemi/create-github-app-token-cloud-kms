@@ -6,7 +6,7 @@ export default defineConfig({
       exclude: ["**/*.test.ts"],
       include: ["src/**"],
       provider: "v8",
-      reporter: ["json-summary", "text", "lcov"]
-    }
-  }
+      reporter: ["json-summary", "text", "lcov"],
+    },
+  },
 });

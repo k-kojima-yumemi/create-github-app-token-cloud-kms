@@ -4,11 +4,11 @@ const coreMock = vi.hoisted(() => ({
   debug: vi.fn(),
   getInput: vi.fn<() => string>(),
   setFailed: vi.fn(),
-  setOutput: vi.fn()
+  setOutput: vi.fn(),
 }));
 
 const waitMock = vi.hoisted(() => ({
-  wait: vi.fn<() => Promise<string>>()
+  wait: vi.fn<() => Promise<string>>(),
 }));
 
 vi.mock("@actions/core", () => coreMock);
@@ -32,7 +32,7 @@ describe("main.ts", () => {
     expect(coreMock.setOutput).toHaveBeenNthCalledWith(
       1,
       "time",
-      expect.stringMatching(/^\d{2}:\d{2}:\d{2}/)
+      expect.stringMatching(/^\d{2}:\d{2}:\d{2}/),
     );
   });
 
@@ -46,7 +46,7 @@ describe("main.ts", () => {
 
     expect(coreMock.setFailed).toHaveBeenNthCalledWith(
       1,
-      "milliseconds is not a number"
+      "milliseconds is not a number",
     );
   });
 });
