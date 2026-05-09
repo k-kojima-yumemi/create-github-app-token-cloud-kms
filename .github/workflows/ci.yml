@@ -42,6 +42,7 @@ jobs:
 
   test-action:
     name: GitHub Actions Test
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-slim
     environment:
       name: demo
@@ -92,6 +93,7 @@ jobs:
 
   test-action-default-repositories:
     name: GitHub Actions Test (default repositories)
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-slim
     environment:
       name: demo
