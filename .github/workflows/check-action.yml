@@ -1,0 +1,37 @@
+name: Check action
+on:
+  push:
+    paths:
+      - '.github/workflows/**.yaml'
+      - '.github/workflows/**.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/**.yaml'
+      - '.github/workflows/**.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install actionlint
+        run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+        shell: bash
+      - run: ./actionlint -color
+      - name: Install pinact
+        run: |
+          set -eux
+          OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+          ARCH=$(uname -m)
+          case $ARCH in
+            x86_64) ARCH=amd64 ;;
+            aarch64|arm64) ARCH=arm64 ;;
+          esac
+          gh release download --repo suzuki-shunsuke/pinact --pattern "pinact_${OS}_${ARCH}.tar.gz" -O - | tar -xz
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: ./pinact run --check
