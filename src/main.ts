@@ -9,6 +9,7 @@ export async function run(): Promise<void> {
 
   const message = buildJwtMessage(clientId);
   const jwt = await signWithKms(kmsKeyName, message);
+  core.setSecret(jwt);
   core.debug("GitHub App JWT created");
 
   const installationId = await getInstallationId(

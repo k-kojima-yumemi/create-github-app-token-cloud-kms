@@ -130042,6 +130042,7 @@ async function run() {
   const permissions = resolvePermissions();
   const message = buildJwtMessage(clientId);
   const jwt = await signWithKms(kmsKeyName, message);
+  setSecret(jwt);
   debug("GitHub App JWT created");
   const installationId = await getInstallationId(
     `${owner}/${repositories[0]}`,
