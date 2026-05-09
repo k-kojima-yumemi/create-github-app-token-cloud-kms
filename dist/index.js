@@ -129955,13 +129955,13 @@ async function getInstallationId(repository, jwt) {
   const { id } = await res.json();
   return id;
 }
-async function createInstallationToken(installationId, jwt, repositories) {
+async function createInstallationToken(installationId, jwt, repositories, permissions) {
   const res = await fetch(
     `https://api.github.com/app/installations/${installationId}/access_tokens`,
     {
       method: "POST",
       headers: githubHeaders(jwt),
-      body: JSON.stringify({ repositories })
+      body: JSON.stringify({ repositories, permissions })
     }
   );
   if (!res.ok)
@@ -129992,6 +129992,18 @@ function resolveRepositories(repositoriesInput) {
   const githubRepository = process.env.GITHUB_REPOSITORY;
   if (!githubRepository) throw new Error("GITHUB_REPOSITORY is not set");
   return [githubRepository.split("/")[1]];
+}
+function resolvePermissions(env = process.env) {
+  const permissions = {};
+  for (const [key, value] of Object.entries(env)) {
+    if (!key.startsWith("INPUT_PERMISSION-") || !value) continue;
+    const name = key.slice("INPUT_PERMISSION-".length).toLowerCase().replaceAll("-", "_");
+    permissions[name] = value;
+  }
+  if (Object.keys(permissions).length === 0) {
+    throw new Error("At least one permission-* input must be set");
+  }
+  return permissions;
 }
 function resolveInputs() {
   const clientId = getInput("client-id", { required: true });
@@ -130032,6 +130044,7 @@ async function signWithKms(kmsKeyName, message) {
 // src/main.ts
 async function run() {
   const { clientId, kmsKeyName, owner, repositories } = resolveInputs();
+  const permissions = resolvePermissions();
   const message = buildJwtMessage(clientId);
   const jwt = await signWithKms(kmsKeyName, message);
   debug("GitHub App JWT created");
@@ -130043,7 +130056,8 @@ async function run() {
   const { token, expiresAt } = await createInstallationToken(
     installationId,
     jwt,
-    repositories
+    repositories,
+    permissions
   );
   setSecret(token);
   setOutput("token", token);
