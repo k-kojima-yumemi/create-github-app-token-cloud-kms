@@ -14,7 +14,7 @@ permissions:
 jobs:
   lint:
     name: Lint Codebase
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
 
     steps:
       - name: Checkout
