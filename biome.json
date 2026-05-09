@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "root": true,
   "assist": {
     "actions": {
       "source": {
@@ -28,6 +29,6 @@
     }
   },
   "files": {
-    "includes": ["**", "!dist", "!coverage", "!node_modules"]
+    "includes": ["**", "!dist", "!coverage", "!node_modules", "!minimal"]
   }
 }

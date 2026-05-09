@@ -128,7 +128,7 @@ describe("resolveInputs", () => {
     vi.unstubAllEnvs();
   });
 
-  it("returns all resolved fields", () => {
+  it("returns all resolved fields including permissions when unset", () => {
     const result = resolveInputs();
 
     expect(result).toEqual({
@@ -136,6 +136,19 @@ describe("resolveInputs", () => {
       kmsKeyName: KMS_KEY,
       owner: "myorg",
       repositories: ["myrepo"],
+      permissions: undefined,
+    });
+  });
+
+  it("includes permissions from INPUT_PERMISSION-* env vars", () => {
+    vi.stubEnv("INPUT_PERMISSION-CONTENTS", "read");
+    vi.stubEnv("INPUT_PERMISSION-ISSUES", "write");
+
+    const result = resolveInputs();
+
+    expect(result.permissions).toEqual({
+      contents: "read",
+      issues: "write",
     });
   });
 });
