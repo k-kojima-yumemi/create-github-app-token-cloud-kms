@@ -44,17 +44,42 @@ jobs:
     name: GitHub Actions Test
     runs-on: ubuntu-slim
 
+    permissions:
+      contents: read
+      id-token: write
+
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v6
 
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+
       - name: Test Local Action
         id: test-action
         uses: ./
         with:
-          milliseconds: 2000
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          kms-key-name: ${{ secrets.KMS_KEY_NAME }}
+          permission-contents: read
 
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+      - name: Verify Token
+        id: verify
+        env:
+          TOKEN: ${{ steps.test-action.outputs.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          node --input-type=module << 'EOF'
+          const { TOKEN, GITHUB_REPOSITORY } = process.env;
+          const res = await fetch(`https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/README.md`, {
+            headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github+json' },
+          });
+          if (!res.ok) throw new Error(`Failed to read README.md: ${res.status}`);
+          const { content, encoding } = await res.json();
+          console.log(Buffer.from(content, encoding).toString('utf-8').trim().slice(0, 100));
+          EOF
