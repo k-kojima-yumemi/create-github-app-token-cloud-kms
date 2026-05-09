@@ -29,7 +29,6 @@ jobs:
           cache: npm
 
       - run: curl -fsSL https://raw.githubusercontent.com/AikidoSec/safe-chain/main/install-scripts/install-safe-chain.sh | sh -s -- --ci
-      - run: safe-chain setup-ci
 
       - name: Install Dependencies
         id: npm-ci
