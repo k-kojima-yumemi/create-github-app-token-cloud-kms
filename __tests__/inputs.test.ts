@@ -1,13 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  resolveInputs,
+  resolveOwner,
+  resolvePermissions,
+  resolveRepositories,
+} from "../src/inputs";
 
 const coreMock = vi.hoisted(() => ({
   getInput: vi.fn<(name: string) => string>(),
 }));
 
-vi.mock("@actions/core", () => coreMock);
-
-const { resolveOwner, resolveRepositories, resolveInputs, resolvePermissions } =
-  await import("../src/inputs");
+vi.mock("../src/actions-wrapper/core", () => coreMock);
 
 const KMS_KEY =
   "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1";
@@ -128,7 +131,7 @@ describe("resolveInputs", () => {
     vi.unstubAllEnvs();
   });
 
-  it("returns all resolved fields", () => {
+  it("returns all resolved fields including permissions when unset", () => {
     const result = resolveInputs();
 
     expect(result).toEqual({
@@ -136,6 +139,19 @@ describe("resolveInputs", () => {
       kmsKeyName: KMS_KEY,
       owner: "myorg",
       repositories: ["myrepo"],
+      permissions: undefined,
+    });
+  });
+
+  it("includes permissions from INPUT_PERMISSION-* env vars", () => {
+    vi.stubEnv("INPUT_PERMISSION-CONTENTS", "read");
+    vi.stubEnv("INPUT_PERMISSION-ISSUES", "write");
+
+    const result = resolveInputs();
+
+    expect(result.permissions).toEqual({
+      contents: "read",
+      issues: "write",
     });
   });
 });

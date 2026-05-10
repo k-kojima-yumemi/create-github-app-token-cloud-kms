@@ -13334,7 +13334,7 @@ var require_fetch = __commonJS({
     function handleFetchDone(response) {
       finalizeAndReportTiming(response, "fetch");
     }
-    function fetch3(input, init = void 0) {
+    function fetch2(input, init = void 0) {
       webidl.argumentLengthCheck(arguments, 1, "globalThis.fetch");
       let p = createDeferredPromise();
       let requestObject;
@@ -14291,7 +14291,7 @@ var require_fetch = __commonJS({
       }
     }
     module2.exports = {
-      fetch: fetch3,
+      fetch: fetch2,
       Fetch,
       fetching,
       finalizeAndReportTiming
@@ -18586,7 +18586,7 @@ var require_undici = __commonJS({
     module2.exports.setGlobalDispatcher = setGlobalDispatcher;
     module2.exports.getGlobalDispatcher = getGlobalDispatcher;
     var fetchImpl = require_fetch().fetch;
-    module2.exports.fetch = async function fetch3(init, options = void 0) {
+    module2.exports.fetch = async function fetch2(init, options = void 0) {
       try {
         return await fetchImpl(init, options);
       } catch (err) {
@@ -31414,25 +31414,25 @@ var require_codegen = __commonJS({
 var require_fetch2 = __commonJS({
   "node_modules/@protobufjs/fetch/index.js"(exports2, module2) {
     "use strict";
-    module2.exports = fetch3;
+    module2.exports = fetch2;
     var asPromise = require_aspromise();
     var inquire = require_inquire();
     var fs4 = inquire("fs");
-    function fetch3(filename, options, callback) {
+    function fetch2(filename, options, callback) {
       if (typeof options === "function") {
         callback = options;
         options = {};
       } else if (!options)
         options = {};
       if (!callback)
-        return asPromise(fetch3, this, filename, options);
+        return asPromise(fetch2, this, filename, options);
       if (!options.xhr && fs4 && fs4.readFile)
         return fs4.readFile(filename, function fetchReadFileCallback(err, contents) {
-          return err && typeof XMLHttpRequest !== "undefined" ? fetch3.xhr(filename, options, callback) : err ? callback(err) : callback(null, options.binary ? contents : contents.toString("utf8"));
+          return err && typeof XMLHttpRequest !== "undefined" ? fetch2.xhr(filename, options, callback) : err ? callback(err) : callback(null, options.binary ? contents : contents.toString("utf8"));
         });
-      return fetch3.xhr(filename, options, callback);
+      return fetch2.xhr(filename, options, callback);
     }
-    fetch3.xhr = function fetch_xhr(filename, options, callback) {
+    fetch2.xhr = function fetch_xhr(filename, options, callback) {
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function fetchOnReadyStateChange() {
         if (xhr.readyState !== 4)
@@ -32922,12 +32922,12 @@ var require_root = __commonJS({
             if (parsed.imports) {
               for (; i3 < parsed.imports.length; ++i3)
                 if (resolved2 = getBundledFileName(parsed.imports[i3]) || self2.resolvePath(filename2, parsed.imports[i3]))
-                  fetch3(resolved2);
+                  fetch2(resolved2);
             }
             if (parsed.weakImports) {
               for (i3 = 0; i3 < parsed.weakImports.length; ++i3)
                 if (resolved2 = getBundledFileName(parsed.weakImports[i3]) || self2.resolvePath(filename2, parsed.weakImports[i3]))
-                  fetch3(resolved2, true);
+                  fetch2(resolved2, true);
             }
           }
         } catch (err) {
@@ -32937,7 +32937,7 @@ var require_root = __commonJS({
           finish(null, self2);
         }
       }
-      function fetch3(filename2, weak) {
+      function fetch2(filename2, weak) {
         filename2 = getBundledFileName(filename2) || filename2;
         if (self2.files.indexOf(filename2) > -1) {
           return;
@@ -32989,7 +32989,7 @@ var require_root = __commonJS({
       }
       for (var i2 = 0, resolved; i2 < filename.length; ++i2)
         if (resolved = self2.resolvePath("", filename[i2]))
-          fetch3(resolved);
+          fetch2(resolved);
       if (sync) {
         self2.resolveAll();
         return self2;
@@ -57175,12 +57175,12 @@ __export(src_exports, {
   Response: () => Response,
   blobFrom: () => blobFrom,
   blobFromSync: () => blobFromSync,
-  default: () => fetch2,
+  default: () => fetch,
   fileFrom: () => fileFrom,
   fileFromSync: () => fileFromSync,
   isRedirect: () => isRedirect
 });
-async function fetch2(url, options_) {
+async function fetch(url, options_) {
   return new Promise((resolve, reject) => {
     const request = new Request(url, options_);
     const { parsedURL, options } = getNodeRequestOptions(request);
@@ -57312,7 +57312,7 @@ async function fetch2(url, options_) {
             if (responseReferrerPolicy) {
               requestOptions.referrerPolicy = responseReferrerPolicy;
             }
-            resolve(fetch2(new Request(locationURL, requestOptions)));
+            resolve(fetch(new Request(locationURL, requestOptions)));
             finalize();
             return;
           }
@@ -129894,16 +129894,6 @@ var ExitCode;
 function setSecret(secret) {
   issueCommand("add-mask", {}, secret);
 }
-function getInput(name, options) {
-  const val = process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] || "";
-  if (options && options.required && !val) {
-    throw new Error(`Input required and not supplied: ${name}`);
-  }
-  if (options && options.trimWhitespace === false) {
-    return val;
-  }
-  return val.trim();
-}
 function setOutput(name, value) {
   const filePath = process.env["GITHUB_OUTPUT"] || "";
   if (filePath) {
@@ -129930,41 +129920,87 @@ function saveState(name, value) {
   issueCommand("save-state", { name }, toCommandValue(value));
 }
 
-// src/github.ts
-function githubHeaders(jwt) {
-  return {
-    Authorization: `Bearer ${jwt}`,
-    Accept: "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28"
+// src/github-app/installation-token.ts
+var githubHeadersBase = {
+  Accept: "application/vnd.github+json",
+  "X-GitHub-Api-Version": "2022-11-28"
+};
+async function createInstallationAccessToken(options) {
+  const fetchImpl = options.fetchImpl ?? globalThis.fetch;
+  const jwtHeaders = {
+    ...githubHeadersBase,
+    Authorization: `Bearer ${options.jwt}`
   };
-}
-async function getInstallationId(repository, jwt) {
-  const res = await fetch(
-    `https://api.github.com/repos/${repository}/installation`,
-    { headers: githubHeaders(jwt) }
+  const installRes = await fetchImpl(
+    `https://api.github.com/repos/${options.owner}/${options.repository}/installation`,
+    { headers: jwtHeaders }
   );
-  if (!res.ok)
+  if (!installRes.ok) {
     throw new Error(
-      `Failed to get installation: ${res.status} ${await res.text()}`
+      `Failed to get installation: ${installRes.status} ${await installRes.text()}`
     );
-  const { id } = await res.json();
-  return id;
-}
-async function createInstallationToken(installationId, jwt, repositories, permissions) {
-  const res = await fetch(
+  }
+  const { id: installationId } = await installRes.json();
+  const tokenRes = await fetchImpl(
     `https://api.github.com/app/installations/${installationId}/access_tokens`,
     {
       method: "POST",
-      headers: githubHeaders(jwt),
-      body: JSON.stringify({ repositories, permissions })
+      headers: jwtHeaders,
+      body: JSON.stringify({
+        repositories: options.repositories,
+        permissions: options.permissions
+      })
     }
   );
-  if (!res.ok)
+  if (!tokenRes.ok) {
     throw new Error(
-      `Failed to create token: ${res.status} ${await res.text()}`
+      `Failed to create token: ${tokenRes.status} ${await tokenRes.text()}`
     );
-  const { token, expires_at } = await res.json();
-  return { token, expiresAt: expires_at };
+  }
+  const { token, expires_at: expiresAt } = await tokenRes.json();
+  return { token, expiresAt, installationId };
+}
+
+// src/github-app/jwt-message.ts
+var expTime = 120;
+function buildJwtSigningMessage(clientId, nowSeconds) {
+  const header = Buffer.from(
+    JSON.stringify({ alg: "RS256", typ: "JWT" })
+  ).toString("base64url");
+  const payload = Buffer.from(
+    JSON.stringify({
+      iat: nowSeconds - 60,
+      exp: nowSeconds + expTime,
+      iss: clientId
+    })
+  ).toString("base64url");
+  return `${header}.${payload}`;
+}
+
+// src/google-cloud/kms-sign-sdk.ts
+var import_node_crypto = require("node:crypto");
+var import_kms = __toESM(require_src11(), 1);
+async function signWithKms(kmsKeyName, message) {
+  const kms = new import_kms.KeyManagementServiceClient();
+  const digest = (0, import_node_crypto.createHash)("sha256").update(message).digest();
+  const [{ signature }] = await kms.asymmetricSign({
+    name: kmsKeyName,
+    digest: { sha256: digest }
+  });
+  if (!signature) throw new Error("No signature in KMS response");
+  return `${message}.${Buffer.from(signature).toString("base64url")}`;
+}
+
+// src/actions-wrapper/core.ts
+function getInput(name, options, env = process.env) {
+  const val = env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] ?? "";
+  if (options?.required && !val) {
+    throw new Error(`Input required and not supplied: ${name}`);
+  }
+  if (options?.trimWhitespace === false) {
+    return val;
+  }
+  return val.trim();
 }
 
 // src/inputs.ts
@@ -130001,64 +130037,43 @@ function resolveInputs() {
   const clientId = getInput("client-id", { required: true });
   const kmsKeyName = getInput("kms-key-name", { required: true });
   const repositoriesInput = getInput("repositories");
+  const permissions = resolvePermissions();
   return {
     clientId,
     kmsKeyName,
     owner: resolveOwner(repositoriesInput),
-    repositories: resolveRepositories(repositoriesInput)
+    repositories: resolveRepositories(repositoriesInput),
+    permissions
   };
 }
 
-// src/kms.ts
-var import_node_crypto = require("node:crypto");
-var import_kms = __toESM(require_src11(), 1);
-function buildJwtMessage(appId) {
-  const header = Buffer.from(
-    JSON.stringify({ alg: "RS256", typ: "JWT" })
-  ).toString("base64url");
-  const now = Math.floor(Date.now() / 1e3);
-  const payload = Buffer.from(
-    JSON.stringify({ iat: now - 60, exp: now + 180, iss: appId })
-  ).toString("base64url");
-  return `${header}.${payload}`;
-}
-async function signWithKms(kmsKeyName, message) {
-  const kms = new import_kms.KeyManagementServiceClient();
-  const digest = (0, import_node_crypto.createHash)("sha256").update(message).digest();
-  const [{ signature }] = await kms.asymmetricSign({
-    name: kmsKeyName,
-    digest: { sha256: digest }
-  });
-  if (!signature) throw new Error("No signature in KMS response");
-  return `${message}.${Buffer.from(signature).toString("base64url")}`;
-}
-
-// src/main.ts
+// src/main/run.ts
 async function run() {
-  const { clientId, kmsKeyName, owner, repositories } = resolveInputs();
-  const permissions = resolvePermissions();
-  const message = buildJwtMessage(clientId);
+  const { clientId, kmsKeyName, owner, repositories, permissions } = resolveInputs();
+  const now = Math.floor(Date.now() / 1e3);
+  const message = buildJwtSigningMessage(clientId, now);
   const jwt = await signWithKms(kmsKeyName, message);
   setSecret(jwt);
   debug("GitHub App JWT created");
-  const installationId = await getInstallationId(
-    `${owner}/${repositories[0]}`,
-    jwt
-  );
-  debug(`Installation ID: ${installationId}`);
-  const { token, expiresAt } = await createInstallationToken(
-    installationId,
+  const primaryRepository = repositories[0];
+  if (!primaryRepository) {
+    throw new Error("At least one repository is required");
+  }
+  const { token, expiresAt, installationId } = await createInstallationAccessToken({
+    owner,
+    repository: primaryRepository,
     jwt,
     repositories,
     permissions
-  );
+  });
+  debug(`Installation ID: ${installationId}`);
   setSecret(token);
   setOutput("token", token);
   saveState("token", token);
   saveState("expiresAt", expiresAt);
 }
 
-// src/index.ts
+// src/entrypoint/index.ts
 run().catch((error2) => {
   if (error2 instanceof Error) {
     setFailed(error2);

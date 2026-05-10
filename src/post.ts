@@ -1,14 +1,15 @@
-import * as core from "@actions/core";
+import { getState } from "./actions-wrapper/core";
+import { debug, info, warning } from "./actions-wrapper/log";
 
 export async function post(): Promise<void> {
-  const token = core.getState("token");
+  const token = getState("token");
   if (!token) {
-    core.debug("No token to revoke");
+    debug("No token to revoke");
     return;
   }
-  const expiresAt = core.getState("expiresAt");
+  const expiresAt = getState("expiresAt");
   if (expiresAt && tokenExpiresIn(expiresAt) < 0) {
-    core.info("Token expired, skipping token revocation");
+    info("Token expired, skipping token revocation");
     return;
   }
 
@@ -21,9 +22,9 @@ export async function post(): Promise<void> {
     },
   });
   if (res.ok) {
-    core.info("Token revoked");
+    info("Token revoked");
   } else {
-    core.warning(`Failed to revoke token: ${res.status} ${await res.text()}`);
+    warning(`Failed to revoke token: ${res.status} ${await res.text()}`);
   }
 }
 
@@ -33,10 +34,3 @@ function tokenExpiresIn(expiresAt: string): number {
 
   return Math.round((expiresAtDate.getTime() - now.getTime()) / 1000);
 }
-
-/* v8 ignore next */
-post().catch((error) => {
-  if (error instanceof Error) {
-    core.setFailed(error);
-  }
-});

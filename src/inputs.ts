@@ -1,10 +1,11 @@
-import * as core from "@actions/core";
+import { getInput } from "./actions-wrapper/core";
 
 export type ResolvedInputs = {
   clientId: string;
   kmsKeyName: string;
   owner: string;
   repositories: string[];
+  permissions: Record<string, string> | undefined;
 };
 
 export function resolveOwner(
@@ -57,14 +58,16 @@ export function resolvePermissions(
 }
 
 export function resolveInputs(): ResolvedInputs {
-  const clientId = core.getInput("client-id", { required: true });
-  const kmsKeyName = core.getInput("kms-key-name", { required: true });
-  const repositoriesInput = core.getInput("repositories");
+  const clientId = getInput("client-id", { required: true });
+  const kmsKeyName = getInput("kms-key-name", { required: true });
+  const repositoriesInput = getInput("repositories");
+  const permissions = resolvePermissions();
 
   return {
     clientId,
     kmsKeyName,
     owner: resolveOwner(repositoriesInput),
     repositories: resolveRepositories(repositoriesInput),
+    permissions,
   };
 }
