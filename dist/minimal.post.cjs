@@ -19083,7 +19083,7 @@ function getState(name) {
   return process.env[`STATE_${name}`] || "";
 }
 
-// src/entrypoint/post.ts
+// src/post.ts
 async function post() {
   const token = getState("token");
   if (!token) {
@@ -19114,6 +19114,8 @@ function tokenExpiresIn(expiresAt) {
   const expiresAtDate = new Date(expiresAt);
   return Math.round((expiresAtDate.getTime() - now.getTime()) / 1e3);
 }
+
+// src/entrypoint/minimal.post.ts
 post().catch((error2) => {
   if (error2 instanceof Error) {
     setFailed(error2);

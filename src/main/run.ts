@@ -1,8 +1,8 @@
 import * as core from "@actions/core";
-import { createInstallationAccessToken } from "./github-app/installation-token";
-import { buildJwtSigningMessage } from "./github-app/jwt-message";
-import { signWithKms } from "./google-cloud/kms-sign-sdk";
-import { resolveInputs } from "./inputs";
+import { createInstallationAccessToken } from "../github-app/installation-token";
+import { buildJwtSigningMessage } from "../github-app/jwt-message";
+import { signWithKms } from "../google-cloud/kms-sign-sdk";
+import { resolveInputs } from "../inputs";
 
 export async function run(): Promise<void> {
   const { clientId, kmsKeyName, owner, repositories, permissions } =

@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { run } from "../main";
+import { run } from "../main/run";
 
 /* v8 ignore next */
 run().catch((error) => {

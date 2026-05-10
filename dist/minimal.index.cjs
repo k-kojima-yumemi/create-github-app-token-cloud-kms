@@ -19130,51 +19130,7 @@ function saveState(name, value) {
   issueCommand("save-state", { name }, toCommandValue(value));
 }
 
-// src/inputs.ts
-function resolveOwner(repositoriesInput, env = process.env) {
-  if (repositoriesInput) {
-    const first = repositoriesInput.split(/[\n,]/)[0].trim();
-    if (first.includes("/")) return first.split("/")[0];
-    const owner = env.GITHUB_REPOSITORY_OWNER;
-    if (!owner) throw new Error("GITHUB_REPOSITORY_OWNER is not set");
-    return owner;
-  }
-  const githubRepository = env.GITHUB_REPOSITORY;
-  if (!githubRepository) throw new Error("GITHUB_REPOSITORY is not set");
-  return githubRepository.split("/")[0];
-}
-function resolveRepositories(repositoriesInput, env = process.env) {
-  if (repositoriesInput) {
-    return repositoriesInput.split(/[\n,]/).map((r) => r.trim()).filter(Boolean).map((r) => r.includes("/") ? r.split("/")[1] : r);
-  }
-  const githubRepository = env.GITHUB_REPOSITORY;
-  if (!githubRepository) throw new Error("GITHUB_REPOSITORY is not set");
-  return [githubRepository.split("/")[1]];
-}
-function resolvePermissions(env = process.env) {
-  const permissions = {};
-  for (const [key, value] of Object.entries(env)) {
-    if (!key.startsWith("INPUT_PERMISSION-") || !value) continue;
-    const name = key.slice("INPUT_PERMISSION-".length).toLowerCase().replaceAll("-", "_");
-    permissions[name] = value;
-  }
-  return Object.keys(permissions).length > 0 ? permissions : void 0;
-}
-function resolveInputs() {
-  const clientId = getInput("client-id", { required: true });
-  const kmsKeyName = getInput("kms-key-name", { required: true });
-  const repositoriesInput = getInput("repositories");
-  const permissions = resolvePermissions();
-  return {
-    clientId,
-    kmsKeyName,
-    owner: resolveOwner(repositoriesInput),
-    repositories: resolveRepositories(repositoriesInput),
-    permissions
-  };
-}
-
-// src/minimal/github-app/installation-token.ts
+// src/github-app/installation-token.ts
 var githubHeadersBase = {
   Accept: "application/vnd.github+json",
   "X-GitHub-Api-Version": "2022-11-28"
@@ -19215,7 +19171,7 @@ async function createInstallationAccessToken(options) {
   return { token, expiresAt, installationId };
 }
 
-// src/minimal/github-app/jwt-message.ts
+// src/github-app/jwt-message.ts
 var expTime = 120;
 function buildJwtSigningMessage(clientId, nowSeconds) {
   const header = Buffer.from(
@@ -19231,7 +19187,7 @@ function buildJwtSigningMessage(clientId, nowSeconds) {
   return `${header}.${payload}`;
 }
 
-// src/minimal/google-cloud/kms-sign.ts
+// src/google-cloud/kms-sign-fetch.ts
 var import_node_crypto = require("node:crypto");
 async function signJwtWithKms(options) {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
@@ -19265,7 +19221,7 @@ function requireEnv(name, env = process.env) {
   return value;
 }
 
-// src/minimal/google-cloud/resolve-access-token.ts
+// src/google-cloud/resolve-access-token.ts
 async function resolveGoogleCloudAccessToken(options) {
   const fetchImpl = options?.fetchImpl ?? globalThis.fetch;
   const fromInput = getInput("google-cloud-access-token", {
@@ -19313,6 +19269,50 @@ async function resolveGoogleCloudAccessToken(options) {
     return access_token;
   }
   throw new Error("No Google Cloud access token provided");
+}
+
+// src/inputs.ts
+function resolveOwner(repositoriesInput, env = process.env) {
+  if (repositoriesInput) {
+    const first = repositoriesInput.split(/[\n,]/)[0].trim();
+    if (first.includes("/")) return first.split("/")[0];
+    const owner = env.GITHUB_REPOSITORY_OWNER;
+    if (!owner) throw new Error("GITHUB_REPOSITORY_OWNER is not set");
+    return owner;
+  }
+  const githubRepository = env.GITHUB_REPOSITORY;
+  if (!githubRepository) throw new Error("GITHUB_REPOSITORY is not set");
+  return githubRepository.split("/")[0];
+}
+function resolveRepositories(repositoriesInput, env = process.env) {
+  if (repositoriesInput) {
+    return repositoriesInput.split(/[\n,]/).map((r) => r.trim()).filter(Boolean).map((r) => r.includes("/") ? r.split("/")[1] : r);
+  }
+  const githubRepository = env.GITHUB_REPOSITORY;
+  if (!githubRepository) throw new Error("GITHUB_REPOSITORY is not set");
+  return [githubRepository.split("/")[1]];
+}
+function resolvePermissions(env = process.env) {
+  const permissions = {};
+  for (const [key, value] of Object.entries(env)) {
+    if (!key.startsWith("INPUT_PERMISSION-") || !value) continue;
+    const name = key.slice("INPUT_PERMISSION-".length).toLowerCase().replaceAll("-", "_");
+    permissions[name] = value;
+  }
+  return Object.keys(permissions).length > 0 ? permissions : void 0;
+}
+function resolveInputs() {
+  const clientId = getInput("client-id", { required: true });
+  const kmsKeyName = getInput("kms-key-name", { required: true });
+  const repositoriesInput = getInput("repositories");
+  const permissions = resolvePermissions();
+  return {
+    clientId,
+    kmsKeyName,
+    owner: resolveOwner(repositoriesInput),
+    repositories: resolveRepositories(repositoriesInput),
+    permissions
+  };
 }
 
 // src/minimal/run.ts
