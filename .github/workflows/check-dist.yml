@@ -78,6 +78,10 @@ jobs:
         with:
           node-version-file: 'minimal/package.json'
 
+      - name: Install Root Dependencies
+        working-directory: .
+        run: npm ci
+
       - name: Install Dependencies
         run: npm ci && ls -al
 
