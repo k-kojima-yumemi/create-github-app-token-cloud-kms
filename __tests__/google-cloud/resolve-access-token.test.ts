@@ -1,14 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { resolveGoogleCloudAccessToken } from "../../src/google-cloud/resolve-access-token";
 
 const coreMock = vi.hoisted(() => ({
   getInput: vi.fn<(name: string, options?: { required?: boolean }) => string>(),
 }));
 
 vi.mock("@actions/core", () => coreMock);
-
-const { resolveGoogleCloudAccessToken } = await import(
-  "../../src/google-cloud/resolve-access-token"
-);
 
 afterEach(() => {
   vi.resetAllMocks();

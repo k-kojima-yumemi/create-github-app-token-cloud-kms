@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { run } from "../src/main/run";
 
 const coreMock = vi.hoisted(() => ({
   debug: vi.fn(),
@@ -37,8 +38,6 @@ vi.mock("../src/inputs", () => inputsMock);
 vi.mock("../src/github-app/jwt-message", () => jwtMock);
 vi.mock("../src/google-cloud/kms-sign-sdk", () => kmsMock);
 vi.mock("../src/github-app/installation-token", () => githubMock);
-
-const { run } = await import("../src/main/run");
 
 describe("main.ts", () => {
   beforeEach(() => {

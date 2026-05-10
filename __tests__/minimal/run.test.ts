@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { run } from "../../src/minimal/run";
 
 const coreMock = vi.hoisted(() => ({
   debug: vi.fn(),
@@ -52,8 +53,6 @@ const installationTokenMock = vi.hoisted(() =>
 vi.mock("../../src/github-app/installation-token", () => ({
   createInstallationAccessToken: installationTokenMock,
 }));
-
-const { run } = await import("../../src/minimal/run");
 
 afterEach(() => {
   vi.clearAllMocks();

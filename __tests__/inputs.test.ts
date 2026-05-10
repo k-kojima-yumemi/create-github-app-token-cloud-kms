@@ -1,13 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  resolveInputs,
+  resolveOwner,
+  resolvePermissions,
+  resolveRepositories,
+} from "../src/inputs";
 
 const coreMock = vi.hoisted(() => ({
   getInput: vi.fn<(name: string) => string>(),
 }));
 
 vi.mock("../src/actions-wrapper/core", () => coreMock);
-
-const { resolveOwner, resolveRepositories, resolveInputs, resolvePermissions } =
-  await import("../src/inputs");
 
 const KMS_KEY =
   "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1";
