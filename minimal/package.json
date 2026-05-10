@@ -9,7 +9,13 @@
     "typescript": "^6.0.3",
     "vitest": "^4.1.5"
   },
+  "volta": {
+    "node": "24.15.0"
+  },
   "scripts": {
-    "format": "biome format --write ."
+    "check": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   }
 }

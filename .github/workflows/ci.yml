@@ -144,3 +144,21 @@ jobs:
           REPOSITORY: k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
           EXPECTED_STATUS: "404"
         run: node .github/scripts/verify-token-readme.mjs
+
+  test-minimal-typescript:
+    name: Minimal TypeScript Tests
+    runs-on: ubuntu-slim
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: 'minimal/package.json'
+      - run: curl -fsSL https://raw.githubusercontent.com/AikidoSec/safe-chain/main/install-scripts/install-safe-chain.sh | sh -s -- --ci
+      - name: Install Dependencies
+        run: npm ci
+      - name: Check Format & Lint
+        run: npm run check
+      - name: Test
+        run: npm test
