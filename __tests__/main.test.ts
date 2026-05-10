@@ -3,6 +3,7 @@ import { run } from "../src/main/run";
 
 const coreMock = vi.hoisted(() => ({
   debug: vi.fn(),
+  getInput: vi.fn<(name: string) => string>().mockReturnValue(""),
   setFailed: vi.fn(),
   setOutput: vi.fn(),
   setSecret: vi.fn(),

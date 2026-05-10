@@ -6,7 +6,7 @@ import { resolveInputs } from "../inputs";
 
 export async function run(): Promise<void> {
   const { clientId, kmsKeyName, owner, repositories, permissions } =
-    resolveInputs();
+    resolveInputs(core.getInput);
 
   const now = Math.floor(Date.now() / 1000);
   const message = buildJwtSigningMessage(clientId, now);

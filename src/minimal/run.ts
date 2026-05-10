@@ -8,7 +8,7 @@ import { resolveGoogleCloudAccessToken } from "../google-cloud/resolve-access-to
 import { resolveInputs } from "../inputs";
 
 export async function run(nowSeconds?: number): Promise<void> {
-  const commonInputs = resolveInputs();
+  const commonInputs = resolveInputs(getInput);
   const googleCloudAccessToken = await resolveGoogleCloudAccessToken({
     getInput,
   });

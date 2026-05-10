@@ -1,4 +1,4 @@
-import { getInput } from "./actions-wrapper/core";
+import type { InputOptions } from "@actions/core";
 
 export type ResolvedInputs = {
   clientId: string;
@@ -57,7 +57,9 @@ export function resolvePermissions(
   return Object.keys(permissions).length > 0 ? permissions : undefined;
 }
 
-export function resolveInputs(): ResolvedInputs {
+export function resolveInputs(
+  getInput: (name: string, options?: InputOptions) => string,
+): ResolvedInputs {
   const clientId = getInput("client-id", { required: true });
   const kmsKeyName = getInput("kms-key-name", { required: true });
   const repositoriesInput = getInput("repositories");

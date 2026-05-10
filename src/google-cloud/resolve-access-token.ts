@@ -1,4 +1,4 @@
-import type { InputOptions } from "../actions-wrapper/core";
+import type { InputOptions } from "@actions/core";
 import { requireEnv } from "../minimal/require-env";
 import type {
   GitHubOidcTokenResponse,
@@ -17,7 +17,7 @@ export async function resolveGoogleCloudAccessToken(options: {
     return fromInput;
   }
 
-  const workloadIdentityProvider = getInput("workload_identity_provider", {
+  const workloadIdentityProvider = getInput("workload-identity-provider", {
     required: false,
   });
   if (workloadIdentityProvider) {

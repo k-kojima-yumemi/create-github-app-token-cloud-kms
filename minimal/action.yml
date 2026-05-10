@@ -23,9 +23,9 @@ inputs:
   google-cloud-access-token:
     description: >-
       Google Cloud access token with Cloud KMS sign permission.
-      Either this or workload_identity_provider must be provided.
+      Either this or workload-identity-provider must be provided.
     required: false
-  workload_identity_provider:
+  workload-identity-provider:
     description: >-
       The Workload Identity Provider resource name
       (projects/.../locations/global/workloadIdentityPools/.../providers/...).

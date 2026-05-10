@@ -18,10 +18,10 @@ describe("resolveGoogleCloudAccessToken", () => {
     );
   });
 
-  it("exchanges OIDC for an access token when workload_identity_provider is set", async () => {
+  it("exchanges OIDC for an access token when workload-identity-provider is set", async () => {
     const getInput = (name: string) => {
       if (name === "google-cloud-access-token") return "";
-      if (name === "workload_identity_provider")
+      if (name === "workload-identity-provider")
         return "projects/1/locations/global/workloadIdentityPools/p/providers/w";
       throw new Error(`Unexpected input: ${name}`);
     };
