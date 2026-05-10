@@ -13,21 +13,30 @@ const inputsMock = vi.hoisted(() => ({
   resolvePermissions: vi.fn(),
 }));
 
+const jwtMock = vi.hoisted(() => ({
+  buildJwtSigningMessage: vi.fn<() => string>(),
+}));
+
 const kmsMock = vi.hoisted(() => ({
-  buildJwtMessage: vi.fn<() => string>(),
   signWithKms: vi.fn<() => Promise<string>>(),
 }));
 
 const githubMock = vi.hoisted(() => ({
-  getInstallationId: vi.fn<() => Promise<number>>(),
-  createInstallationToken:
-    vi.fn<() => Promise<{ token: string; expiresAt: string }>>(),
+  createInstallationAccessToken:
+    vi.fn<
+      () => Promise<{
+        token: string;
+        expiresAt: string;
+        installationId: number;
+      }>
+    >(),
 }));
 
 vi.mock("@actions/core", () => coreMock);
 vi.mock("../src/inputs", () => inputsMock);
-vi.mock("../src/kms", () => kmsMock);
-vi.mock("../src/github", () => githubMock);
+vi.mock("../src/github-app/jwt-message", () => jwtMock);
+vi.mock("../src/google-cloud/kms-sign-sdk", () => kmsMock);
+vi.mock("../src/github-app/installation-token", () => githubMock);
 
 const { run } = await import("../src/main");
 
@@ -41,12 +50,12 @@ describe("main.ts", () => {
       repositories: ["myrepo"],
       permissions: { contents: "read" },
     });
-    kmsMock.buildJwtMessage.mockReturnValue("header.payload");
+    jwtMock.buildJwtSigningMessage.mockReturnValue("header.payload");
     kmsMock.signWithKms.mockResolvedValue("header.payload.sig");
-    githubMock.getInstallationId.mockResolvedValue(42);
-    githubMock.createInstallationToken.mockResolvedValue({
+    githubMock.createInstallationAccessToken.mockResolvedValue({
       token: "ghs_token",
       expiresAt: "2024-01-01T00:00:00Z",
+      installationId: 42,
     });
   });
 
@@ -75,13 +84,16 @@ describe("main.ts", () => {
   it("looks up installation by owner and first repository", async () => {
     await run();
 
-    expect(githubMock.getInstallationId).toHaveBeenCalledWith(
-      "myorg/myrepo",
-      "header.payload.sig",
+    expect(githubMock.createInstallationAccessToken).toHaveBeenCalledWith(
+      expect.objectContaining({
+        owner: "myorg",
+        repository: "myrepo",
+        jwt: "header.payload.sig",
+      }),
     );
   });
 
-  it("passes repositories and permissions to createInstallationToken", async () => {
+  it("passes repositories and permissions to createInstallationAccessToken", async () => {
     inputsMock.resolveInputs.mockReturnValue({
       clientId: "Iv1.abc123",
       kmsKeyName: "projects/p/...",
@@ -92,12 +104,13 @@ describe("main.ts", () => {
 
     await run();
 
-    expect(githubMock.createInstallationToken).toHaveBeenCalledWith(
-      42,
-      "header.payload.sig",
-      ["frontend", "backend"],
-      { contents: "read", issues: "write" },
-    );
+    expect(githubMock.createInstallationAccessToken).toHaveBeenCalledWith({
+      owner: "acme",
+      repository: "frontend",
+      jwt: "header.payload.sig",
+      repositories: ["frontend", "backend"],
+      permissions: { contents: "read", issues: "write" },
+    });
   });
 
   it("passes undefined permissions when no permission inputs are set", async () => {
@@ -112,11 +125,8 @@ describe("main.ts", () => {
 
     await run();
 
-    expect(githubMock.createInstallationToken).toHaveBeenCalledWith(
-      42,
-      "header.payload.sig",
-      ["myrepo"],
-      undefined,
+    expect(githubMock.createInstallationAccessToken).toHaveBeenCalledWith(
+      expect.objectContaining({ permissions: undefined }),
     );
   });
 

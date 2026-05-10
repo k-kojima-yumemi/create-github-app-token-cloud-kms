@@ -25,19 +25,19 @@ vi.mock("../../src/inputs", () => ({
 
 const resolveGcMock = vi.hoisted(() => vi.fn(async () => "gcp-access"));
 
-vi.mock("../../src/minimal/google-cloud/resolve-access-token", () => ({
+vi.mock("../../src/google-cloud/resolve-access-token", () => ({
   resolveGoogleCloudAccessToken: resolveGcMock,
 }));
 
 const buildJwtMock = vi.hoisted(() => vi.fn(() => "unsigned.jwt"));
 
-vi.mock("../../src/minimal/github-app/jwt-message", () => ({
+vi.mock("../../src/github-app/jwt-message", () => ({
   buildJwtSigningMessage: buildJwtMock,
 }));
 
 const signKmsMock = vi.hoisted(() => vi.fn(async () => "signed.jwt.token"));
 
-vi.mock("../../src/minimal/google-cloud/kms-sign", () => ({
+vi.mock("../../src/google-cloud/kms-sign-fetch", () => ({
   signJwtWithKms: signKmsMock,
 }));
 
@@ -49,7 +49,7 @@ const installationTokenMock = vi.hoisted(() =>
   })),
 );
 
-vi.mock("../../src/minimal/github-app/installation-token", () => ({
+vi.mock("../../src/github-app/installation-token", () => ({
   createInstallationAccessToken: installationTokenMock,
 }));
 

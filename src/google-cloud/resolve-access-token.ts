@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { requireEnv } from "../require-env";
+import { requireEnv } from "../minimal/require-env";
 import type {
   GitHubOidcTokenResponse,
   GoogleCloudAccessTokenResponse,

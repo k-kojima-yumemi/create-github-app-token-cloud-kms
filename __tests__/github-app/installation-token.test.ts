@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createInstallationAccessToken } from "../../../src/minimal/github-app/installation-token";
+import { createInstallationAccessToken } from "../../src/github-app/installation-token";
 
 describe("createInstallationAccessToken", () => {
   it("requests installation then access token with a flat repositories array", async () => {

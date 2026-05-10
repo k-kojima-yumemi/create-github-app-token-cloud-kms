@@ -1,9 +1,9 @@
 import * as core from "@actions/core";
+import { createInstallationAccessToken } from "../github-app/installation-token";
+import { buildJwtSigningMessage } from "../github-app/jwt-message";
+import { signJwtWithKms } from "../google-cloud/kms-sign-fetch";
+import { resolveGoogleCloudAccessToken } from "../google-cloud/resolve-access-token";
 import { resolveInputs } from "../inputs";
-import { createInstallationAccessToken } from "./github-app/installation-token";
-import { buildJwtSigningMessage } from "./github-app/jwt-message";
-import { signJwtWithKms } from "./google-cloud/kms-sign";
-import { resolveGoogleCloudAccessToken } from "./google-cloud/resolve-access-token";
 
 export async function run(nowSeconds?: number): Promise<void> {
   const commonInputs = resolveInputs();
