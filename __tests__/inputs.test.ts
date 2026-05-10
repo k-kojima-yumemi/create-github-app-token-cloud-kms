@@ -6,12 +6,6 @@ import {
   resolveRepositories,
 } from "../src/inputs";
 
-const coreMock = vi.hoisted(() => ({
-  getInput: vi.fn<(name: string) => string>(),
-}));
-
-vi.mock("../src/actions-wrapper/core", () => coreMock);
-
 const KMS_KEY =
   "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1";
 
@@ -118,12 +112,14 @@ describe("resolvePermissions", () => {
 });
 
 describe("resolveInputs", () => {
+  const getInput = (name: string): string => {
+    if (name === "client-id") return "Iv1.abc123";
+    if (name === "kms-key-name") return KMS_KEY;
+    if (name === "repositories") return "";
+    throw new Error(`Unexpected input: ${name}`);
+  };
+
   beforeEach(() => {
-    coreMock.getInput.mockImplementation((name: string) => {
-      if (name === "client-id") return "Iv1.abc123";
-      if (name === "kms-key-name") return KMS_KEY;
-      return "";
-    });
     vi.stubEnv("GITHUB_REPOSITORY", "myorg/myrepo");
   });
 
@@ -132,7 +128,7 @@ describe("resolveInputs", () => {
   });
 
   it("returns all resolved fields including permissions when unset", () => {
-    const result = resolveInputs();
+    const result = resolveInputs(getInput);
 
     expect(result).toEqual({
       clientId: "Iv1.abc123",
@@ -147,7 +143,7 @@ describe("resolveInputs", () => {
     vi.stubEnv("INPUT_PERMISSION-CONTENTS", "read");
     vi.stubEnv("INPUT_PERMISSION-ISSUES", "write");
 
-    const result = resolveInputs();
+    const result = resolveInputs(getInput);
 
     expect(result.permissions).toEqual({
       contents: "read",

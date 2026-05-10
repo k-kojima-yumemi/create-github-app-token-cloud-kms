@@ -1,7 +1,4 @@
-export interface InputOptions {
-  required?: boolean;
-  trimWhitespace?: boolean;
-}
+import type { InputOptions } from "@actions/core";
 
 export function getState(
   name: string,

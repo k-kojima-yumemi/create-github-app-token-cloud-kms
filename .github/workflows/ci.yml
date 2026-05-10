@@ -169,7 +169,7 @@ jobs:
         with:
           client-id: ${{ secrets.APP_CLIENT_ID }}
           kms-key-name: ${{ secrets.KMS_KEY_NAME }}
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           repositories: |
             ${{ github.repository }}
             k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
@@ -211,7 +211,7 @@ jobs:
         with:
           client-id: ${{ secrets.APP_CLIENT_ID }}
           kms-key-name: ${{ secrets.KMS_KEY_NAME }}
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           repositories: |
             ${{ github.repository }}
             k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
@@ -229,4 +229,3 @@ jobs:
           REPOSITORY: k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
           EXPECTED_STATUS: "200"
         run: node .github/scripts/verify-token-readme.mjs
-      

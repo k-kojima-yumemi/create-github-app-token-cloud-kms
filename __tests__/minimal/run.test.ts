@@ -1,14 +1,19 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { run } from "../../src/minimal/run";
 
-const coreMock = vi.hoisted(() => ({
+const logMock = vi.hoisted(() => ({
   debug: vi.fn(),
+}));
+
+vi.mock("../../src/actions-wrapper/log", () => logMock);
+
+const setMock = vi.hoisted(() => ({
   saveState: vi.fn(),
   setOutput: vi.fn(),
   setSecret: vi.fn(),
 }));
 
-vi.mock("@actions/core", () => coreMock);
+vi.mock("../../src/actions-wrapper/set", () => setMock);
 
 const resolveInputsMock = vi.hoisted(() =>
   vi.fn(() => ({
@@ -78,16 +83,10 @@ describe("run", () => {
       permissions: undefined,
     });
 
-    expect(coreMock.setSecret).toHaveBeenCalledWith("ghs_installation");
-    expect(coreMock.setOutput).toHaveBeenCalledWith(
-      "token",
-      "ghs_installation",
-    );
-    expect(coreMock.saveState).toHaveBeenCalledWith(
-      "token",
-      "ghs_installation",
-    );
-    expect(coreMock.saveState).toHaveBeenCalledWith(
+    expect(setMock.setSecret).toHaveBeenCalledWith("ghs_installation");
+    expect(setMock.setOutput).toHaveBeenCalledWith("token", "ghs_installation");
+    expect(setMock.saveState).toHaveBeenCalledWith("token", "ghs_installation");
+    expect(setMock.saveState).toHaveBeenCalledWith(
       "expiresAt",
       "2030-01-01T00:00:00Z",
     );

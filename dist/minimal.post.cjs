@@ -1,6 +1,9 @@
 "use strict";
 
 // src/actions-wrapper/log.ts
+var import_node_os2 = require("node:os");
+
+// src/actions-wrapper/command.ts
 var import_node_os = require("node:os");
 function escapeData(s) {
   return s.replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
@@ -8,11 +11,13 @@ function escapeData(s) {
 function issueCommand(command, message) {
   process.stdout.write(`::${command}::${escapeData(message)}${import_node_os.EOL}`);
 }
+
+// src/actions-wrapper/log.ts
 function debug(message) {
   issueCommand("debug", message);
 }
 function info(message) {
-  process.stdout.write(message + import_node_os.EOL);
+  process.stdout.write(message + import_node_os2.EOL);
 }
 function warning(message) {
   issueCommand(
@@ -36,7 +41,29 @@ function getState(name, env = process.env) {
   return env[`STATE_${name}`] ?? "";
 }
 
-// src/post.ts
+// src/github-app/revoke-installation-token.ts
+function tokenExpiresIn(expiresAt) {
+  const now = /* @__PURE__ */ new Date();
+  const expiresAtDate = new Date(expiresAt);
+  return Math.round((expiresAtDate.getTime() - now.getTime()) / 1e3);
+}
+async function revokeInstallationToken(token, fetchImpl = globalThis.fetch) {
+  const res = await fetchImpl("https://api.github.com/installation/token", {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    }
+  });
+  if (!res.ok) {
+    throw new Error(
+      `Failed to revoke token: ${res.status} ${await res.text()}`
+    );
+  }
+}
+
+// src/minimal/post.ts
 async function post() {
   const token = getState("token");
   if (!token) {
@@ -48,24 +75,12 @@ async function post() {
     info("Token expired, skipping token revocation");
     return;
   }
-  const res = await fetch("https://api.github.com/installation/token", {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28"
-    }
-  });
-  if (res.ok) {
+  try {
+    await revokeInstallationToken(token);
     info("Token revoked");
-  } else {
-    warning(`Failed to revoke token: ${res.status} ${await res.text()}`);
+  } catch (e) {
+    warning(e instanceof Error ? e.message : String(e));
   }
-}
-function tokenExpiresIn(expiresAt) {
-  const now = /* @__PURE__ */ new Date();
-  const expiresAtDate = new Date(expiresAt);
-  return Math.round((expiresAtDate.getTime() - now.getTime()) / 1e3);
 }
 
 // src/entrypoint/minimal.post.ts

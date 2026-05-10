@@ -1,5 +1,5 @@
 import { setFailed } from "../actions-wrapper/log";
-import { post } from "../post";
+import { post } from "../minimal/post";
 
 /* v8 ignore next */
 post().catch((error) => {
