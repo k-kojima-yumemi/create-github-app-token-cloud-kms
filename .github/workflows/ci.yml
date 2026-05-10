@@ -11,12 +11,13 @@ on:
 permissions:
   contents: read
 
+env:
+  SAFE_CHAIN_MINIMUM_PACKAGE_AGE_HOURS: 12
+
 jobs:
   test-typescript:
     name: TypeScript Tests
     runs-on: ubuntu-slim
-    env:
-      SAFE_CHAIN_MINIMUM_PACKAGE_AGE_HOURS: 12
 
     steps:
       - name: Checkout
