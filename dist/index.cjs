@@ -130001,11 +130001,13 @@ function resolveInputs() {
   const clientId = getInput("client-id", { required: true });
   const kmsKeyName = getInput("kms-key-name", { required: true });
   const repositoriesInput = getInput("repositories");
+  const permissions = resolvePermissions();
   return {
     clientId,
     kmsKeyName,
     owner: resolveOwner(repositoriesInput),
-    repositories: resolveRepositories(repositoriesInput)
+    repositories: resolveRepositories(repositoriesInput),
+    permissions
   };
 }
 
@@ -130035,8 +130037,7 @@ async function signWithKms(kmsKeyName, message) {
 
 // src/main.ts
 async function run() {
-  const { clientId, kmsKeyName, owner, repositories } = resolveInputs();
-  const permissions = resolvePermissions();
+  const { clientId, kmsKeyName, owner, repositories, permissions } = resolveInputs();
   const message = buildJwtMessage(clientId);
   const jwt = await signWithKms(kmsKeyName, message);
   setSecret(jwt);

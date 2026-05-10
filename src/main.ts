@@ -1,11 +1,11 @@
 import * as core from "@actions/core";
 import { createInstallationToken, getInstallationId } from "./github";
-import { resolveInputs, resolvePermissions } from "./inputs";
+import { resolveInputs } from "./inputs";
 import { buildJwtMessage, signWithKms } from "./kms";
 
 export async function run(): Promise<void> {
-  const { clientId, kmsKeyName, owner, repositories } = resolveInputs();
-  const permissions = resolvePermissions();
+  const { clientId, kmsKeyName, owner, repositories, permissions } =
+    resolveInputs();
 
   const message = buildJwtMessage(clientId);
   const jwt = await signWithKms(kmsKeyName, message);

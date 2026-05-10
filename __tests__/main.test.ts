@@ -39,8 +39,8 @@ describe("main.ts", () => {
         "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1",
       owner: "myorg",
       repositories: ["myrepo"],
+      permissions: { contents: "read" },
     });
-    inputsMock.resolvePermissions.mockReturnValue({ contents: "read" });
     kmsMock.buildJwtMessage.mockReturnValue("header.payload");
     kmsMock.signWithKms.mockResolvedValue("header.payload.sig");
     githubMock.getInstallationId.mockResolvedValue(42);
@@ -87,10 +87,7 @@ describe("main.ts", () => {
       kmsKeyName: "projects/p/...",
       owner: "acme",
       repositories: ["frontend", "backend"],
-    });
-    inputsMock.resolvePermissions.mockReturnValue({
-      contents: "read",
-      issues: "write",
+      permissions: { contents: "read", issues: "write" },
     });
 
     await run();
@@ -104,7 +101,14 @@ describe("main.ts", () => {
   });
 
   it("passes undefined permissions when no permission inputs are set", async () => {
-    inputsMock.resolvePermissions.mockReturnValue(undefined);
+    inputsMock.resolveInputs.mockReturnValue({
+      clientId: "Iv1.abc123",
+      kmsKeyName:
+        "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1",
+      owner: "myorg",
+      repositories: ["myrepo"],
+      permissions: undefined,
+    });
 
     await run();
 
@@ -124,8 +128,8 @@ describe("main.ts", () => {
     await expect(run()).rejects.toThrow("GITHUB_REPOSITORY is not set");
   });
 
-  it("propagates errors thrown by resolvePermissions", async () => {
-    inputsMock.resolvePermissions.mockImplementation(() => {
+  it("propagates errors thrown by resolveInputs with permissions error", async () => {
+    inputsMock.resolveInputs.mockImplementation(() => {
       throw new Error("At least one permission-* input must be set");
     });
 
