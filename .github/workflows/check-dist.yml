@@ -64,7 +64,9 @@ jobs:
   check-minimal-dist:
     name: Check minimal/dist/
     runs-on: ubuntu-slim
-
+    defaults:
+      run:
+        working-directory: minimal
     steps:
       - name: Checkout
         id: checkout
@@ -75,29 +77,24 @@ jobs:
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version-file: 'minimal/package.json'
-          cache: npm
 
       - name: Install Dependencies
-        id: install
-        run: npm ci
-        working-directory: minimal
+        run: npm ci && ls -al
 
       - name: Build minimal/dist/ Directory
-        id: build
         run: npm run bundle
-        working-directory: minimal
 
       # This will fail the workflow if the `minimal/dist/` directory is different than
       # expected.
       - name: Compare Directories
         run: |
-          if [ ! -d minimal/dist/ ]; then
-            echo "Expected minimal/dist/ directory does not exist.  See status below:"
-            ls -la ./minimal/
+          if [ ! -d ./dist/ ]; then
+            echo "Expected ./dist/ directory does not exist.  See status below:"
+            ls -la ./
             exit 1
           fi
-          if [ "$(git diff --ignore-space-at-eol --text minimal/dist/ | wc -l)" -gt "0" ]; then
+          if [ "$(git diff --ignore-space-at-eol --text ./dist/ | wc -l)" -gt "0" ]; then
             echo "Detected uncommitted changes after build. See status below:"
-            git diff --ignore-space-at-eol --text minimal/dist/
+            git diff --ignore-space-at-eol --text ./dist/
             exit 1
           fi
