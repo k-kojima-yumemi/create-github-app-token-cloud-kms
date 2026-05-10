@@ -163,7 +163,7 @@ async function resolveGoogleCloudAccessToken(options) {
   if (fromInput) {
     return fromInput;
   }
-  const workloadIdentityProvider = getInput2("workload_identity_provider", {
+  const workloadIdentityProvider = getInput2("workload-identity-provider", {
     required: false
   });
   if (workloadIdentityProvider) {
@@ -234,10 +234,10 @@ function resolvePermissions(env = process.env) {
   }
   return Object.keys(permissions).length > 0 ? permissions : void 0;
 }
-function resolveInputs() {
-  const clientId = getInput("client-id", { required: true });
-  const kmsKeyName = getInput("kms-key-name", { required: true });
-  const repositoriesInput = getInput("repositories");
+function resolveInputs(getInput2) {
+  const clientId = getInput2("client-id", { required: true });
+  const kmsKeyName = getInput2("kms-key-name", { required: true });
+  const repositoriesInput = getInput2("repositories");
   const permissions = resolvePermissions();
   return {
     clientId,
@@ -250,7 +250,7 @@ function resolveInputs() {
 
 // src/minimal/run.ts
 async function run(nowSeconds) {
-  const commonInputs = resolveInputs();
+  const commonInputs = resolveInputs(getInput);
   const googleCloudAccessToken = await resolveGoogleCloudAccessToken({
     getInput
   });

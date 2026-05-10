@@ -41,7 +41,29 @@ function getState(name, env = process.env) {
   return env[`STATE_${name}`] ?? "";
 }
 
-// src/post.ts
+// src/github-app/revoke-installation-token.ts
+function tokenExpiresIn(expiresAt) {
+  const now = /* @__PURE__ */ new Date();
+  const expiresAtDate = new Date(expiresAt);
+  return Math.round((expiresAtDate.getTime() - now.getTime()) / 1e3);
+}
+async function revokeInstallationToken(token, fetchImpl = globalThis.fetch) {
+  const res = await fetchImpl("https://api.github.com/installation/token", {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    }
+  });
+  if (!res.ok) {
+    throw new Error(
+      `Failed to revoke token: ${res.status} ${await res.text()}`
+    );
+  }
+}
+
+// src/minimal/post.ts
 async function post() {
   const token = getState("token");
   if (!token) {
@@ -53,24 +75,12 @@ async function post() {
     info("Token expired, skipping token revocation");
     return;
   }
-  const res = await fetch("https://api.github.com/installation/token", {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28"
-    }
-  });
-  if (res.ok) {
+  try {
+    await revokeInstallationToken(token);
     info("Token revoked");
-  } else {
-    warning(`Failed to revoke token: ${res.status} ${await res.text()}`);
+  } catch (e) {
+    warning(e instanceof Error ? e.message : String(e));
   }
-}
-function tokenExpiresIn(expiresAt) {
-  const now = /* @__PURE__ */ new Date();
-  const expiresAtDate = new Date(expiresAt);
-  return Math.round((expiresAtDate.getTime() - now.getTime()) / 1e3);
 }
 
 // src/entrypoint/minimal.post.ts

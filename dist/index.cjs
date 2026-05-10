@@ -129894,6 +129894,16 @@ var ExitCode;
 function setSecret(secret) {
   issueCommand("add-mask", {}, secret);
 }
+function getInput(name, options) {
+  const val = process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] || "";
+  if (options && options.required && !val) {
+    throw new Error(`Input required and not supplied: ${name}`);
+  }
+  if (options && options.trimWhitespace === false) {
+    return val;
+  }
+  return val.trim();
+}
 function setOutput(name, value) {
   const filePath = process.env["GITHUB_OUTPUT"] || "";
   if (filePath) {
@@ -129991,18 +130001,6 @@ async function signWithKms(kmsKeyName, message) {
   return `${message}.${Buffer.from(signature).toString("base64url")}`;
 }
 
-// src/actions-wrapper/core.ts
-function getInput(name, options, env = process.env) {
-  const val = env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] ?? "";
-  if (options?.required && !val) {
-    throw new Error(`Input required and not supplied: ${name}`);
-  }
-  if (options?.trimWhitespace === false) {
-    return val;
-  }
-  return val.trim();
-}
-
 // src/inputs.ts
 function resolveOwner(repositoriesInput, env = process.env) {
   if (repositoriesInput) {
@@ -130033,10 +130031,10 @@ function resolvePermissions(env = process.env) {
   }
   return Object.keys(permissions).length > 0 ? permissions : void 0;
 }
-function resolveInputs() {
-  const clientId = getInput("client-id", { required: true });
-  const kmsKeyName = getInput("kms-key-name", { required: true });
-  const repositoriesInput = getInput("repositories");
+function resolveInputs(getInput2) {
+  const clientId = getInput2("client-id", { required: true });
+  const kmsKeyName = getInput2("kms-key-name", { required: true });
+  const repositoriesInput = getInput2("repositories");
   const permissions = resolvePermissions();
   return {
     clientId,
@@ -130049,7 +130047,7 @@ function resolveInputs() {
 
 // src/main/run.ts
 async function run() {
-  const { clientId, kmsKeyName, owner, repositories, permissions } = resolveInputs();
+  const { clientId, kmsKeyName, owner, repositories, permissions } = resolveInputs(getInput);
   const now = Math.floor(Date.now() / 1e3);
   const message = buildJwtSigningMessage(clientId, now);
   const jwt = await signWithKms(kmsKeyName, message);
