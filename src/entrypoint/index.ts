@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
-import { run } from "./run";
+import { run } from "../main";
 
+/* v8 ignore next */
 run().catch((error) => {
   if (error instanceof Error) {
     core.setFailed(error);

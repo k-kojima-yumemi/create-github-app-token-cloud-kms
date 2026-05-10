@@ -20,7 +20,7 @@
     "format": "biome check --write --unsafe",
     "lint": "biome lint .",
     "check": "biome check .",
-    "package": "esbuild src/index.ts src/post.ts --bundle --platform=node --target=node24 --format=cjs --out-extension:.js=.cjs --outdir=dist",
+    "package": "esbuild src/entrypoint/index.ts src/entrypoint/post.ts src/entrypoint/minimal.index.ts src/entrypoint/minimal.post.ts --bundle --platform=node --target=node24 --format=cjs --out-extension:.js=.cjs --outdir=dist",
     "test": "vitest run",
     "typecheck": "tsc --noemit",
     "all": "npm run check && npm run typecheck && npm run test && npm run package"

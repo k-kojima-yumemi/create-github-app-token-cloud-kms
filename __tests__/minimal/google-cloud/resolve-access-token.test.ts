@@ -7,7 +7,7 @@ const coreMock = vi.hoisted(() => ({
 vi.mock("@actions/core", () => coreMock);
 
 const { resolveGoogleCloudAccessToken } = await import(
-  "../../src/google-cloud/resolve-access-token"
+  "../../../src/minimal/google-cloud/resolve-access-token"
 );
 
 afterEach(() => {

@@ -18633,7 +18633,7 @@ var require_undici = __commonJS({
   }
 });
 
-// src/post.ts
+// src/entrypoint/post.ts
 var post_exports = {};
 __export(post_exports, {
   post: () => post
@@ -19095,7 +19095,7 @@ function getState(name) {
   return process.env[`STATE_${name}`] || "";
 }
 
-// src/post.ts
+// src/entrypoint/post.ts
 async function post() {
   const token = getState("token");
   if (!token) {

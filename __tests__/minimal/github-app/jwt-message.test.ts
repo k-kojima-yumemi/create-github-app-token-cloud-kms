@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildJwtSigningMessage } from "../../src/github-app/jwt-message";
+import { buildJwtSigningMessage } from "../../../src/minimal/github-app/jwt-message";
 
 describe("buildJwtSigningMessage", () => {
   it("builds the unsigned JWT message (header.payload)", () => {

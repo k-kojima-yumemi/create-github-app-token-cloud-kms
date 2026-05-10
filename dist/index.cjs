@@ -130059,7 +130059,7 @@ async function run() {
   saveState("expiresAt", expiresAt);
 }
 
-// src/index.ts
+// src/entrypoint/index.ts
 run().catch((error2) => {
   if (error2 instanceof Error) {
     setFailed(error2);

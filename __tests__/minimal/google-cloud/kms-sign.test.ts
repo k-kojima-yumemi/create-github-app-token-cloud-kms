@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
-import { signJwtWithKms } from "../../src/google-cloud/kms-sign";
+import { signJwtWithKms } from "../../../src/minimal/google-cloud/kms-sign";
 
 describe("signJwtWithKms", () => {
   it("returns a complete JWT when KMS responds with a signature", async () => {

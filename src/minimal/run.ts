@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { resolveInputs } from "../../src/inputs";
+import { resolveInputs } from "../inputs";
 import { createInstallationAccessToken } from "./github-app/installation-token";
 import { buildJwtSigningMessage } from "./github-app/jwt-message";
 import { signJwtWithKms } from "./google-cloud/kms-sign";
