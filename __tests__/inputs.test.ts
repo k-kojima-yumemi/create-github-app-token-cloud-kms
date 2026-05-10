@@ -4,7 +4,7 @@ const coreMock = vi.hoisted(() => ({
   getInput: vi.fn<(name: string) => string>(),
 }));
 
-vi.mock("@actions/core", () => coreMock);
+vi.mock("../src/actions-wrapper/core", () => coreMock);
 
 const { resolveOwner, resolveRepositories, resolveInputs, resolvePermissions } =
   await import("../src/inputs");

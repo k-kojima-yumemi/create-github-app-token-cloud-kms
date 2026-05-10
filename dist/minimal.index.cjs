@@ -19271,6 +19271,18 @@ async function resolveGoogleCloudAccessToken(options) {
   throw new Error("No Google Cloud access token provided");
 }
 
+// src/actions-wrapper/core.ts
+function getInput2(name, options, env = process.env) {
+  const val = env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] ?? "";
+  if (options?.required && !val) {
+    throw new Error(`Input required and not supplied: ${name}`);
+  }
+  if (options?.trimWhitespace === false) {
+    return val;
+  }
+  return val.trim();
+}
+
 // src/inputs.ts
 function resolveOwner(repositoriesInput, env = process.env) {
   if (repositoriesInput) {
@@ -19302,9 +19314,9 @@ function resolvePermissions(env = process.env) {
   return Object.keys(permissions).length > 0 ? permissions : void 0;
 }
 function resolveInputs() {
-  const clientId = getInput("client-id", { required: true });
-  const kmsKeyName = getInput("kms-key-name", { required: true });
-  const repositoriesInput = getInput("repositories");
+  const clientId = getInput2("client-id", { required: true });
+  const kmsKeyName = getInput2("kms-key-name", { required: true });
+  const repositoriesInput = getInput2("repositories");
   const permissions = resolvePermissions();
   return {
     clientId,

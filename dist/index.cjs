@@ -129894,16 +129894,6 @@ var ExitCode;
 function setSecret(secret) {
   issueCommand("add-mask", {}, secret);
 }
-function getInput(name, options) {
-  const val = process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] || "";
-  if (options && options.required && !val) {
-    throw new Error(`Input required and not supplied: ${name}`);
-  }
-  if (options && options.trimWhitespace === false) {
-    return val;
-  }
-  return val.trim();
-}
 function setOutput(name, value) {
   const filePath = process.env["GITHUB_OUTPUT"] || "";
   if (filePath) {
@@ -129999,6 +129989,18 @@ async function signWithKms(kmsKeyName, message) {
   });
   if (!signature) throw new Error("No signature in KMS response");
   return `${message}.${Buffer.from(signature).toString("base64url")}`;
+}
+
+// src/actions-wrapper/core.ts
+function getInput(name, options, env = process.env) {
+  const val = env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] ?? "";
+  if (options?.required && !val) {
+    throw new Error(`Input required and not supplied: ${name}`);
+  }
+  if (options?.trimWhitespace === false) {
+    return val;
+  }
+  return val.trim();
 }
 
 // src/inputs.ts
