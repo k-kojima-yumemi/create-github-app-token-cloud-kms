@@ -1,12 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { resolveGoogleCloudAccessToken } from "../../src/google-cloud/resolve-access-token";
 
-const coreMock = vi.hoisted(() => ({
-  getInput: vi.fn<(name: string, options?: { required?: boolean }) => string>(),
-}));
-
-vi.mock("@actions/core", () => coreMock);
-
 afterEach(() => {
   vi.resetAllMocks();
   vi.unstubAllEnvs();
@@ -14,21 +8,23 @@ afterEach(() => {
 
 describe("resolveGoogleCloudAccessToken", () => {
   it("returns google-cloud-access-token input when set", async () => {
-    coreMock.getInput.mockImplementation((name: string) => {
+    const getInput = (name: string) => {
       if (name === "google-cloud-access-token") return "from-input";
-      return "";
-    });
+      throw new Error(`Unexpected input: ${name}`);
+    };
 
-    await expect(resolveGoogleCloudAccessToken()).resolves.toBe("from-input");
+    await expect(resolveGoogleCloudAccessToken({ getInput })).resolves.toBe(
+      "from-input",
+    );
   });
 
   it("exchanges OIDC for an access token when workload_identity_provider is set", async () => {
-    coreMock.getInput.mockImplementation((name: string) => {
+    const getInput = (name: string) => {
       if (name === "google-cloud-access-token") return "";
       if (name === "workload_identity_provider")
         return "projects/1/locations/global/workloadIdentityPools/p/providers/w";
-      return "";
-    });
+      throw new Error(`Unexpected input: ${name}`);
+    };
     vi.stubEnv("ACTIONS_ID_TOKEN_REQUEST_URL", "https://github.example/oidc");
     vi.stubEnv("ACTIONS_ID_TOKEN_REQUEST_TOKEN", "github-oidc-secret");
 
@@ -48,6 +44,7 @@ describe("resolveGoogleCloudAccessToken", () => {
     await expect(
       resolveGoogleCloudAccessToken({
         fetchImpl: fetchImpl as unknown as typeof fetch,
+        getInput,
       }),
     ).resolves.toBe("gcp-access");
 
@@ -74,9 +71,9 @@ describe("resolveGoogleCloudAccessToken", () => {
   });
 
   it("throws when no token path is configured", async () => {
-    coreMock.getInput.mockReturnValue("");
+    const getInput = () => "";
 
-    await expect(resolveGoogleCloudAccessToken()).rejects.toThrow(
+    await expect(resolveGoogleCloudAccessToken({ getInput })).rejects.toThrow(
       "No Google Cloud access token provided",
     );
   });

@@ -1,23 +1,23 @@
-import * as core from "@actions/core";
+import type { InputOptions } from "../actions-wrapper/core";
 import { requireEnv } from "../minimal/require-env";
 import type {
   GitHubOidcTokenResponse,
   GoogleCloudAccessTokenResponse,
 } from "../schema";
 
-export async function resolveGoogleCloudAccessToken(options?: {
+export async function resolveGoogleCloudAccessToken(options: {
   fetchImpl?: typeof fetch;
+  getInput: (name: string, options?: InputOptions) => string;
 }): Promise<string> {
-  const fetchImpl = options?.fetchImpl ?? globalThis.fetch;
+  const fetchImpl = options.fetchImpl ?? globalThis.fetch;
+  const { getInput } = options;
 
-  const fromInput = core.getInput("google-cloud-access-token", {
-    required: false,
-  });
+  const fromInput = getInput("google-cloud-access-token", { required: false });
   if (fromInput) {
     return fromInput;
   }
 
-  const workloadIdentityProvider = core.getInput("workload_identity_provider", {
+  const workloadIdentityProvider = getInput("workload_identity_provider", {
     required: false,
   });
   if (workloadIdentityProvider) {

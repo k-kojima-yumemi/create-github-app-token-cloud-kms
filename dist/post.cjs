@@ -1,6 +1,9 @@
 "use strict";
 
 // src/actions-wrapper/log.ts
+var import_node_os2 = require("node:os");
+
+// src/actions-wrapper/command.ts
 var import_node_os = require("node:os");
 function escapeData(s) {
   return s.replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
@@ -8,11 +11,13 @@ function escapeData(s) {
 function issueCommand(command, message) {
   process.stdout.write(`::${command}::${escapeData(message)}${import_node_os.EOL}`);
 }
+
+// src/actions-wrapper/log.ts
 function debug(message) {
   issueCommand("debug", message);
 }
 function info(message) {
-  process.stdout.write(message + import_node_os.EOL);
+  process.stdout.write(message + import_node_os2.EOL);
 }
 function warning(message) {
   issueCommand(

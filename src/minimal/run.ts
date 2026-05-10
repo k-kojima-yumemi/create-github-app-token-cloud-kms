@@ -1,4 +1,6 @@
-import * as core from "@actions/core";
+import { getInput } from "../actions-wrapper/core";
+import { debug } from "../actions-wrapper/log";
+import { saveState, setOutput, setSecret } from "../actions-wrapper/set";
 import { createInstallationAccessToken } from "../github-app/installation-token";
 import { buildJwtSigningMessage } from "../github-app/jwt-message";
 import { signJwtWithKms } from "../google-cloud/kms-sign-fetch";
@@ -7,7 +9,9 @@ import { resolveInputs } from "../inputs";
 
 export async function run(nowSeconds?: number): Promise<void> {
   const commonInputs = resolveInputs();
-  const googleCloudAccessToken = await resolveGoogleCloudAccessToken();
+  const googleCloudAccessToken = await resolveGoogleCloudAccessToken({
+    getInput,
+  });
   const now = nowSeconds ?? Math.floor(Date.now() / 1000);
   const message = buildJwtSigningMessage(commonInputs.clientId, now);
   const jwt = await signJwtWithKms({
@@ -27,11 +31,11 @@ export async function run(nowSeconds?: number): Promise<void> {
       repositories: commonInputs.repositories,
       permissions: commonInputs.permissions,
     });
-  core.debug(`Installation ID: ${installationId}`);
-  core.debug(`Token expires at: ${expiresAt}`);
+  debug(`Installation ID: ${installationId}`);
+  debug(`Token expires at: ${expiresAt}`);
 
-  core.setSecret(token);
-  core.setOutput("token", token);
-  core.saveState("token", token);
-  core.saveState("expiresAt", expiresAt);
+  setSecret(token);
+  setOutput("token", token);
+  saveState("token", token);
+  saveState("expiresAt", expiresAt);
 }
