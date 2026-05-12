@@ -6,7 +6,10 @@ const kmsMock = vi.hoisted(() => ({
 }));
 
 vi.mock("@google-cloud/kms", () => ({
-  KeyManagementServiceClient: vi.fn().mockImplementation(() => kmsMock),
+  KeyManagementServiceClient: class {
+    // noinspection JSUnusedGlobalSymbols Intended for mock test
+    asymmetricSign = kmsMock.asymmetricSign;
+  },
 }));
 
 describe("kms-sign-sdk.ts", () => {
