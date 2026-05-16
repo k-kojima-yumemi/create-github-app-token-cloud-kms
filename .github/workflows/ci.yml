@@ -67,6 +67,7 @@ jobs:
     strategy:
       matrix:
         runner: ${{ fromJSON(needs.setup.outputs.runners) }}
+      fail-fast: false
 
     permissions:
       contents: read
@@ -124,6 +125,7 @@ jobs:
     strategy:
       matrix:
         runner: ${{ fromJSON(needs.setup.outputs.runners) }}
+      fail-fast: false
 
     permissions:
       contents: read
@@ -177,6 +179,7 @@ jobs:
     strategy:
       matrix:
         runner: ${{ fromJSON(needs.setup.outputs.runners) }}
+      fail-fast: false
 
     permissions:
       contents: read
@@ -223,6 +226,7 @@ jobs:
     strategy:
       matrix:
         runner: ${{ fromJSON(needs.setup.outputs.runners) }}
+      fail-fast: false
 
     permissions:
       contents: read
