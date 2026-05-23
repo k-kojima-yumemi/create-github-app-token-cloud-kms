@@ -6,9 +6,6 @@ updates:
       interval: daily
     cooldown:
       default-days: 3
-    ignore:
-      - dependency-name: "@types/node"
-        update-types: [ "version-update:semver-major" ]
 
   - package-ecosystem: npm
     directory: /
@@ -22,3 +19,6 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: [ "version-update:semver-major" ]
