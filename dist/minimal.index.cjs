@@ -350,6 +350,7 @@ async function run(nowSeconds) {
   saveState("expiresAt", tokenResult.expiresAt);
 }
 async function getToken(inputs, jwt) {
+  debug(`Installation type: ${inputs.type}`);
   if (inputs.type === "repo") {
     if (inputs.repositories.length === 0) {
       throw new Error("At least one repository is required");

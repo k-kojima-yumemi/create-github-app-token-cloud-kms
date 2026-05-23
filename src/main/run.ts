@@ -25,6 +25,7 @@ export async function run(): Promise<void> {
 }
 
 async function getToken(inputs: ResolvedInputs, jwt: string) {
+  core.debug(`Installation type: ${inputs.type}`);
   if (inputs.type === "repo") {
     if (inputs.repositories.length === 0) {
       throw new Error("At least one repository is required");
