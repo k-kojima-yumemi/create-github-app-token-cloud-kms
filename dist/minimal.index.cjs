@@ -126,13 +126,15 @@ var import_node_crypto = require("node:crypto");
 async function signJwtWithKms(options) {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   const sha256DigestBase64 = (0, import_node_crypto.createHash)("sha256").update(options.message).digest("base64");
+  const kmsProject = options.kmsKeyName.split("/")[1];
   const kmsRes = await fetchImpl(
     `https://cloudkms.googleapis.com/v1/${options.kmsKeyName}:asymmetricSign`,
     {
       method: "POST",
       headers: {
         Authorization: `Bearer ${options.accessToken}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "x-goog-user-project": kmsProject
       },
       body: JSON.stringify({
         digest: { sha256: sha256DigestBase64 }

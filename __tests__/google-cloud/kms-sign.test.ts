@@ -28,7 +28,8 @@ describe("signJwtWithKms", () => {
         method: "POST",
         headers: expect.objectContaining({
           Authorization: "Bearer gcp-token",
-        }) as Record<string, string>,
+          "x-goog-user-project": "p",
+        }),
       }),
     );
 
