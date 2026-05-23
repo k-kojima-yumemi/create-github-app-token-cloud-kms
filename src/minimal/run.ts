@@ -1,11 +1,9 @@
 import { getInput } from "../actions-wrapper/core";
 import { debug } from "../actions-wrapper/log";
 import { saveState, setOutput, setSecret } from "../actions-wrapper/set";
-import {
-  createOwnerInstallationAccessToken,
-  createRepoInstallationAccessToken,
-} from "../github-app/installation-token";
 import { buildJwtSigningMessage } from "../github-app/jwt-message";
+import { createOwnerInstallationAccessToken } from "../github-app/owner-installation-token";
+import { createRepoInstallationAccessToken } from "../github-app/repo-installation-token";
 import { signJwtWithKms } from "../google-cloud/kms-sign-fetch";
 import { resolveGoogleCloudAccessToken } from "../google-cloud/resolve-access-token";
 import { type ResolvedInputs, resolveInputs } from "../inputs";

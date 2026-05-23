@@ -70,7 +70,13 @@ export function resolveInputs(
   const permissions = resolvePermissions();
 
   if (ownerInput && !repositoriesInput) {
-    return { type: "owner", clientId, kmsKeyName, owner: ownerInput, permissions };
+    return {
+      type: "owner",
+      clientId,
+      kmsKeyName,
+      owner: ownerInput,
+      permissions,
+    };
   }
 
   return {

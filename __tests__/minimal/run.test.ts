@@ -65,8 +65,11 @@ const ownerTokenMock = vi.hoisted(() =>
   })),
 );
 
-vi.mock("../../src/github-app/installation-token", () => ({
+vi.mock("../../src/github-app/repo-installation-token", () => ({
   createRepoInstallationAccessToken: repoTokenMock,
+}));
+
+vi.mock("../../src/github-app/owner-installation-token", () => ({
   createOwnerInstallationAccessToken: ownerTokenMock,
 }));
 

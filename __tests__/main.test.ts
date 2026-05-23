@@ -46,7 +46,14 @@ vi.mock("@actions/core", () => coreMock);
 vi.mock("../src/inputs", () => inputsMock);
 vi.mock("../src/github-app/jwt-message", () => jwtMock);
 vi.mock("../src/google-cloud/kms-sign-sdk", () => kmsMock);
-vi.mock("../src/github-app/installation-token", () => githubMock);
+vi.mock("../src/github-app/repo-installation-token", () => ({
+  createRepoInstallationAccessToken:
+    githubMock.createRepoInstallationAccessToken,
+}));
+vi.mock("../src/github-app/owner-installation-token", () => ({
+  createOwnerInstallationAccessToken:
+    githubMock.createOwnerInstallationAccessToken,
+}));
 
 describe("main.ts", () => {
   beforeEach(() => {

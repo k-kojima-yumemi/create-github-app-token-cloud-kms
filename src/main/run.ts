@@ -1,9 +1,7 @@
 import * as core from "@actions/core";
-import {
-  createOwnerInstallationAccessToken,
-  createRepoInstallationAccessToken,
-} from "../github-app/installation-token";
 import { buildJwtSigningMessage } from "../github-app/jwt-message";
+import { createOwnerInstallationAccessToken } from "../github-app/owner-installation-token";
+import { createRepoInstallationAccessToken } from "../github-app/repo-installation-token";
 import { signWithKms } from "../google-cloud/kms-sign-sdk";
 import { type ResolvedInputs, resolveInputs } from "../inputs";
 
