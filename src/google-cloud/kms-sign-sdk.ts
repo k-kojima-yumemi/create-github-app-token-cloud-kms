@@ -5,7 +5,10 @@ export async function signWithKms(
   kmsKeyName: string,
   message: string,
 ): Promise<string> {
-  const kms = new KeyManagementServiceClient();
+  const kmsProject = kmsKeyName.split("/")[1];
+  const kms = new KeyManagementServiceClient({
+    projectId: kmsProject,
+  });
   const digest = createHash("sha256").update(message).digest();
   const [{ signature }] = await kms.asymmetricSign({
     name: kmsKeyName,
