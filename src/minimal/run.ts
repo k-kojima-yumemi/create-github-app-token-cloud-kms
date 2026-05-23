@@ -12,12 +12,15 @@ export async function run(nowSeconds?: number): Promise<void> {
   const googleCloudAccessToken = await resolveGoogleCloudAccessToken({
     getInput,
   });
+  const quotaProject =
+    getInput("quota-project", { required: false }) || undefined;
   const now = nowSeconds ?? Math.floor(Date.now() / 1000);
   const message = buildJwtSigningMessage(commonInputs.clientId, now);
   const jwt = await signJwtWithKms({
     kmsKeyName: commonInputs.kmsKeyName,
     message,
     accessToken: googleCloudAccessToken,
+    quotaProject,
   });
   const primaryRepository = commonInputs.repositories[0];
   if (!primaryRepository) {

@@ -129991,10 +129991,7 @@ function buildJwtSigningMessage(clientId, nowSeconds) {
 var import_node_crypto = require("node:crypto");
 var import_kms = __toESM(require_src11(), 1);
 async function signWithKms(kmsKeyName, message) {
-  const kmsProject = kmsKeyName.split("/")[1];
-  const kms = new import_kms.KeyManagementServiceClient({
-    projectId: kmsProject
-  });
+  const kms = new import_kms.KeyManagementServiceClient();
   const digest = (0, import_node_crypto.createHash)("sha256").update(message).digest();
   const [{ signature }] = await kms.asymmetricSign({
     name: kmsKeyName,

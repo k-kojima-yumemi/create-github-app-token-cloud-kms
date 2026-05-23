@@ -74,6 +74,7 @@ describe("run", () => {
       kmsKeyName: "projects/p/locations/l/keyRings/r/cryptoKeys/k",
       message: "unsigned.jwt",
       accessToken: "gcp-access",
+      quotaProject: undefined,
     });
     expect(installationTokenMock).toHaveBeenCalledWith({
       owner: "acme",
