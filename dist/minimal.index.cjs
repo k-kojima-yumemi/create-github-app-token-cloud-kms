@@ -351,22 +351,29 @@ async function run(nowSeconds) {
 }
 async function getToken(inputs, jwt) {
   debug(`Installation type: ${inputs.type}`);
-  if (inputs.type === "repo") {
-    if (inputs.repositories.length === 0) {
-      throw new Error("At least one repository is required");
-    }
-    return createRepoInstallationAccessToken({
-      owner: inputs.owner,
-      jwt,
-      repositories: inputs.repositories,
-      permissions: inputs.permissions
-    });
+  switch (inputs.type) {
+    case "repo":
+      if (inputs.repositories.length === 0) {
+        throw new Error("At least one repository is required");
+      }
+      return createRepoInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        repositories: inputs.repositories,
+        permissions: inputs.permissions
+      });
+    case "owner":
+      return createOwnerInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        permissions: inputs.permissions
+      });
+    default:
+      error(`Unsupported installation type: ${inputs}`);
+      throw new Error(
+        `Unsupported installation type: ${inputs}`
+      );
   }
-  return createOwnerInstallationAccessToken({
-    owner: inputs.owner,
-    jwt,
-    permissions: inputs.permissions
-  });
 }
 
 // src/entrypoint/minimal.index.ts

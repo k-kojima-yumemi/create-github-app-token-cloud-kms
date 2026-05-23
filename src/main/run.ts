@@ -26,20 +26,27 @@ export async function run(): Promise<void> {
 
 async function getToken(inputs: ResolvedInputs, jwt: string) {
   core.debug(`Installation type: ${inputs.type}`);
-  if (inputs.type === "repo") {
-    if (inputs.repositories.length === 0) {
-      throw new Error("At least one repository is required");
-    }
-    return createRepoInstallationAccessToken({
-      owner: inputs.owner,
-      jwt,
-      repositories: inputs.repositories,
-      permissions: inputs.permissions,
-    });
+  switch (inputs.type) {
+    case "repo":
+      if (inputs.repositories.length === 0) {
+        throw new Error("At least one repository is required");
+      }
+      return createRepoInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        repositories: inputs.repositories,
+        permissions: inputs.permissions,
+      });
+    case "owner":
+      return createOwnerInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        permissions: inputs.permissions,
+      });
+    default:
+      core.error(`Unsupported installation type: ${inputs satisfies never}`);
+      throw new Error(
+        `Unsupported installation type: ${inputs satisfies never}`,
+      );
   }
-  return createOwnerInstallationAccessToken({
-    owner: inputs.owner,
-    jwt,
-    permissions: inputs.permissions,
-  });
 }

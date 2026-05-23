@@ -1,5 +1,5 @@
 import { getInput } from "../actions-wrapper/core";
-import { debug } from "../actions-wrapper/log";
+import { debug, error } from "../actions-wrapper/log";
 import { saveState, setOutput, setSecret } from "../actions-wrapper/set";
 import { buildJwtSigningMessage } from "../github-app/jwt-message";
 import { createOwnerInstallationAccessToken } from "../github-app/owner-installation-token";
@@ -37,20 +37,27 @@ export async function run(nowSeconds?: number): Promise<void> {
 
 async function getToken(inputs: ResolvedInputs, jwt: string) {
   debug(`Installation type: ${inputs.type}`);
-  if (inputs.type === "repo") {
-    if (inputs.repositories.length === 0) {
-      throw new Error("At least one repository is required");
-    }
-    return createRepoInstallationAccessToken({
-      owner: inputs.owner,
-      jwt,
-      repositories: inputs.repositories,
-      permissions: inputs.permissions,
-    });
+  switch (inputs.type) {
+    case "repo":
+      if (inputs.repositories.length === 0) {
+        throw new Error("At least one repository is required");
+      }
+      return createRepoInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        repositories: inputs.repositories,
+        permissions: inputs.permissions,
+      });
+    case "owner":
+      return createOwnerInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        permissions: inputs.permissions,
+      });
+    default:
+      error(`Unsupported installation type: ${inputs satisfies never}`);
+      throw new Error(
+        `Unsupported installation type: ${inputs satisfies never}`,
+      );
   }
-  return createOwnerInstallationAccessToken({
-    owner: inputs.owner,
-    jwt,
-    permissions: inputs.permissions,
-  });
 }
