@@ -126,14 +126,18 @@ var import_node_crypto = require("node:crypto");
 async function signJwtWithKms(options) {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   const sha256DigestBase64 = (0, import_node_crypto.createHash)("sha256").update(options.message).digest("base64");
+  const headers = {
+    Authorization: `Bearer ${options.accessToken}`,
+    "Content-Type": "application/json"
+  };
+  if (options.quotaProject) {
+    headers["x-goog-user-project"] = options.quotaProject;
+  }
   const kmsRes = await fetchImpl(
     `https://cloudkms.googleapis.com/v1/${options.kmsKeyName}:asymmetricSign`,
     {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${options.accessToken}`,
-        "Content-Type": "application/json"
-      },
+      headers,
       body: JSON.stringify({
         digest: { sha256: sha256DigestBase64 }
       })
@@ -254,12 +258,14 @@ async function run(nowSeconds) {
   const googleCloudAccessToken = await resolveGoogleCloudAccessToken({
     getInput
   });
+  const quotaProject = getInput("quota-project", { required: false }) || void 0;
   const now = nowSeconds ?? Math.floor(Date.now() / 1e3);
   const message = buildJwtSigningMessage(commonInputs.clientId, now);
   const jwt = await signJwtWithKms({
     kmsKeyName: commonInputs.kmsKeyName,
     message,
-    accessToken: googleCloudAccessToken
+    accessToken: googleCloudAccessToken,
+    quotaProject
   });
   const primaryRepository = commonInputs.repositories[0];
   if (!primaryRepository) {

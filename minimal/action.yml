@@ -32,6 +32,14 @@ inputs:
       Used to exchange a GitHub OIDC token for a Google Cloud access token.
       Either this or google-cloud-access-token must be provided.
     required: false
+  quota-project:
+    description: >-
+      Google Cloud project ID to use for quota and billing when calling the KMS API.
+      Sets the x-goog-user-project header. Useful when the Workload Identity Pool
+      project differs from the KMS project and the KMS API is not enabled in the
+      WIF pool project. Requires roles/serviceusage.serviceUsageConsumer on the
+      specified project.
+    required: false
   # Permissions are copied from actions/create-github-app-token
   permission-actions:
     description: "The level of permission to grant the access token for GitHub Actions workflows, workflow runs, and artifacts. Can be set to 'read' or 'write'."

@@ -28,7 +28,7 @@ describe("signJwtWithKms", () => {
         method: "POST",
         headers: expect.objectContaining({
           Authorization: "Bearer gcp-token",
-        }) as Record<string, string>,
+        }),
       }),
     );
 
@@ -41,6 +41,31 @@ describe("signJwtWithKms", () => {
       .update(message)
       .digest("base64");
     expect(body.digest.sha256).toBe(expectedDigest);
+  });
+
+  it("sends x-goog-user-project header when quotaProject is specified", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => "",
+      json: async () => ({ signature: Buffer.from("sig").toString("base64") }),
+    });
+
+    await signJwtWithKms({
+      kmsKeyName: "projects/p/locations/l/keyRings/r/cryptoKeys/k",
+      message: "header.payload",
+      accessToken: "gcp-token",
+      quotaProject: "my-quota-project",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          "x-goog-user-project": "my-quota-project",
+        }),
+      }),
+    );
   });
 
   it("throws when KMS returns an error status", async () => {
