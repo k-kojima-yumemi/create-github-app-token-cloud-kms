@@ -24,7 +24,15 @@ const kmsMock = vi.hoisted(() => ({
 }));
 
 const githubMock = vi.hoisted(() => ({
-  createInstallationAccessToken:
+  createRepoInstallationAccessToken:
+    vi.fn<
+      () => Promise<{
+        token: string;
+        expiresAt: string;
+        installationId: number;
+      }>
+    >(),
+  createOwnerInstallationAccessToken:
     vi.fn<
       () => Promise<{
         token: string;
@@ -43,6 +51,7 @@ vi.mock("../src/github-app/installation-token", () => githubMock);
 describe("main.ts", () => {
   beforeEach(() => {
     inputsMock.resolveInputs.mockReturnValue({
+      type: "repo",
       clientId: "Iv1.abc123",
       kmsKeyName:
         "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1",
@@ -52,7 +61,12 @@ describe("main.ts", () => {
     });
     jwtMock.buildJwtSigningMessage.mockReturnValue("header.payload");
     kmsMock.signWithKms.mockResolvedValue("header.payload.sig");
-    githubMock.createInstallationAccessToken.mockResolvedValue({
+    githubMock.createRepoInstallationAccessToken.mockResolvedValue({
+      token: "ghs_token",
+      expiresAt: "2024-01-01T00:00:00Z",
+      installationId: 42,
+    });
+    githubMock.createOwnerInstallationAccessToken.mockResolvedValue({
       token: "ghs_token",
       expiresAt: "2024-01-01T00:00:00Z",
       installationId: 42,
@@ -81,20 +95,21 @@ describe("main.ts", () => {
     );
   });
 
-  it("looks up installation by owner and first repository", async () => {
+  it("looks up installation by owner and repositories", async () => {
     await run();
 
-    expect(githubMock.createInstallationAccessToken).toHaveBeenCalledWith(
+    expect(githubMock.createRepoInstallationAccessToken).toHaveBeenCalledWith(
       expect.objectContaining({
         owner: "myorg",
-        repository: "myrepo",
+        repositories: ["myrepo"],
         jwt: "header.payload.sig",
       }),
     );
   });
 
-  it("passes repositories and permissions to createInstallationAccessToken", async () => {
+  it("passes repositories and permissions to createRepoInstallationAccessToken", async () => {
     inputsMock.resolveInputs.mockReturnValue({
+      type: "repo",
       clientId: "Iv1.abc123",
       kmsKeyName: "projects/p/...",
       owner: "acme",
@@ -104,9 +119,8 @@ describe("main.ts", () => {
 
     await run();
 
-    expect(githubMock.createInstallationAccessToken).toHaveBeenCalledWith({
+    expect(githubMock.createRepoInstallationAccessToken).toHaveBeenCalledWith({
       owner: "acme",
-      repository: "frontend",
       jwt: "header.payload.sig",
       repositories: ["frontend", "backend"],
       permissions: { contents: "read", issues: "write" },
@@ -115,6 +129,7 @@ describe("main.ts", () => {
 
   it("passes undefined permissions when no permission inputs are set", async () => {
     inputsMock.resolveInputs.mockReturnValue({
+      type: "repo",
       clientId: "Iv1.abc123",
       kmsKeyName:
         "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1",
@@ -125,9 +140,29 @@ describe("main.ts", () => {
 
     await run();
 
-    expect(githubMock.createInstallationAccessToken).toHaveBeenCalledWith(
+    expect(githubMock.createRepoInstallationAccessToken).toHaveBeenCalledWith(
       expect.objectContaining({ permissions: undefined }),
     );
+  });
+
+  it("calls createOwnerInstallationAccessToken for owner token", async () => {
+    inputsMock.resolveInputs.mockReturnValue({
+      type: "owner",
+      clientId: "Iv1.abc123",
+      kmsKeyName:
+        "projects/p/locations/global/keyRings/r/cryptoKeys/k/cryptoKeyVersions/1",
+      owner: "myorg",
+      permissions: undefined,
+    });
+
+    await run();
+
+    expect(githubMock.createOwnerInstallationAccessToken).toHaveBeenCalledWith({
+      owner: "myorg",
+      jwt: "header.payload.sig",
+      permissions: undefined,
+    });
+    expect(githubMock.createRepoInstallationAccessToken).not.toHaveBeenCalled();
   });
 
   it("propagates errors thrown by resolveInputs", async () => {

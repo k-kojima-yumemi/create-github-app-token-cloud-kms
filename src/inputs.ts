@@ -1,12 +1,15 @@
 import type { InputOptions } from "@actions/core";
 
-export type ResolvedInputs = {
+type CommonInputs = {
   clientId: string;
   kmsKeyName: string;
   owner: string;
-  repositories: string[];
   permissions: Record<string, string> | undefined;
 };
+
+export type ResolvedInputs =
+  | (CommonInputs & { type: "repo"; repositories: string[] })
+  | (CommonInputs & { type: "owner" });
 
 export function resolveOwner(
   repositoriesInput: string,
@@ -62,13 +65,19 @@ export function resolveInputs(
 ): ResolvedInputs {
   const clientId = getInput("client-id", { required: true });
   const kmsKeyName = getInput("kms-key-name", { required: true });
+  const ownerInput = getInput("owner");
   const repositoriesInput = getInput("repositories");
   const permissions = resolvePermissions();
 
+  if (ownerInput && !repositoriesInput) {
+    return { type: "owner", clientId, kmsKeyName, owner: ownerInput, permissions };
+  }
+
   return {
+    type: "repo",
     clientId,
     kmsKeyName,
-    owner: resolveOwner(repositoriesInput),
+    owner: ownerInput || resolveOwner(repositoriesInput),
     repositories: resolveRepositories(repositoriesInput),
     permissions,
   };
