@@ -13,7 +13,6 @@ permissions:
 
 env:
   SAFE_CHAIN_MINIMUM_PACKAGE_AGE_HOURS: 12
-  ACTIONS_STEP_DEBUG: true
 
 jobs:
   setup:
