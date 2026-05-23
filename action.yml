@@ -20,6 +20,12 @@ inputs:
       Comma or newline-separated list of repositories to grant access to.
       Defaults to the current repository.
     required: false
+  owner:
+    description: >-
+      The owner (organization or user) for an owner-level installation token.
+      When provided without 'repositories', creates an owner-scoped token
+      instead of a repository-scoped token.
+    required: false
   # Permissions are copied from actions/create-github-app-token
   permission-actions:
     description: "The level of permission to grant the access token for GitHub Actions workflows, workflow runs, and artifacts. Can be set to 'read' or 'write'."

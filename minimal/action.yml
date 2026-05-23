@@ -20,6 +20,12 @@ inputs:
       Comma or newline-separated list of repositories to grant access to.
       Defaults to the current repository.
     required: false
+  owner:
+    description: >-
+      The owner (organization or user) for an owner-level installation token.
+      When provided without 'repositories', creates an owner-scoped token
+      instead of a repository-scoped token.
+    required: false
   google-cloud-access-token:
     description: >-
       Google Cloud access token with Cloud KMS sign permission.
