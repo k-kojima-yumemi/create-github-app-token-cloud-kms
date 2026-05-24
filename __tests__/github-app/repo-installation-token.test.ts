@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { createInstallationAccessToken } from "../../src/github-app/installation-token";
+import { createRepoInstallationAccessToken } from "../../src/github-app/repo-installation-token";
 
-describe("createInstallationAccessToken", () => {
+describe("createRepoInstallationAccessToken", () => {
   it("requests installation then access token with a flat repositories array", async () => {
     const fetchImpl = vi
       .fn()
@@ -19,9 +19,8 @@ describe("createInstallationAccessToken", () => {
         }),
       });
 
-    const result = await createInstallationAccessToken({
+    const result = await createRepoInstallationAccessToken({
       owner: "acme",
-      repository: "app-repo",
       jwt: "jwt-value",
       repositories: ["app-repo", "other-repo"],
       permissions: { contents: "read" },
@@ -40,11 +39,8 @@ describe("createInstallationAccessToken", () => {
       expect.any(Object),
     );
 
-    expect(fetchImpl.mock.calls.length).toBeGreaterThanOrEqual(2);
     const tokenCall = fetchImpl.mock.calls[1];
-    if (!tokenCall) {
-      throw new Error("expected access_tokens fetch");
-    }
+    if (!tokenCall) throw new Error("expected access_tokens fetch");
     expect(tokenCall[0]).toBe(
       "https://api.github.com/app/installations/42/access_tokens",
     );
@@ -62,9 +58,8 @@ describe("createInstallationAccessToken", () => {
     });
 
     await expect(
-      createInstallationAccessToken({
+      createRepoInstallationAccessToken({
         owner: "a",
-        repository: "b",
         jwt: "j",
         repositories: ["b"],
         permissions: undefined,

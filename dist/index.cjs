@@ -130037,27 +130037,90 @@ function saveState(name, value) {
   issueCommand("save-state", { name }, toCommandValue(value));
 }
 
-// src/github-app/installation-token.ts
+// src/github-app/owner-installation-token.ts
 var githubHeadersBase = {
   Accept: "application/vnd.github+json",
   "X-GitHub-Api-Version": "2022-11-28"
 };
-async function createInstallationAccessToken(options) {
+async function getOwnerInstallationId(owner, headers, fetchImpl) {
+  const orgRes = await fetchImpl(
+    `https://api.github.com/orgs/${owner}/installation`,
+    { headers }
+  );
+  if (orgRes.ok) {
+    const { id: id2 } = await orgRes.json();
+    return id2;
+  }
+  const userRes = await fetchImpl(
+    `https://api.github.com/users/${owner}/installation`,
+    { headers }
+  );
+  if (!userRes.ok) {
+    throw new Error(
+      `Failed to get installation: ${userRes.status} ${await userRes.text()}`
+    );
+  }
+  const { id } = await userRes.json();
+  return id;
+}
+async function createOwnerInstallationAccessToken(options) {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   const jwtHeaders = {
     ...githubHeadersBase,
     Authorization: `Bearer ${options.jwt}`
   };
-  const installRes = await fetchImpl(
-    `https://api.github.com/repos/${options.owner}/${options.repository}/installation`,
-    { headers: jwtHeaders }
+  const installationId = await getOwnerInstallationId(
+    options.owner,
+    jwtHeaders,
+    fetchImpl
   );
-  if (!installRes.ok) {
+  const tokenRes = await fetchImpl(
+    `https://api.github.com/app/installations/${installationId}/access_tokens`,
+    {
+      method: "POST",
+      headers: jwtHeaders,
+      body: JSON.stringify({ permissions: options.permissions })
+    }
+  );
+  if (!tokenRes.ok) {
     throw new Error(
-      `Failed to get installation: ${installRes.status} ${await installRes.text()}`
+      `Failed to create token: ${tokenRes.status} ${await tokenRes.text()}`
     );
   }
-  const { id: installationId } = await installRes.json();
+  const { token, expires_at: expiresAt } = await tokenRes.json();
+  return { token, expiresAt, installationId };
+}
+
+// src/github-app/repo-installation-token.ts
+var githubHeadersBase2 = {
+  Accept: "application/vnd.github+json",
+  "X-GitHub-Api-Version": "2022-11-28"
+};
+async function getRepoInstallationId(owner, repository, headers, fetchImpl) {
+  const res = await fetchImpl(
+    `https://api.github.com/repos/${owner}/${repository}/installation`,
+    { headers }
+  );
+  if (!res.ok) {
+    throw new Error(
+      `Failed to get installation: ${res.status} ${await res.text()}`
+    );
+  }
+  const { id } = await res.json();
+  return id;
+}
+async function createRepoInstallationAccessToken(options) {
+  const fetchImpl = options.fetchImpl ?? globalThis.fetch;
+  const jwtHeaders = {
+    ...githubHeadersBase2,
+    Authorization: `Bearer ${options.jwt}`
+  };
+  const installationId = await getRepoInstallationId(
+    options.owner,
+    options.repositories[0] ?? "",
+    jwtHeaders,
+    fetchImpl
+  );
   const tokenRes = await fetchImpl(
     `https://api.github.com/app/installations/${installationId}/access_tokens`,
     {
@@ -130076,6 +130139,32 @@ async function createInstallationAccessToken(options) {
   }
   const { token, expires_at: expiresAt } = await tokenRes.json();
   return { token, expiresAt, installationId };
+}
+
+// src/github-app/installation-token.ts
+async function getInstallationAccessToken(inputs, jwt) {
+  switch (inputs.type) {
+    case "repo":
+      if (inputs.repositories.length === 0) {
+        throw new Error("At least one repository is required");
+      }
+      return createRepoInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        repositories: inputs.repositories,
+        permissions: inputs.permissions
+      });
+    case "owner":
+      return createOwnerInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        permissions: inputs.permissions
+      });
+    default:
+      throw new Error(
+        `Unsupported installation type: ${inputs}`
+      );
+  }
 }
 
 // src/github-app/jwt-message.ts
@@ -130141,12 +130230,23 @@ function resolvePermissions(env = process.env) {
 function resolveInputs(getInput2) {
   const clientId = getInput2("client-id", { required: true });
   const kmsKeyName = getInput2("kms-key-name", { required: true });
+  const ownerInput = getInput2("owner");
   const repositoriesInput = getInput2("repositories");
   const permissions = resolvePermissions();
+  if (ownerInput && !repositoriesInput) {
+    return {
+      type: "owner",
+      clientId,
+      kmsKeyName,
+      owner: ownerInput,
+      permissions
+    };
+  }
   return {
+    type: "repo",
     clientId,
     kmsKeyName,
-    owner: resolveOwner(repositoriesInput),
+    owner: ownerInput || resolveOwner(repositoriesInput),
     repositories: resolveRepositories(repositoriesInput),
     permissions
   };
@@ -130154,28 +130254,19 @@ function resolveInputs(getInput2) {
 
 // src/main/run.ts
 async function run() {
-  const { clientId, kmsKeyName, owner, repositories, permissions } = resolveInputs(getInput);
+  const inputs = resolveInputs(getInput);
   const now = Math.floor(Date.now() / 1e3);
-  const message = buildJwtSigningMessage(clientId, now);
-  const jwt = await signWithKms(kmsKeyName, message);
+  const message = buildJwtSigningMessage(inputs.clientId, now);
+  const jwt = await signWithKms(inputs.kmsKeyName, message);
   setSecret(jwt);
   debug("GitHub App JWT created");
-  const primaryRepository = repositories[0];
-  if (!primaryRepository) {
-    throw new Error("At least one repository is required");
-  }
-  const { token, expiresAt, installationId } = await createInstallationAccessToken({
-    owner,
-    repository: primaryRepository,
-    jwt,
-    repositories,
-    permissions
-  });
-  debug(`Installation ID: ${installationId}`);
-  setSecret(token);
-  setOutput("token", token);
-  saveState("token", token);
-  saveState("expiresAt", expiresAt);
+  debug(`Installation type: ${inputs.type}`);
+  const tokenResult = await getInstallationAccessToken(inputs, jwt);
+  debug(`Installation ID: ${tokenResult.installationId}`);
+  setSecret(tokenResult.token);
+  setOutput("token", tokenResult.token);
+  saveState("token", tokenResult.token);
+  saveState("expiresAt", tokenResult.expiresAt);
 }
 
 // src/entrypoint/index.ts

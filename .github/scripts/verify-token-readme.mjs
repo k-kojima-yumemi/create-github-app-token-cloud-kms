@@ -26,8 +26,9 @@ async function readReadme(repo, token, expectedStatus) {
     },
   );
   if (res.status !== expectedStatus) {
+    const body = await res.text();
     throw new Error(
-      `Expected status ${expectedStatus} for ${repo}, got ${res.status}`,
+      `Expected status ${expectedStatus} for ${repo}, got ${res.status}: ${body}`,
     );
   }
   if (expectedStatus === 200) {

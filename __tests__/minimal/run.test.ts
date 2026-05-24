@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { ResolvedInputs } from "../../src/inputs";
 import { run } from "../../src/minimal/run";
 
 const logMock = vi.hoisted(() => ({
@@ -16,12 +17,13 @@ const setMock = vi.hoisted(() => ({
 vi.mock("../../src/actions-wrapper/set", () => setMock);
 
 const resolveInputsMock = vi.hoisted(() =>
-  vi.fn(() => ({
+  vi.fn<() => ResolvedInputs>(() => ({
+    type: "repo",
     clientId: "Iv1.app",
     kmsKeyName: "projects/p/locations/l/keyRings/r/cryptoKeys/k",
     owner: "acme",
     repositories: ["svc"],
-    permissions: undefined as Record<string, string> | undefined,
+    permissions: undefined,
   })),
 );
 
@@ -47,7 +49,7 @@ vi.mock("../../src/google-cloud/kms-sign-fetch", () => ({
   signJwtWithKms: signKmsMock,
 }));
 
-const installationTokenMock = vi.hoisted(() =>
+const repoTokenMock = vi.hoisted(() =>
   vi.fn(async () => ({
     token: "ghs_installation",
     expiresAt: "2030-01-01T00:00:00Z",
@@ -55,8 +57,20 @@ const installationTokenMock = vi.hoisted(() =>
   })),
 );
 
-vi.mock("../../src/github-app/installation-token", () => ({
-  createInstallationAccessToken: installationTokenMock,
+const ownerTokenMock = vi.hoisted(() =>
+  vi.fn(async () => ({
+    token: "ghs_installation",
+    expiresAt: "2030-01-01T00:00:00Z",
+    installationId: 99,
+  })),
+);
+
+vi.mock("../../src/github-app/repo-installation-token", () => ({
+  createRepoInstallationAccessToken: repoTokenMock,
+}));
+
+vi.mock("../../src/github-app/owner-installation-token", () => ({
+  createOwnerInstallationAccessToken: ownerTokenMock,
 }));
 
 afterEach(() => {
@@ -76,9 +90,8 @@ describe("run", () => {
       accessToken: "gcp-access",
       quotaProject: undefined,
     });
-    expect(installationTokenMock).toHaveBeenCalledWith({
+    expect(repoTokenMock).toHaveBeenCalledWith({
       owner: "acme",
-      repository: "svc",
       jwt: "signed.jwt.token",
       repositories: ["svc"],
       permissions: undefined,
@@ -91,5 +104,24 @@ describe("run", () => {
       "expiresAt",
       "2030-01-01T00:00:00Z",
     );
+  });
+
+  it("calls createOwnerInstallationAccessToken for owner token", async () => {
+    resolveInputsMock.mockReturnValueOnce({
+      type: "owner",
+      clientId: "Iv1.app",
+      kmsKeyName: "projects/p/locations/l/keyRings/r/cryptoKeys/k",
+      owner: "acme",
+      permissions: undefined,
+    });
+
+    await run(1_800_000_000);
+
+    expect(ownerTokenMock).toHaveBeenCalledWith({
+      owner: "acme",
+      jwt: "signed.jwt.token",
+      permissions: undefined,
+    });
+    expect(repoTokenMock).not.toHaveBeenCalled();
   });
 });

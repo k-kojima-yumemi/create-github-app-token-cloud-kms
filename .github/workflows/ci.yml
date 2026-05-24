@@ -259,3 +259,105 @@ jobs:
           REPOSITORY: k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
           EXPECTED_STATUS: "200"
         run: node .github/scripts/verify-token-readme.mjs
+
+  test-action-owner:
+    name: GitHub Actions Test (owner)
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ${{ matrix.runner }}
+    environment:
+      name: demo
+      deployment: false
+    needs:
+      - setup
+      - test-typescript
+    strategy:
+      matrix:
+        runner: ${{ fromJSON(needs.setup.outputs.runners) }}
+      fail-fast: false
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+
+      - name: Test Local Action
+        id: test-action
+        uses: ./
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          kms-key-name: ${{ secrets.KMS_KEY_NAME }}
+          owner: ${{ github.repository_owner }}
+          permission-contents: read
+
+      - name: Verify Token (current repository)
+        id: verify-current-repo
+        env:
+          TOKEN: ${{ steps.test-action.outputs.token }}
+          REPOSITORY: ${{ github.repository }}
+          EXPECTED_STATUS: "200"
+        run: node .github/scripts/verify-token-readme.mjs
+
+      - name: Verify Token (private demo repository)
+        id: verify-private-demo
+        env:
+          TOKEN: ${{ steps.test-action.outputs.token }}
+          REPOSITORY: k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
+          EXPECTED_STATUS: "200"
+        run: node .github/scripts/verify-token-readme.mjs
+
+  test-minimal-action-owner:
+    name: Minimal GitHub Actions Test (owner)
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ${{ matrix.runner }}
+    environment:
+      name: demo
+      deployment: false
+    needs:
+      - setup
+      - test-typescript
+    strategy:
+      matrix:
+        runner: ${{ fromJSON(needs.setup.outputs.runners) }}
+      fail-fast: false
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Test Local Action
+        id: test-action
+        uses: ./minimal
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          kms-key-name: ${{ secrets.KMS_KEY_NAME }}
+          workload-identity-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          owner: ${{ github.repository_owner }}
+          permission-contents: read
+      - name: Verify Token (current repository)
+        id: verify-current-repo
+        env:
+          TOKEN: ${{ steps.test-action.outputs.token }}
+          REPOSITORY: ${{ github.repository }}
+          EXPECTED_STATUS: "200"
+        run: node .github/scripts/verify-token-readme.mjs
+      - name: Verify Token (private demo repository)
+        id: verify-private-demo
+        env:
+          TOKEN: ${{ steps.test-action.outputs.token }}
+          REPOSITORY: k-kojima-yumemi/create-github-app-token-cloud-kms-private-demo
+          EXPECTED_STATUS: "200"
+        run: node .github/scripts/verify-token-readme.mjs

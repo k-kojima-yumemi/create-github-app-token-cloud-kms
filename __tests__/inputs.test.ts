@@ -115,6 +115,7 @@ describe("resolveInputs", () => {
   const getInput = (name: string): string => {
     if (name === "client-id") return "Iv1.abc123";
     if (name === "kms-key-name") return KMS_KEY;
+    if (name === "owner") return "";
     if (name === "repositories") return "";
     throw new Error(`Unexpected input: ${name}`);
   };
@@ -127,10 +128,11 @@ describe("resolveInputs", () => {
     vi.unstubAllEnvs();
   });
 
-  it("returns all resolved fields including permissions when unset", () => {
+  it("returns repo type with resolved fields when no owner input", () => {
     const result = resolveInputs(getInput);
 
     expect(result).toEqual({
+      type: "repo",
       clientId: "Iv1.abc123",
       kmsKeyName: KMS_KEY,
       owner: "myorg",
@@ -148,6 +150,47 @@ describe("resolveInputs", () => {
     expect(result.permissions).toEqual({
       contents: "read",
       issues: "write",
+    });
+  });
+
+  it("returns owner type when owner input is set and repositories is empty", () => {
+    const getInputWithOwner = (name: string): string => {
+      if (name === "client-id") return "Iv1.abc123";
+      if (name === "kms-key-name") return KMS_KEY;
+      if (name === "owner") return "myorg";
+      if (name === "repositories") return "";
+      throw new Error(`Unexpected input: ${name}`);
+    };
+
+    const result = resolveInputs(getInputWithOwner);
+
+    expect(result).toEqual({
+      type: "owner",
+      clientId: "Iv1.abc123",
+      kmsKeyName: KMS_KEY,
+      owner: "myorg",
+      permissions: undefined,
+    });
+  });
+
+  it("returns repo type with owner override when both owner and repositories are set", () => {
+    const getInputWithBoth = (name: string): string => {
+      if (name === "client-id") return "Iv1.abc123";
+      if (name === "kms-key-name") return KMS_KEY;
+      if (name === "owner") return "explicit-org";
+      if (name === "repositories") return "repo-a";
+      throw new Error(`Unexpected input: ${name}`);
+    };
+
+    const result = resolveInputs(getInputWithBoth);
+
+    expect(result).toEqual({
+      type: "repo",
+      clientId: "Iv1.abc123",
+      kmsKeyName: KMS_KEY,
+      owner: "explicit-org",
+      repositories: ["repo-a"],
+      permissions: undefined,
     });
   });
 });

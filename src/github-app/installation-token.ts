@@ -1,60 +1,37 @@
-import type {
-  GitHubInstallationResponse,
-  GitHubScopedAccessTokenResponse,
-} from "../schema";
+import type { ResolvedInputs } from "../inputs";
+import { createOwnerInstallationAccessToken } from "./owner-installation-token";
+import { createRepoInstallationAccessToken } from "./repo-installation-token";
 
-const githubHeadersBase = {
-  Accept: "application/vnd.github+json",
-  "X-GitHub-Api-Version": "2022-11-28",
-} as const;
-
-export async function createInstallationAccessToken(options: {
-  owner: string;
-  repository: string;
-  jwt: string;
-  repositories: string[];
-  permissions: Record<string, string> | undefined;
-  fetchImpl?: typeof fetch;
-}): Promise<{
+export type TokenResult = {
   token: string;
   expiresAt: string;
   installationId: number;
-}> {
-  const fetchImpl = options.fetchImpl ?? globalThis.fetch;
-  const jwtHeaders = {
-    ...githubHeadersBase,
-    Authorization: `Bearer ${options.jwt}`,
-  };
+};
 
-  const installRes = await fetchImpl(
-    `https://api.github.com/repos/${options.owner}/${options.repository}/installation`,
-    { headers: jwtHeaders },
-  );
-  if (!installRes.ok) {
-    throw new Error(
-      `Failed to get installation: ${installRes.status} ${await installRes.text()}`,
-    );
+export async function getInstallationAccessToken(
+  inputs: ResolvedInputs,
+  jwt: string,
+): Promise<TokenResult> {
+  switch (inputs.type) {
+    case "repo":
+      if (inputs.repositories.length === 0) {
+        throw new Error("At least one repository is required");
+      }
+      return createRepoInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        repositories: inputs.repositories,
+        permissions: inputs.permissions,
+      });
+    case "owner":
+      return createOwnerInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        permissions: inputs.permissions,
+      });
+    default:
+      throw new Error(
+        `Unsupported installation type: ${inputs satisfies never}`,
+      );
   }
-  const { id: installationId } =
-    (await installRes.json()) as GitHubInstallationResponse;
-
-  const tokenRes = await fetchImpl(
-    `https://api.github.com/app/installations/${installationId}/access_tokens`,
-    {
-      method: "POST",
-      headers: jwtHeaders,
-      body: JSON.stringify({
-        repositories: options.repositories,
-        permissions: options.permissions,
-      }),
-    },
-  );
-  if (!tokenRes.ok) {
-    throw new Error(
-      `Failed to create token: ${tokenRes.status} ${await tokenRes.text()}`,
-    );
-  }
-  const { token, expires_at: expiresAt } =
-    (await tokenRes.json()) as GitHubScopedAccessTokenResponse;
-  return { token, expiresAt, installationId };
 }
