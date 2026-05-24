@@ -63065,7 +63065,7 @@ var require_getToken = __commonJS({
   "node_modules/google-auth-library/build/src/gtoken/getToken.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.getToken = getToken2;
+    exports2.getToken = getToken;
     var jwsSign_1 = require_jwsSign();
     var GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
     var GOOGLE_GRANT_TYPE = "urn:ietf:params:oauth:grant-type:jwt-bearer";
@@ -63084,7 +63084,7 @@ var require_getToken = __commonJS({
         }
       };
     };
-    async function getToken2(tokenOptions) {
+    async function getToken(tokenOptions) {
       if (!tokenOptions.transporter) {
         throw new Error("No transporter set.");
       }
@@ -130037,22 +130037,6 @@ function saveState(name, value) {
   issueCommand("save-state", { name }, toCommandValue(value));
 }
 
-// src/github-app/jwt-message.ts
-var expTime = 120;
-function buildJwtSigningMessage(clientId, nowSeconds) {
-  const header = Buffer.from(
-    JSON.stringify({ alg: "RS256", typ: "JWT" })
-  ).toString("base64url");
-  const payload = Buffer.from(
-    JSON.stringify({
-      iat: nowSeconds - 60,
-      exp: nowSeconds + expTime,
-      iss: clientId
-    })
-  ).toString("base64url");
-  return `${header}.${payload}`;
-}
-
 // src/github-app/owner-installation-token.ts
 var githubHeadersBase = {
   Accept: "application/vnd.github+json",
@@ -130157,6 +130141,48 @@ async function createRepoInstallationAccessToken(options) {
   return { token, expiresAt, installationId };
 }
 
+// src/github-app/installation-token.ts
+async function getInstallationAccessToken(inputs, jwt) {
+  switch (inputs.type) {
+    case "repo":
+      if (inputs.repositories.length === 0) {
+        throw new Error("At least one repository is required");
+      }
+      return createRepoInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        repositories: inputs.repositories,
+        permissions: inputs.permissions
+      });
+    case "owner":
+      return createOwnerInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        permissions: inputs.permissions
+      });
+    default:
+      throw new Error(
+        `Unsupported installation type: ${inputs}`
+      );
+  }
+}
+
+// src/github-app/jwt-message.ts
+var expTime = 120;
+function buildJwtSigningMessage(clientId, nowSeconds) {
+  const header = Buffer.from(
+    JSON.stringify({ alg: "RS256", typ: "JWT" })
+  ).toString("base64url");
+  const payload = Buffer.from(
+    JSON.stringify({
+      iat: nowSeconds - 60,
+      exp: nowSeconds + expTime,
+      iss: clientId
+    })
+  ).toString("base64url");
+  return `${header}.${payload}`;
+}
+
 // src/google-cloud/kms-sign-sdk.ts
 var import_node_crypto = require("node:crypto");
 var import_kms = __toESM(require_src11(), 1);
@@ -130234,38 +130260,13 @@ async function run() {
   const jwt = await signWithKms(inputs.kmsKeyName, message);
   setSecret(jwt);
   debug("GitHub App JWT created");
-  const tokenResult = await getToken(inputs, jwt);
+  debug(`Installation type: ${inputs.type}`);
+  const tokenResult = await getInstallationAccessToken(inputs, jwt);
   debug(`Installation ID: ${tokenResult.installationId}`);
   setSecret(tokenResult.token);
   setOutput("token", tokenResult.token);
   saveState("token", tokenResult.token);
   saveState("expiresAt", tokenResult.expiresAt);
-}
-async function getToken(inputs, jwt) {
-  debug(`Installation type: ${inputs.type}`);
-  switch (inputs.type) {
-    case "repo":
-      if (inputs.repositories.length === 0) {
-        throw new Error("At least one repository is required");
-      }
-      return createRepoInstallationAccessToken({
-        owner: inputs.owner,
-        jwt,
-        repositories: inputs.repositories,
-        permissions: inputs.permissions
-      });
-    case "owner":
-      return createOwnerInstallationAccessToken({
-        owner: inputs.owner,
-        jwt,
-        permissions: inputs.permissions
-      });
-    default:
-      error(`Unsupported installation type: ${inputs}`);
-      throw new Error(
-        `Unsupported installation type: ${inputs}`
-      );
-  }
 }
 
 // src/entrypoint/index.ts

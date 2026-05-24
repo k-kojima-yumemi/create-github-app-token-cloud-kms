@@ -2,6 +2,7 @@ import type {
   GitHubInstallationResponse,
   GitHubScopedAccessTokenResponse,
 } from "../schema";
+import type { TokenResult } from "./installation-token";
 
 const githubHeadersBase = {
   Accept: "application/vnd.github+json",
@@ -33,12 +34,6 @@ async function getOwnerInstallationId(
   const { id } = (await userRes.json()) as GitHubInstallationResponse;
   return id;
 }
-
-type TokenResult = {
-  token: string;
-  expiresAt: string;
-  installationId: number;
-};
 
 export async function createOwnerInstallationAccessToken(options: {
   owner: string;

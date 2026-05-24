@@ -64,22 +64,6 @@ function saveState(name, value) {
   appendEnvFile("GITHUB_STATE", `${name}=${value}`);
 }
 
-// src/github-app/jwt-message.ts
-var expTime = 120;
-function buildJwtSigningMessage(clientId, nowSeconds) {
-  const header = Buffer.from(
-    JSON.stringify({ alg: "RS256", typ: "JWT" })
-  ).toString("base64url");
-  const payload = Buffer.from(
-    JSON.stringify({
-      iat: nowSeconds - 60,
-      exp: nowSeconds + expTime,
-      iss: clientId
-    })
-  ).toString("base64url");
-  return `${header}.${payload}`;
-}
-
 // src/github-app/owner-installation-token.ts
 var githubHeadersBase = {
   Accept: "application/vnd.github+json",
@@ -182,6 +166,48 @@ async function createRepoInstallationAccessToken(options) {
   }
   const { token, expires_at: expiresAt } = await tokenRes.json();
   return { token, expiresAt, installationId };
+}
+
+// src/github-app/installation-token.ts
+async function getInstallationAccessToken(inputs, jwt) {
+  switch (inputs.type) {
+    case "repo":
+      if (inputs.repositories.length === 0) {
+        throw new Error("At least one repository is required");
+      }
+      return createRepoInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        repositories: inputs.repositories,
+        permissions: inputs.permissions
+      });
+    case "owner":
+      return createOwnerInstallationAccessToken({
+        owner: inputs.owner,
+        jwt,
+        permissions: inputs.permissions
+      });
+    default:
+      throw new Error(
+        `Unsupported installation type: ${inputs}`
+      );
+  }
+}
+
+// src/github-app/jwt-message.ts
+var expTime = 120;
+function buildJwtSigningMessage(clientId, nowSeconds) {
+  const header = Buffer.from(
+    JSON.stringify({ alg: "RS256", typ: "JWT" })
+  ).toString("base64url");
+  const payload = Buffer.from(
+    JSON.stringify({
+      iat: nowSeconds - 60,
+      exp: nowSeconds + expTime,
+      iss: clientId
+    })
+  ).toString("base64url");
+  return `${header}.${payload}`;
 }
 
 // src/google-cloud/kms-sign-fetch.ts
@@ -341,39 +367,14 @@ async function run(nowSeconds) {
     accessToken: googleCloudAccessToken,
     quotaProject
   });
-  const tokenResult = await getToken(inputs, jwt);
+  debug(`Installation type: ${inputs.type}`);
+  const tokenResult = await getInstallationAccessToken(inputs, jwt);
   debug(`Installation ID: ${tokenResult.installationId}`);
   debug(`Token expires at: ${tokenResult.expiresAt}`);
   setSecret(tokenResult.token);
   setOutput("token", tokenResult.token);
   saveState("token", tokenResult.token);
   saveState("expiresAt", tokenResult.expiresAt);
-}
-async function getToken(inputs, jwt) {
-  debug(`Installation type: ${inputs.type}`);
-  switch (inputs.type) {
-    case "repo":
-      if (inputs.repositories.length === 0) {
-        throw new Error("At least one repository is required");
-      }
-      return createRepoInstallationAccessToken({
-        owner: inputs.owner,
-        jwt,
-        repositories: inputs.repositories,
-        permissions: inputs.permissions
-      });
-    case "owner":
-      return createOwnerInstallationAccessToken({
-        owner: inputs.owner,
-        jwt,
-        permissions: inputs.permissions
-      });
-    default:
-      error(`Unsupported installation type: ${inputs}`);
-      throw new Error(
-        `Unsupported installation type: ${inputs}`
-      );
-  }
 }
 
 // src/entrypoint/minimal.index.ts

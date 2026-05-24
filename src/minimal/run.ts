@@ -1,12 +1,11 @@
 import { getInput } from "../actions-wrapper/core";
-import { debug, error } from "../actions-wrapper/log";
+import { debug } from "../actions-wrapper/log";
 import { saveState, setOutput, setSecret } from "../actions-wrapper/set";
+import { getInstallationAccessToken } from "../github-app/installation-token";
 import { buildJwtSigningMessage } from "../github-app/jwt-message";
-import { createOwnerInstallationAccessToken } from "../github-app/owner-installation-token";
-import { createRepoInstallationAccessToken } from "../github-app/repo-installation-token";
 import { signJwtWithKms } from "../google-cloud/kms-sign-fetch";
 import { resolveGoogleCloudAccessToken } from "../google-cloud/resolve-access-token";
-import { type ResolvedInputs, resolveInputs } from "../inputs";
+import { resolveInputs } from "../inputs";
 
 export async function run(nowSeconds?: number): Promise<void> {
   const inputs = resolveInputs(getInput);
@@ -24,7 +23,8 @@ export async function run(nowSeconds?: number): Promise<void> {
     quotaProject,
   });
 
-  const tokenResult = await getToken(inputs, jwt);
+  debug(`Installation type: ${inputs.type}`);
+  const tokenResult = await getInstallationAccessToken(inputs, jwt);
 
   debug(`Installation ID: ${tokenResult.installationId}`);
   debug(`Token expires at: ${tokenResult.expiresAt}`);
@@ -33,31 +33,4 @@ export async function run(nowSeconds?: number): Promise<void> {
   setOutput("token", tokenResult.token);
   saveState("token", tokenResult.token);
   saveState("expiresAt", tokenResult.expiresAt);
-}
-
-async function getToken(inputs: ResolvedInputs, jwt: string) {
-  debug(`Installation type: ${inputs.type}`);
-  switch (inputs.type) {
-    case "repo":
-      if (inputs.repositories.length === 0) {
-        throw new Error("At least one repository is required");
-      }
-      return createRepoInstallationAccessToken({
-        owner: inputs.owner,
-        jwt,
-        repositories: inputs.repositories,
-        permissions: inputs.permissions,
-      });
-    case "owner":
-      return createOwnerInstallationAccessToken({
-        owner: inputs.owner,
-        jwt,
-        permissions: inputs.permissions,
-      });
-    default:
-      error(`Unsupported installation type: ${inputs satisfies never}`);
-      throw new Error(
-        `Unsupported installation type: ${inputs satisfies never}`,
-      );
-  }
 }

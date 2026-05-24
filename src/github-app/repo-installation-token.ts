@@ -2,6 +2,7 @@ import type {
   GitHubInstallationResponse,
   GitHubScopedAccessTokenResponse,
 } from "../schema";
+import type { TokenResult } from "./installation-token";
 
 const githubHeadersBase = {
   Accept: "application/vnd.github+json",
@@ -26,12 +27,6 @@ async function getRepoInstallationId(
   const { id } = (await res.json()) as GitHubInstallationResponse;
   return id;
 }
-
-type TokenResult = {
-  token: string;
-  expiresAt: string;
-  installationId: number;
-};
 
 export async function createRepoInstallationAccessToken(options: {
   owner: string;
