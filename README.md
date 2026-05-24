@@ -18,7 +18,7 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
 
-      - uses: k-kojima-yumemi/create-github-app-token-cloud-kms@v1.2.0
+      - uses: k-kojima-yumemi/create-github-app-token-cloud-kms@v1.3.0
         id: app-token
         with:
           client-id: ${{ secrets.APP_CLIENT_ID }}
@@ -33,7 +33,7 @@ jobs:
 ### Accessing multiple repositories
 
 ```yaml
-- uses: k-kojima-yumemi/create-github-app-token-cloud-kms@v1.2.0
+- uses: k-kojima-yumemi/create-github-app-token-cloud-kms@v1.3.0
   id: app-token
   with:
     client-id: ${{ secrets.APP_CLIENT_ID }}
