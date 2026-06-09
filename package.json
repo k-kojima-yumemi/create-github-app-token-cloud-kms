@@ -32,7 +32,7 @@
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@google-cloud/kms": "^5.5.0",
-    "google-auth-library": "^10.6.2"
+    "google-auth-library": "^10.7.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
