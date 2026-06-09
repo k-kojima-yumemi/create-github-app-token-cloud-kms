@@ -61192,7 +61192,7 @@ var require_package3 = __commonJS({
   "node_modules/google-auth-library/package.json"(exports2, module2) {
     module2.exports = {
       name: "google-auth-library",
-      version: "10.6.2",
+      version: "10.7.0",
       author: "Google Inc.",
       description: "Google APIs Authentication Client Library for Node.js",
       engines: {
@@ -61250,7 +61250,7 @@ var require_package3 = __commonJS({
         nock: "^14.0.5",
         "null-loader": "^4.0.1",
         puppeteer: "^24.0.0",
-        sinon: "^21.0.0",
+        sinon: "21.0.3",
         "ts-loader": "^9.5.2",
         typescript: "5.8.3",
         webpack: "^5.97.1",
@@ -61275,8 +61275,6 @@ var require_package3 = __commonJS({
         "presystem-test": "npm run compile -- --sourceMap",
         webpack: "webpack",
         "browser-test": "karma start",
-        "docs-test": "echo 'disabled until linkinator is fixed'",
-        "predocs-test": "npm run docs",
         prelint: "cd samples; npm link ../; npm install"
       },
       license: "Apache-2.0",
@@ -66274,6 +66272,289 @@ var require_externalAccountAuthorizedUserClient = __commonJS({
   }
 });
 
+// node_modules/google-auth-library/build/src/auth/gdchclient.js
+var require_gdchclient = __commonJS({
+  "node_modules/google-auth-library/build/src/auth/gdchclient.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.GdchClient = exports2.GDCH_SERVICE_ACCOUNT_TYPE = void 0;
+    var crypto3 = require("crypto");
+    var fs4 = require("fs");
+    var https2 = require("https");
+    var oauth2client_1 = require_oauth2client();
+    var DEFAULT_LIFETIME_IN_SECONDS = 3600;
+    exports2.GDCH_SERVICE_ACCOUNT_TYPE = "gdch_service_account";
+    var GdchClient = class _GdchClient extends oauth2client_1.OAuth2Client {
+      projectId;
+      privateKeyId;
+      privateKey;
+      serviceIdentityName;
+      tokenServerUri;
+      caCertPath;
+      apiAudience;
+      lifetime;
+      gdchOptions;
+      caAgentPromise;
+      cachedCaCertPath;
+      lastCaCertReadTime = 0;
+      CA_CERT_TTL_MS = 5 * 60 * 1e3;
+      constructor(options = {}) {
+        super(options);
+        this.gdchOptions = options;
+        this.projectId = options.projectId || void 0;
+        this.privateKeyId = options.privateKeyId;
+        this.privateKey = options.privateKey;
+        this.serviceIdentityName = options.serviceIdentityName;
+        this.tokenServerUri = options.tokenServerUri;
+        this.caCertPath = options.caCertPath;
+        this.apiAudience = options.apiAudience;
+        this.lifetime = options.lifetime || DEFAULT_LIFETIME_IN_SECONDS;
+        this.credentials = { refresh_token: "gdch-placeholder", expiry_date: 1 };
+      }
+      createWithGdchAudience(apiAudience) {
+        if (!apiAudience) {
+          throw new Error("Audience cannot be null or empty for GDCH service account credentials.");
+        }
+        return new _GdchClient({
+          ...this.gdchOptions,
+          projectId: this.projectId,
+          privateKeyId: this.privateKeyId,
+          privateKey: this.privateKey,
+          serviceIdentityName: this.serviceIdentityName,
+          tokenServerUri: this.tokenServerUri,
+          caCertPath: this.caCertPath,
+          lifetime: this.lifetime,
+          apiAudience
+        });
+      }
+      fromJSON(json) {
+        if (!json) {
+          throw new Error("Must pass in a JSON object containing the GDCH credentials settings.");
+        }
+        if (json.type !== exports2.GDCH_SERVICE_ACCOUNT_TYPE) {
+          throw new Error(`The incoming JSON object does not have the "${exports2.GDCH_SERVICE_ACCOUNT_TYPE}" type`);
+        }
+        if (json.format_version !== "1") {
+          throw new Error("Only format version 1 is supported.");
+        }
+        if (!json.project) {
+          throw new Error("The incoming JSON object does not contain a project field");
+        }
+        if (!json.private_key_id) {
+          throw new Error("The incoming JSON object does not contain a private_key_id field");
+        }
+        if (!json.private_key) {
+          throw new Error("The incoming JSON object does not contain a private_key field");
+        }
+        if (!json.name) {
+          throw new Error("The incoming JSON object does not contain a name field");
+        }
+        if (!json.token_uri) {
+          throw new Error("The incoming JSON object does not contain a token_uri field");
+        }
+        this.projectId = json.project;
+        this.privateKeyId = json.private_key_id;
+        this.privateKey = json.private_key;
+        this.serviceIdentityName = json.name;
+        this.tokenServerUri = json.token_uri;
+        this.caCertPath = json.ca_cert_path;
+        this.gdchOptions = {
+          ...this.gdchOptions,
+          projectId: json.project,
+          privateKeyId: json.private_key_id,
+          privateKey: json.private_key,
+          serviceIdentityName: json.name,
+          tokenServerUri: json.token_uri,
+          caCertPath: json.ca_cert_path
+        };
+      }
+      async refreshTokenNoCache() {
+        if (!this.apiAudience) {
+          throw new Error("Audience cannot be null or empty for GDCH service account credentials. Specify the audience by calling createWithGdchAudience.");
+        }
+        if (!this.privateKey) {
+          throw new Error("Private key is not configured for GDCH credentials.");
+        }
+        if (!this.privateKeyId) {
+          throw new Error("Private key ID is not configured for GDCH credentials.");
+        }
+        if (!this.projectId) {
+          throw new Error("Project is not configured for GDCH credentials.");
+        }
+        if (!this.serviceIdentityName) {
+          throw new Error("Service identity name is not configured for GDCH credentials.");
+        }
+        if (!this.tokenServerUri) {
+          throw new Error("Token server URI is not configured for GDCH credentials.");
+        }
+        const assertion = this.createAssertion();
+        const data = {
+          audience: this.apiAudience,
+          grant_type: "urn:ietf:params:oauth:token-type:token-exchange",
+          requested_token_type: "urn:ietf:params:oauth:token-type:access_token",
+          subject_token: assertion,
+          subject_token_type: "urn:k8s:params:oauth:token-type:serviceaccount"
+        };
+        const requestOpts = {
+          url: this.tokenServerUri,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          data,
+          responseType: "json",
+          timeout: 1e4,
+          retry: true,
+          retryConfig: {
+            httpMethodsToRetry: ["POST"],
+            statusCodesToRetry: [[500, 599]],
+            noResponseRetries: 3
+          }
+        };
+        if (this.caCertPath) {
+          requestOpts.agent = await this.getCaAgent();
+        }
+        try {
+          const res = await this.transporter.request(requestOpts);
+          const tokenResponse = res.data;
+          if (!tokenResponse.access_token) {
+            throw new Error("Token response did not contain an access_token.");
+          }
+          if (!tokenResponse.expires_in) {
+            throw new Error("Token response did not contain an expires_in field.");
+          }
+          const tokens = {
+            access_token: tokenResponse.access_token,
+            token_type: "STS-Bearer",
+            expiry_date: Date.now() + tokenResponse.expires_in * 1e3
+          };
+          this.emit("tokens", tokens);
+          return { res, tokens };
+        } catch (e2) {
+          if (e2 && e2.config && e2.config.data) {
+            try {
+              if (typeof e2.config.data === "string") {
+                const parsedData = JSON.parse(e2.config.data);
+                if (parsedData.subject_token) {
+                  parsedData.subject_token = "***REDACTED***";
+                  e2.config.data = JSON.stringify(parsedData);
+                }
+              } else if (typeof e2.config.data === "object" && e2.config.data.subject_token) {
+                e2.config.data.subject_token = "***REDACTED***";
+              }
+            } catch {
+            }
+          }
+          if (e2 instanceof Error) {
+            e2.message = `Error getting access token for GDCH service account: ${e2.message}, iss: ${this.serviceIdentityName}`;
+          }
+          throw e2;
+        }
+      }
+      createAssertion() {
+        const header = {
+          alg: "ES256",
+          typ: "JWT",
+          kid: this.privateKeyId
+        };
+        const issSub = `system:serviceaccount:${this.projectId}:${this.serviceIdentityName}`;
+        const currentTime = Math.floor(Date.now() / 1e3);
+        const payload = {
+          iss: issSub,
+          sub: issSub,
+          iat: currentTime,
+          exp: currentTime + this.lifetime,
+          aud: this.tokenServerUri
+        };
+        const encodedHeader = this.base64UrlEncode(JSON.stringify(header));
+        const encodedPayload = this.base64UrlEncode(JSON.stringify(payload));
+        const signingInput = `${encodedHeader}.${encodedPayload}`;
+        const signature = crypto3.sign("sha256", Buffer.from(signingInput), {
+          key: this.privateKey,
+          dsaEncoding: "ieee-p1363"
+        });
+        const encodedSignature = this.base64UrlEncode(signature);
+        return `${signingInput}.${encodedSignature}`;
+      }
+      async requestAsync(opts, retry = false) {
+        if (this.caCertPath && !opts.agent) {
+          const url = (opts.url || "").toString();
+          if (!url.includes("googleapis.com") && !url.includes("google.com")) {
+            opts.agent = await this.getCaAgent();
+          }
+        }
+        return super.requestAsync(opts, retry);
+      }
+      getCaAgent() {
+        if (!this.caCertPath) {
+          this.caAgentPromise = void 0;
+          this.cachedCaCertPath = void 0;
+          this.lastCaCertReadTime = 0;
+          return void 0;
+        }
+        const now = Date.now();
+        const isCacheExpired = now - this.lastCaCertReadTime > this.CA_CERT_TTL_MS;
+        if (this.caAgentPromise && this.caCertPath === this.cachedCaCertPath && !isCacheExpired) {
+          return this.caAgentPromise;
+        }
+        this.cachedCaCertPath = this.caCertPath;
+        this.lastCaCertReadTime = now;
+        const currentPath = this.caCertPath;
+        this.caAgentPromise = (async () => {
+          try {
+            const ca = await fs4.promises.readFile(currentPath);
+            return new https2.Agent({ ca });
+          } catch (err) {
+            if (this.cachedCaCertPath === currentPath) {
+              this.caAgentPromise = void 0;
+              this.cachedCaCertPath = void 0;
+              this.lastCaCertReadTime = 0;
+            }
+            if (err instanceof Error) {
+              err.message = `Error reading certificate file from CA cert path, value '${currentPath}': ${err.message}`;
+            }
+            throw err;
+          }
+        })();
+        return this.caAgentPromise;
+      }
+      toJSON() {
+        return {
+          ...this,
+          privateKey: this.privateKey ? "***REDACTED***" : void 0,
+          _clientSecret: this._clientSecret ? "***REDACTED***" : void 0,
+          apiKey: this.apiKey ? "***REDACTED***" : void 0,
+          gdchOptions: this.gdchOptions ? {
+            ...this.gdchOptions,
+            privateKey: this.gdchOptions.privateKey ? "***REDACTED***" : void 0,
+            clientSecret: this.gdchOptions.clientSecret ? "***REDACTED***" : void 0,
+            client_secret: this.gdchOptions.client_secret ? "***REDACTED***" : void 0,
+            apiKey: this.gdchOptions.apiKey ? "***REDACTED***" : void 0,
+            credentials: this.gdchOptions.credentials ? {
+              ...this.gdchOptions.credentials,
+              access_token: this.gdchOptions.credentials.access_token ? "***REDACTED***" : void 0,
+              refresh_token: this.gdchOptions.credentials.refresh_token ? "***REDACTED***" : void 0
+            } : void 0
+          } : void 0,
+          credentials: {
+            ...this.credentials,
+            access_token: this.credentials?.access_token ? "***REDACTED***" : void 0,
+            refresh_token: this.credentials?.refresh_token ? "***REDACTED***" : void 0
+          }
+        };
+      }
+      [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")]() {
+        return this.toJSON();
+      }
+      base64UrlEncode(str) {
+        const buffer = typeof str === "string" ? Buffer.from(str) : str;
+        return buffer.toString("base64url");
+      }
+    };
+    exports2.GdchClient = GdchClient;
+  }
+});
+
 // node_modules/google-auth-library/build/src/auth/googleauth.js
 var require_googleauth = __commonJS({
   "node_modules/google-auth-library/build/src/auth/googleauth.js"(exports2) {
@@ -66297,6 +66578,7 @@ var require_googleauth = __commonJS({
     var baseexternalclient_1 = require_baseexternalclient();
     var authclient_1 = require_authclient();
     var externalAccountAuthorizedUserClient_1 = require_externalAccountAuthorizedUserClient();
+    var gdchclient_1 = require_gdchclient();
     var util_1 = require_util12();
     exports2.GoogleAuthExceptionMessages = {
       API_KEY_WITH_CREDENTIALS: "API Keys and Credentials are mutually exclusive authentication methods and cannot be used together.",
@@ -66705,6 +66987,9 @@ var require_googleauth = __commonJS({
             ...json,
             ...options
           });
+        } else if (json.type === gdchclient_1.GDCH_SERVICE_ACCOUNT_TYPE) {
+          client = new gdchclient_1.GdchClient(options);
+          client.fromJSON(json);
         } else {
           options.scopes = this.scopes;
           client = new jwtclient_1.JWT(options);
@@ -66910,7 +67195,19 @@ var require_googleauth = __commonJS({
         }
         this.#pendingAuthClient = this.#pendingAuthClient || this.#determineClient();
         try {
-          return await this.#pendingAuthClient;
+          const client = await this.#pendingAuthClient;
+          if (client instanceof gdchclient_1.GdchClient && !client.apiAudience) {
+            const opts = this.clientOptions;
+            const endpoint = opts.apiEndpoint || opts.servicePath;
+            if (endpoint) {
+              const scheme = endpoint.startsWith("http") ? "" : "https://";
+              const formattedAudience = `${scheme}${endpoint}/`.replace(/\/+$/, "/");
+              const newClient = client.createWithGdchAudience(formattedAudience);
+              this.cachedCredential = newClient;
+              return newClient;
+            }
+          }
+          return client;
         } finally {
           this.#pendingAuthClient = null;
         }
@@ -67351,7 +67648,7 @@ var require_src8 = __commonJS({
       for (var p in m2) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports3, p)) __createBinding(exports3, m2, p);
     };
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.GoogleAuth = exports2.auth = exports2.PassThroughClient = exports2.ExternalAccountAuthorizedUserClient = exports2.EXTERNAL_ACCOUNT_AUTHORIZED_USER_TYPE = exports2.ExecutableError = exports2.PluggableAuthClient = exports2.DownscopedClient = exports2.BaseExternalAccountClient = exports2.ExternalAccountClient = exports2.IdentityPoolClient = exports2.AwsRequestSigner = exports2.AwsClient = exports2.UserRefreshClient = exports2.LoginTicket = exports2.ClientAuthentication = exports2.OAuth2Client = exports2.CodeChallengeMethod = exports2.Impersonated = exports2.JWT = exports2.JWTAccess = exports2.IdTokenClient = exports2.IAMAuth = exports2.GCPEnv = exports2.Compute = exports2.DEFAULT_UNIVERSE = exports2.AuthClient = exports2.gaxios = exports2.gcpMetadata = void 0;
+    exports2.GoogleAuth = exports2.auth = exports2.GDCH_SERVICE_ACCOUNT_TYPE = exports2.GdchClient = exports2.PassThroughClient = exports2.ExternalAccountAuthorizedUserClient = exports2.EXTERNAL_ACCOUNT_AUTHORIZED_USER_TYPE = exports2.ExecutableError = exports2.PluggableAuthClient = exports2.DownscopedClient = exports2.BaseExternalAccountClient = exports2.ExternalAccountClient = exports2.IdentityPoolClient = exports2.AwsRequestSigner = exports2.AwsClient = exports2.UserRefreshClient = exports2.LoginTicket = exports2.ClientAuthentication = exports2.OAuth2Client = exports2.CodeChallengeMethod = exports2.Impersonated = exports2.JWT = exports2.JWTAccess = exports2.IdTokenClient = exports2.IAMAuth = exports2.GCPEnv = exports2.Compute = exports2.DEFAULT_UNIVERSE = exports2.AuthClient = exports2.gaxios = exports2.gcpMetadata = void 0;
     var googleauth_1 = require_googleauth();
     Object.defineProperty(exports2, "GoogleAuth", { enumerable: true, get: function() {
       return googleauth_1.GoogleAuth;
@@ -67452,6 +67749,13 @@ var require_src8 = __commonJS({
     var passthrough_1 = require_passthrough();
     Object.defineProperty(exports2, "PassThroughClient", { enumerable: true, get: function() {
       return passthrough_1.PassThroughClient;
+    } });
+    var gdchclient_1 = require_gdchclient();
+    Object.defineProperty(exports2, "GdchClient", { enumerable: true, get: function() {
+      return gdchclient_1.GdchClient;
+    } });
+    Object.defineProperty(exports2, "GDCH_SERVICE_ACCOUNT_TYPE", { enumerable: true, get: function() {
+      return gdchclient_1.GDCH_SERVICE_ACCOUNT_TYPE;
     } });
     __exportStar(require_googleToken(), exports2);
     var auth = new googleauth_1.GoogleAuth();
@@ -87117,7 +87421,7 @@ var require_package5 = __commonJS({
     module2.exports = {
       name: "@google-cloud/kms",
       description: "Google Cloud Key Management Service (KMS) API client for Node.js",
-      version: "5.5.0",
+      version: "5.5.1",
       license: "Apache-2.0",
       author: "Google LLC",
       engines: {
@@ -87152,8 +87456,6 @@ var require_package5 = __commonJS({
         compile: "tsc -p . && cp -r protos build/",
         "compile-protos": "compileProtos src",
         docs: "jsdoc -c .jsdoc.js",
-        "predocs-test": "npm run docs",
-        "docs-test": "linkinator docs",
         fix: "gts fix",
         lint: "gts check",
         prepare: "npm run compile",
@@ -87176,7 +87478,6 @@ var require_package5 = __commonJS({
         jsdoc: "^4.0.4",
         "jsdoc-fresh": "^4.0.0",
         "jsdoc-region-tag": "^3.0.0",
-        linkinator: "^6.1.2",
         long: "^5.3.1",
         mocha: "^11.1.0",
         "pack-n-play": "^3.0.0",
