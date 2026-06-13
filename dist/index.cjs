@@ -25276,7 +25276,7 @@ var require_package = __commonJS({
   "node_modules/@grpc/grpc-js/package.json"(exports2, module2) {
     module2.exports = {
       name: "@grpc/grpc-js",
-      version: "1.14.3",
+      version: "1.14.4",
       description: "gRPC Library for Node - pure JS implementation",
       homepage: "https://grpc.io/",
       repository: "https://github.com/grpc/grpc-node/tree/master/packages/grpc-js",
@@ -39819,6 +39819,12 @@ var require_compression_filter = __commonJS({
           let totalLength = 0;
           const messageParts = [];
           const decompresser = zlib2.createInflate();
+          decompresser.on("error", (error2) => {
+            reject({
+              code: constants_1.Status.INTERNAL,
+              details: "Failed to decompress deflate-encoded message"
+            });
+          });
           decompresser.on("data", (chunk) => {
             messageParts.push(chunk);
             totalLength += chunk.byteLength;
@@ -39859,6 +39865,12 @@ var require_compression_filter = __commonJS({
           let totalLength = 0;
           const messageParts = [];
           const decompresser = zlib2.createGunzip();
+          decompresser.on("error", (error2) => {
+            reject({
+              code: constants_1.Status.INTERNAL,
+              details: "Failed to decompress gzip-encoded message"
+            });
+          });
           decompresser.on("data", (chunk) => {
             messageParts.push(chunk);
             totalLength += chunk.byteLength;
@@ -45373,8 +45385,6 @@ var require_server_interceptors = __commonJS({
         this.receivedHalfClose = false;
         this.streamEnded = false;
         this.metricsRecorder = new orca_1.PerRequestMetricRecorder();
-        this.stream.once("error", (err) => {
-        });
         this.stream.once("close", () => {
           var _a2;
           trace("Request to method " + ((_a2 = this.handler) === null || _a2 === void 0 ? void 0 : _a2.path) + " stream closed with rstCode " + this.stream.rstCode);
@@ -45517,6 +45527,12 @@ var require_server_interceptors = __commonJS({
           return new Promise((resolve, reject) => {
             let totalLength = 0;
             const messageParts = [];
+            decompresser.on("error", (error2) => {
+              reject({
+                code: constants_1.Status.INTERNAL,
+                details: "Failed to decompress message"
+              });
+            });
             decompresser.on("data", (chunk) => {
               messageParts.push(chunk);
               totalLength += chunk.byteLength;
@@ -46618,6 +46634,8 @@ var require_server = __commonJS({
           channelzSessionInfo === null || channelzSessionInfo === void 0 ? void 0 : channelzSessionInfo.streamTracker.addCallFailed();
         }
         _channelzHandler(extraInterceptors, stream, headers) {
+          stream.once("error", (err) => {
+          });
           this.onStreamOpened(stream);
           const channelzSessionInfo = this.sessions.get(stream.session);
           this.callTracker.addCallStarted();
@@ -46674,6 +46692,8 @@ var require_server = __commonJS({
           }
         }
         _streamHandler(extraInterceptors, stream, headers) {
+          stream.once("error", (err) => {
+          });
           this.onStreamOpened(stream);
           if (this._verifyContentType(stream, headers) !== true) {
             return;
