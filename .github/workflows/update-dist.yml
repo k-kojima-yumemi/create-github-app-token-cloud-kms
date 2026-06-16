@@ -1,0 +1,126 @@
+# Rebuilds the committed `dist/` directory on a branch and pushes the result
+# back to it.
+#
+# This is meant to be run manually against Dependabot pull request branches:
+# when a dependency bump changes the bundled output, `check-dist.yml` fails
+# because the checked-in `dist/` no longer matches the build. Instead of
+# rebuilding `dist/` locally and pushing, run this workflow and select the
+# branch to update (the "Run workflow" branch picker).
+#
+# The commit is created through the GraphQL `createCommitOnBranch` mutation, so
+# it is signed by GitHub and shows up as "Verified". This satisfies the
+# "Require signed commits" branch protection rule without managing any GPG keys.
+#
+# Note: commits pushed with `GITHUB_TOKEN` do not trigger other workflows, so
+# `check-dist.yml` will not automatically re-run on the new commit. If it is a
+# required status check, re-run it manually (or re-request the check) before
+# merging.
+name: Update dist
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-dist:
+    name: Rebuild and commit dist/
+    runs-on: ubuntu-slim
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: 'package.json'
+
+      - name: Install Dependencies
+        id: install
+        run: npm ci
+
+      - name: Build dist/ Directory
+        id: build
+        run: npm run bundle
+
+      - name: Detect dist changes
+        id: diff
+        run: |
+          if [ -n "$(git status --porcelain -- dist/)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Detected dist/ changes:"
+            git status --short -- dist/
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "dist/ is already up to date."
+          fi
+
+      - name: Commit dist/ (verified)
+        id: commit
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const fs = require('node:fs');
+            const { execSync } = require('node:child_process');
+
+            const branch = context.ref.replace(/^refs\/heads\//, '');
+            const defaultBranch = context.payload.repository.default_branch;
+            if (branch === defaultBranch) {
+              core.setFailed(`Refusing to commit directly to the default branch (${defaultBranch}). Run this on a PR branch instead.`);
+              return;
+            }
+
+            const expectedHeadOid = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+
+            const status = execSync('git status --porcelain -- dist/', { encoding: 'utf8' });
+            const additions = [];
+            const deletions = [];
+            for (const line of status.split('\n')) {
+              if (!line.trim()) continue;
+              const code = line.slice(0, 2);
+              const path = line.slice(3);
+              if (code.includes('D')) {
+                deletions.push({ path });
+              } else {
+                additions.push({ path, contents: fs.readFileSync(path).toString('base64') });
+              }
+            }
+
+            const fileChanges = {};
+            if (additions.length) fileChanges.additions = additions;
+            if (deletions.length) fileChanges.deletions = deletions;
+
+            const mutation = `
+              mutation($input: CreateCommitOnBranchInput!) {
+                createCommitOnBranch(input: $input) {
+                  commit { oid url }
+                }
+              }`;
+            const result = await github.graphql(mutation, {
+              input: {
+                branch: {
+                  repositoryNameWithOwner: `${context.repo.owner}/${context.repo.repo}`,
+                  branchName: branch,
+                },
+                message: { headline: 'Update dist' },
+                expectedHeadOid,
+                fileChanges,
+              },
+            });
+
+            const commit = result.createCommitOnBranch.commit;
+            core.info(`Created verified commit ${commit.oid}`);
+            await core.summary
+              .addHeading('dist/ updated', 3)
+              .addRaw(`Pushed a verified commit to \`${branch}\`: `)
+              .addLink(commit.oid, commit.url)
+              .write();
+
+      - name: No changes
+        if: steps.diff.outputs.changed != 'true'
+        run: echo "### dist/ already up to date — nothing to commit." >> "$GITHUB_STEP_SUMMARY"
