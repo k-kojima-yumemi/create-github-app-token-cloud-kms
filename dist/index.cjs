@@ -30331,26 +30331,6 @@ var require_float = __commonJS({
   }
 });
 
-// node_modules/@protobufjs/inquire/index.js
-var require_inquire = __commonJS({
-  "node_modules/@protobufjs/inquire/index.js"(exports2, module2) {
-    "use strict";
-    module2.exports = inquire;
-    function inquire(moduleName) {
-      try {
-        if (typeof require !== "function") {
-          return null;
-        }
-        var mod = require(moduleName);
-        if (mod && (mod.length || Object.keys(mod).length)) return mod;
-        return null;
-      } catch (err) {
-        return null;
-      }
-    }
-  }
-});
-
 // node_modules/@protobufjs/utf8/index.js
 var require_utf8 = __commonJS({
   "node_modules/@protobufjs/utf8/index.js"(exports2) {
@@ -31543,7 +31523,6 @@ var require_minimal = __commonJS({
     util.base64 = require_base64();
     util.EventEmitter = require_eventemitter();
     util.float = require_float();
-    util.inquire = require_inquire();
     util.utf8 = require_utf8();
     util.pool = require_pool2();
     util.LongBits = require_longbits();
@@ -31579,7 +31558,7 @@ var require_minimal = __commonJS({
      */
     util.isSet = function isSet(obj, prop) {
       var value = obj[prop];
-      if (value != null && obj.hasOwnProperty(prop))
+      if (value != null && Object.hasOwnProperty.call(obj, prop))
         return typeof value !== "object" || (Array.isArray(value) ? value.length : Object.keys(value).length) > 0;
       return false;
     };
@@ -32317,7 +32296,7 @@ var require_rpc = __commonJS({
 var require_roots = __commonJS({
   "node_modules/protobufjs/src/roots.js"(exports2, module2) {
     "use strict";
-    module2.exports = {};
+    module2.exports = /* @__PURE__ */ Object.create(null);
   }
 });
 
@@ -32981,7 +32960,6 @@ var require_service2 = __commonJS({
     var Method = require_method();
     var util = require_util9();
     var rpc = require_rpc();
-    var reservedRe = util.patterns.reservedRe;
     function Service(name, options) {
       Namespace.call(this, name, options);
       this.methods = {};
@@ -33074,11 +33052,11 @@ var require_service2 = __commonJS({
       for (var i2 = 0, method; i2 < /* initializes */
       this.methodsArray.length; ++i2) {
         var methodName = util.lcFirst((method = this._methodsArray[i2]).resolve().name).replace(/[^$\w_]/g, "");
-        rpcService[methodName] = util.codegen(["r", "c"], reservedRe.test(methodName) ? methodName + "_" : methodName)("return this.rpcCall(m,q,s,r,c)")({
-          m: method,
-          q: method.resolvedRequestType.ctor,
-          s: method.resolvedResponseType.ctor
-        });
+        rpcService[methodName] = /* @__PURE__ */ (function(method2, requestType, responseType) {
+          return function rpcMethod(request, callback) {
+            return rpc.Service.prototype.rpcCall.call(this, method2, requestType, responseType, request, callback);
+          };
+        })(method, method.resolvedRequestType.ctor, method.resolvedResponseType.ctor);
       }
       return rpcService;
     };
@@ -33177,7 +33155,7 @@ var require_decoder = __commonJS({
       gen("default:")("r.skipType(t&7,n)")("break")("}")("}");
       for (i2 = 0; i2 < mtype._fieldsArray.length; ++i2) {
         var rfield = mtype._fieldsArray[i2];
-        if (rfield.required) gen("if(!m.hasOwnProperty(%j))", rfield.name)("throw util.ProtocolError(%j,{instance:m})", missing(rfield));
+        if (rfield.required) gen("if(!Object.hasOwnProperty.call(m,%j))", rfield.name)("throw util.ProtocolError(%j,{instance:m})", missing(rfield));
       }
       return gen("return m");
     }
@@ -33265,7 +33243,7 @@ var require_verifier = __commonJS({
       for (var i2 = 0; i2 < /* initializes */
       mtype.fieldsArray.length; ++i2) {
         var field = mtype._fieldsArray[i2].resolve(), ref = "m" + util.safeProp(field.name);
-        if (field.optional) gen("if(%s!=null&&m.hasOwnProperty(%j)){", ref, field.name);
+        if (field.optional) gen("if(%s!=null&&Object.hasOwnProperty.call(m,%j)){", ref, field.name);
         if (field.map) {
           gen("if(!util.isObject(%s))", ref)("return%j", invalid(field, "object"))("var k=Object.keys(%s)", ref)("for(var i=0;i<k.length;++i){");
           genVerifyKey(gen, field, "k[i]");
@@ -33310,7 +33288,7 @@ var require_converter = __commonJS({
             gen("case%j:", keys[i2])("case %i:", values[keys[i2]])("m%s=%j", prop, values[keys[i2]])("break");
           }
           gen("}");
-        } else gen('if(typeof d%s!=="object")', prop)("throw TypeError(%j)", field.fullName + ": object expected")("m%s=types[%i].fromObject(d%s,n+1)", prop, fieldIndex, prop);
+        } else gen("if(!util.isObject(d%s))", prop)("throw TypeError(%j)", field.fullName + ": object expected")("m%s=types[%i].fromObject(d%s,n+1)", prop, fieldIndex, prop);
       } else {
         var isUnsigned = false;
         switch (field.type) {
@@ -33351,13 +33329,14 @@ var require_converter = __commonJS({
     }
     converter.fromObject = function fromObject(mtype) {
       var fields = mtype.fieldsArray;
-      var gen = util.codegen(["d", "n"], mtype.name + "$fromObject")("if(d instanceof this.ctor)")("return d")("if(n===undefined)n=0")("if(n>util.recursionLimit)")('throw Error("maximum nesting depth exceeded")');
+      var gen = util.codegen(["d", "n"], mtype.name + "$fromObject")("if(d instanceof this.ctor)")("return d");
       if (!fields.length) return gen("return new this.ctor");
+      gen("if(!util.isObject(d))")("throw TypeError(%j)", mtype.fullName + ": object expected")("if(n===undefined)n=0")("if(n>util.recursionLimit)")('throw Error("maximum nesting depth exceeded")');
       gen("var m=new this.ctor");
       for (var i2 = 0; i2 < fields.length; ++i2) {
         var field = fields[i2].resolve(), prop = util.safeProp(field.name);
         if (field.map) {
-          gen("if(d%s){", prop)('if(typeof d%s!=="object")', prop)("throw TypeError(%j)", field.fullName + ": object expected")("m%s={}", prop)("for(var ks=Object.keys(d%s),i=0;i<ks.length;++i){", prop);
+          gen("if(d%s){", prop)("if(!util.isObject(d%s))", prop)("throw TypeError(%j)", field.fullName + ": object expected")("m%s={}", prop)("for(var ks=Object.keys(d%s),i=0;i<ks.length;++i){", prop);
           gen('if(ks[i]==="__proto__")')("util.makeProp(m%s,ks[i])", prop);
           genValuePartial_fromObject(
             gen,
@@ -33478,7 +33457,7 @@ var require_converter = __commonJS({
             prop + "[j]"
           )("}");
         } else {
-          gen("if(m%s!=null&&m.hasOwnProperty(%j)){", prop, field.name);
+          gen("if(m%s!=null&&Object.hasOwnProperty.call(m,%j)){", prop, field.name);
           genValuePartial_toObject(
             gen,
             field,
@@ -33784,7 +33763,7 @@ var require_type = __commonJS({
           throw Error("duplicate id " + object.id + " in " + this);
         if (this.isReservedId(object.id))
           throw Error("id " + object.id + " is reserved in " + this);
-        if (this.isReservedName(object.name))
+        if (this.isReservedName(object.name) || object.name.charAt(0) === "$")
           throw Error("name '" + object.name + "' is reserved in " + this);
         if (object.name === "__proto__")
           return this;
@@ -33796,6 +33775,8 @@ var require_type = __commonJS({
         return clearCache(this);
       }
       if (object instanceof OneOf) {
+        if (object.name.charAt(0) === "$")
+          throw Error("name '" + object.name + "' is reserved in " + this);
         if (object.name === "__proto__")
           return this;
         if (!this.oneofs)
