@@ -61315,7 +61315,7 @@ var require_package3 = __commonJS({
   "node_modules/google-auth-library/package.json"(exports2, module2) {
     module2.exports = {
       name: "google-auth-library",
-      version: "10.7.0",
+      version: "10.9.0",
       author: "Google Inc.",
       description: "Google APIs Authentication Client Library for Node.js",
       engines: {
@@ -61325,8 +61325,8 @@ var require_package3 = __commonJS({
       types: "./build/src/index.d.ts",
       repository: {
         type: "git",
-        directory: "packages/google-auth-library-nodejs",
-        url: "https://github.com/googleapis/google-cloud-node-core.git"
+        directory: "core/packages/google-auth-library-nodejs",
+        url: "https://github.com/googleapis/google-cloud-node.git"
       },
       keywords: [
         "google",
@@ -61401,7 +61401,7 @@ var require_package3 = __commonJS({
         prelint: "cd samples; npm link ../; npm install"
       },
       license: "Apache-2.0",
-      homepage: "https://github.com/googleapis/google-cloud-node-core/tree/main/packages/google-auth-library-nodejs"
+      homepage: "https://github.com/googleapis/google-cloud-node/tree/main/core/packages/google-auth-library-nodejs"
     };
   }
 });
@@ -67324,7 +67324,7 @@ var require_googleauth = __commonJS({
             const endpoint = opts.apiEndpoint || opts.servicePath;
             if (endpoint) {
               const scheme = endpoint.startsWith("http") ? "" : "https://";
-              const formattedAudience = `${scheme}${endpoint}/`.replace(/\/+$/, "/");
+              const formattedAudience = `${scheme}${endpoint}`.replace(/\/+$/, "");
               const newClient = client.createWithGdchAudience(formattedAudience);
               this.cachedCredential = newClient;
               return newClient;
