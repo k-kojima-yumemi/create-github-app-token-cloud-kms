@@ -36233,6 +36233,9 @@ var require_parse2 = __commonJS({
           token2 = next();
         }
         while (token2 !== "=") {
+          if (token2 === null) {
+            throw illegal(token2, "end of input");
+          }
           if (token2 === "(") {
             var parensValue = next();
             skip(")");
