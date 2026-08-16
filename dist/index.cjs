@@ -23686,6 +23686,10 @@ var require_protos = __commonJS({
                     common: {
                       type: "CommonLanguageSettings",
                       id: 1
+                    },
+                    libraryPackage: {
+                      type: "string",
+                      id: 2
                     }
                   }
                 },
@@ -23795,6 +23799,10 @@ var require_protos = __commonJS({
                       rule: "repeated",
                       type: "string",
                       id: 3
+                    },
+                    batching: {
+                      type: "BatchingConfigProto",
+                      id: 4
                     }
                   },
                   nested: {
@@ -23849,6 +23857,79 @@ var require_protos = __commonJS({
                     generateOmittedAsInternal: {
                       type: "bool",
                       id: 2
+                    }
+                  }
+                },
+                BatchingConfigProto: {
+                  fields: {
+                    thresholds: {
+                      type: "BatchingSettingsProto",
+                      id: 1
+                    },
+                    batchDescriptor: {
+                      type: "BatchingDescriptorProto",
+                      id: 2
+                    }
+                  }
+                },
+                BatchingSettingsProto: {
+                  fields: {
+                    elementCountThreshold: {
+                      type: "int32",
+                      id: 1
+                    },
+                    requestByteThreshold: {
+                      type: "int64",
+                      id: 2
+                    },
+                    delayThreshold: {
+                      type: "google.protobuf.Duration",
+                      id: 3
+                    },
+                    elementCountLimit: {
+                      type: "int32",
+                      id: 4
+                    },
+                    requestByteLimit: {
+                      type: "int32",
+                      id: 5
+                    },
+                    flowControlElementLimit: {
+                      type: "int32",
+                      id: 6
+                    },
+                    flowControlByteLimit: {
+                      type: "int32",
+                      id: 7
+                    },
+                    flowControlLimitExceededBehavior: {
+                      type: "FlowControlLimitExceededBehaviorProto",
+                      id: 8
+                    }
+                  }
+                },
+                FlowControlLimitExceededBehaviorProto: {
+                  values: {
+                    UNSET_BEHAVIOR: 0,
+                    THROW_EXCEPTION: 1,
+                    BLOCK: 2,
+                    IGNORE: 3
+                  }
+                },
+                BatchingDescriptorProto: {
+                  fields: {
+                    batchedField: {
+                      type: "string",
+                      id: 1
+                    },
+                    discriminatorFields: {
+                      rule: "repeated",
+                      type: "string",
+                      id: 2
+                    },
+                    subresponseField: {
+                      type: "string",
+                      id: 3
                     }
                   }
                 },
@@ -24001,6 +24082,8 @@ var require_protos = __commonJS({
                     EDITION_PROTO3: 999,
                     EDITION_2023: 1e3,
                     EDITION_2024: 1001,
+                    EDITION_2026: 1002,
+                    EDITION_UNSTABLE: 9999,
                     EDITION_1_TEST_ONLY: 1,
                     EDITION_2_TEST_ONLY: 2,
                     EDITION_99997_TEST_ONLY: 99997,
@@ -24195,6 +24278,10 @@ var require_protos = __commonJS({
                     }
                   },
                   extensions: [
+                    [
+                      990,
+                      998
+                    ],
                     [
                       1e3,
                       536870911
@@ -24470,7 +24557,10 @@ var require_protos = __commonJS({
                       type: "bool",
                       id: 10,
                       options: {
-                        default: false
+                        default: false,
+                        "feature_support.edition_introduced": "EDITION_PROTO2",
+                        "feature_support.edition_removed": "EDITION_2024",
+                        "feature_support.removal_error": "This behavior is enabled by default in editions 2024 and above. To disable it, you can set `features.(pb.java).nest_in_file_class = YES` on individual messages, enums, or services."
                       }
                     },
                     javaGenerateEqualsAndHash: {
@@ -24530,7 +24620,9 @@ var require_protos = __commonJS({
                       type: "bool",
                       id: 31,
                       options: {
-                        default: true
+                        default: true,
+                        "feature_support.edition_removed": "EDITION_2026",
+                        "feature_support.removal_error": "cc_enable_arenas is enabled by default in every edition and overrides are ignored.This option is removed in editions 2026 and above."
                       }
                     },
                     objcClassPrefix: {
@@ -24572,6 +24664,10 @@ var require_protos = __commonJS({
                     }
                   },
                   extensions: [
+                    [
+                      990,
+                      998
+                    ],
                     [
                       1e3,
                       536870911
@@ -24644,6 +24740,10 @@ var require_protos = __commonJS({
                     }
                   },
                   extensions: [
+                    [
+                      990,
+                      998
+                    ],
                     [
                       1e3,
                       536870911
@@ -24759,6 +24859,10 @@ var require_protos = __commonJS({
                   },
                   extensions: [
                     [
+                      990,
+                      998
+                    ],
+                    [
                       1e3,
                       536870911
                     ]
@@ -24838,6 +24942,10 @@ var require_protos = __commonJS({
                         editionRemoved: {
                           type: "Edition",
                           id: 4
+                        },
+                        removalError: {
+                          type: "string",
+                          id: 5
                         }
                       }
                     }
@@ -24857,6 +24965,10 @@ var require_protos = __commonJS({
                     }
                   },
                   extensions: [
+                    [
+                      990,
+                      998
+                    ],
                     [
                       1e3,
                       536870911
@@ -24895,6 +25007,10 @@ var require_protos = __commonJS({
                     }
                   },
                   extensions: [
+                    [
+                      990,
+                      998
+                    ],
                     [
                       1e3,
                       536870911
@@ -24940,6 +25056,10 @@ var require_protos = __commonJS({
                   },
                   extensions: [
                     [
+                      990,
+                      998
+                    ],
+                    [
                       1e3,
                       536870911
                     ]
@@ -24966,6 +25086,10 @@ var require_protos = __commonJS({
                     }
                   },
                   extensions: [
+                    [
+                      990,
+                      998
+                    ],
                     [
                       1e3,
                       536870911
@@ -25000,6 +25124,10 @@ var require_protos = __commonJS({
                     }
                   },
                   extensions: [
+                    [
+                      990,
+                      998
+                    ],
                     [
                       1e3,
                       536870911
@@ -25141,8 +25269,8 @@ var require_protos = __commonJS({
                         retention: "RETENTION_SOURCE",
                         targets: "TARGET_TYPE_METHOD",
                         "feature_support.edition_introduced": "EDITION_2024",
-                        "edition_defaults.edition": "EDITION_2024",
-                        "edition_defaults.value": "STYLE2024"
+                        "edition_defaults.edition": "EDITION_2026",
+                        "edition_defaults.value": "STYLE2026"
                       }
                     },
                     defaultSymbolVisibility: {
@@ -25154,6 +25282,17 @@ var require_protos = __commonJS({
                         "feature_support.edition_introduced": "EDITION_2024",
                         "edition_defaults.edition": "EDITION_2024",
                         "edition_defaults.value": "EXPORT_TOP_LEVEL"
+                      }
+                    },
+                    enforceProtoLimits: {
+                      type: "ProtoLimitsFeature.EnforceProtoLimits",
+                      id: 9,
+                      options: {
+                        retention: "RETENTION_SOURCE",
+                        targets: "TARGET_TYPE_ONEOF",
+                        "feature_support.edition_introduced": "EDITION_2026",
+                        "edition_defaults.edition": "EDITION_2026",
+                        "edition_defaults.value": "PROTO_LIMITS2026"
                       }
                     }
                   },
@@ -25231,7 +25370,8 @@ var require_protos = __commonJS({
                       values: {
                         ENFORCE_NAMING_STYLE_UNKNOWN: 0,
                         STYLE2024: 1,
-                        STYLE_LEGACY: 2
+                        STYLE_LEGACY: 2,
+                        STYLE2026: 3
                       }
                     },
                     VisibilityFeature: {
@@ -25250,6 +25390,18 @@ var require_protos = __commonJS({
                             EXPORT_TOP_LEVEL: 2,
                             LOCAL_ALL: 3,
                             STRICT: 4
+                          }
+                        }
+                      }
+                    },
+                    ProtoLimitsFeature: {
+                      fields: {},
+                      nested: {
+                        EnforceProtoLimits: {
+                          values: {
+                            PROTO_LIMITS_UNKNOWN: 0,
+                            LEGACY_NO_EXPLICIT_LIMITS: 1,
+                            PROTO_LIMITS2026: 2
                           }
                         }
                       }
@@ -25535,7 +25687,6 @@ var require_protos = __commonJS({
             },
             longrunning: {
               options: {
-                cc_enable_arenas: true,
                 csharp_namespace: "Google.LongRunning",
                 go_package: "cloud.google.com/go/longrunning/autogen/longrunningpb;longrunningpb",
                 java_multiple_files: true,
@@ -25692,6 +25843,10 @@ var require_protos = __commonJS({
                     pageToken: {
                       type: "string",
                       id: 3
+                    },
+                    returnPartialSuccess: {
+                      type: "bool",
+                      id: 5
                     }
                   }
                 },
@@ -25705,6 +25860,14 @@ var require_protos = __commonJS({
                     nextPageToken: {
                       type: "string",
                       id: 2
+                    },
+                    unreachable: {
+                      rule: "repeated",
+                      type: "string",
+                      id: 3,
+                      options: {
+                        "(google.api.field_behavior)": "UNORDERED_LIST"
+                      }
                     }
                   }
                 },
@@ -25752,7 +25915,6 @@ var require_protos = __commonJS({
             },
             rpc: {
               options: {
-                cc_enable_arenas: true,
                 go_package: "google.golang.org/genproto/googleapis/rpc/status;status",
                 java_multiple_files: true,
                 java_outer_classname: "StatusProto",
@@ -30888,7 +31050,7 @@ var require_utf8 = __commonJS({
   "node_modules/@protobufjs/utf8/index.js"(exports2) {
     "use strict";
     var utf8 = exports2;
-    var replacementChar = "\uFFFD";
+    var replacementCharCode = 65533;
     utf8.length = function utf8_length(string) {
       var len = 0, c = 0;
       for (var i2 = 0; i2 < string.length; ++i2) {
@@ -30906,32 +31068,40 @@ var require_utf8 = __commonJS({
       return len;
     };
     utf8.read = function utf8_read(buffer, start, end) {
-      if (end - start < 1) {
+      if (end - start < 1)
         return "";
-      }
-      var str = "";
-      for (var i2 = start; i2 < end; ) {
-        var t2 = buffer[i2++];
+      var parts = null, chunk = [], i2 = 0, t2, t22, c2, c3;
+      while (start < end) {
+        t2 = buffer[start++];
         if (t2 <= 127) {
-          str += String.fromCharCode(t2);
+          chunk[i2++] = t2;
         } else if (t2 >= 192 && t2 < 224) {
-          var c2 = (t2 & 31) << 6 | buffer[i2++] & 63;
-          str += c2 >= 128 ? String.fromCharCode(c2) : replacementChar;
+          c2 = (t2 & 31) << 6 | buffer[start++] & 63;
+          chunk[i2++] = c2 >= 128 ? c2 : replacementCharCode;
         } else if (t2 >= 224 && t2 < 240) {
-          var c3 = (t2 & 15) << 12 | (buffer[i2++] & 63) << 6 | buffer[i2++] & 63;
-          str += c3 >= 2048 ? String.fromCharCode(c3) : replacementChar;
+          c3 = (t2 & 15) << 12 | (buffer[start++] & 63) << 6 | buffer[start++] & 63;
+          chunk[i2++] = c3 >= 2048 ? c3 : replacementCharCode;
         } else if (t2 >= 240) {
-          var t22 = (t2 & 7) << 18 | (buffer[i2++] & 63) << 12 | (buffer[i2++] & 63) << 6 | buffer[i2++] & 63;
+          t22 = (t2 & 7) << 18 | (buffer[start++] & 63) << 12 | (buffer[start++] & 63) << 6 | buffer[start++] & 63;
           if (t22 < 65536 || t22 > 1114111)
-            str += replacementChar;
+            chunk[i2++] = replacementCharCode;
           else {
             t22 -= 65536;
-            str += String.fromCharCode(55296 + (t22 >> 10));
-            str += String.fromCharCode(56320 + (t22 & 1023));
+            chunk[i2++] = 55296 + (t22 >> 10);
+            chunk[i2++] = 56320 + (t22 & 1023);
           }
         }
+        if (i2 > 8191) {
+          (parts || (parts = [])).push(String.fromCharCode.apply(String, chunk.slice(0, i2)));
+          i2 = 0;
+        }
       }
-      return str;
+      if (parts) {
+        if (i2)
+          parts.push(String.fromCharCode.apply(String, chunk.slice(0, i2)));
+        return parts.join("");
+      }
+      return String.fromCharCode.apply(String, chunk.slice(0, i2));
     };
     utf8.write = function utf8_write(string, buffer, offset) {
       var start = offset, c1, c2;
@@ -60410,9 +60580,9 @@ var require_json_bigint = __commonJS({
   }
 });
 
-// node_modules/gcp-metadata/build/src/gcp-residency.js
+// node_modules/google-auth-library/node_modules/gcp-metadata/build/src/gcp-residency.js
 var require_gcp_residency = __commonJS({
-  "node_modules/gcp-metadata/build/src/gcp-residency.js"(exports2) {
+  "node_modules/google-auth-library/node_modules/gcp-metadata/build/src/gcp-residency.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GCE_LINUX_BIOS_PATHS = void 0;
@@ -60472,6 +60642,18 @@ var require_colours = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Colours = void 0;
     var Colours = class _Colours {
+      static enabled = false;
+      static reset = "";
+      static bright = "";
+      static dim = "";
+      static red = "";
+      static green = "";
+      static yellow = "";
+      static blue = "";
+      static magenta = "";
+      static cyan = "";
+      static white = "";
+      static grey = "";
       /**
        * @param stream The stream (e.g. process.stderr)
        * @returns true if the stream should have colourization enabled
@@ -60481,7 +60663,7 @@ var require_colours = __commonJS({
         stream.isTTY && (typeof stream.getColorDepth === "function" ? stream.getColorDepth() > 2 : true);
       }
       static refresh() {
-        _Colours.enabled = _Colours.isEnabled(process === null || process === void 0 ? void 0 : process.stderr);
+        _Colours.enabled = _Colours.isEnabled(process?.stderr);
         if (!this.enabled) {
           _Colours.reset = "";
           _Colours.bright = "";
@@ -60510,19 +60692,24 @@ var require_colours = __commonJS({
       }
     };
     exports2.Colours = Colours;
-    Colours.enabled = false;
-    Colours.reset = "";
-    Colours.bright = "";
-    Colours.dim = "";
-    Colours.red = "";
-    Colours.green = "";
-    Colours.yellow = "";
-    Colours.blue = "";
-    Colours.magenta = "";
-    Colours.cyan = "";
-    Colours.white = "";
-    Colours.grey = "";
     Colours.refresh();
+  }
+});
+
+// node_modules/google-logging-utils/build/src/types.js
+var require_types2 = __commonJS({
+  "node_modules/google-logging-utils/build/src/types.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.LogSeverity = void 0;
+    var LogSeverity;
+    (function(LogSeverity2) {
+      LogSeverity2["DEFAULT"] = "DEFAULT";
+      LogSeverity2["DEBUG"] = "DEBUG";
+      LogSeverity2["INFO"] = "INFO";
+      LogSeverity2["WARNING"] = "WARNING";
+      LogSeverity2["ERROR"] = "ERROR";
+    })(LogSeverity || (exports2.LogSeverity = LogSeverity = {}));
   }
 });
 
@@ -60568,7 +60755,7 @@ var require_logging_utils = __commonJS({
       };
     })();
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.env = exports2.DebugLogBackendBase = exports2.placeholder = exports2.AdhocDebugLogger = exports2.LogSeverity = void 0;
+    exports2.env = exports2.DebugLogBackendBase = exports2.placeholder = exports2.AdhocDebugLogger = void 0;
     exports2.getNodeBackend = getNodeBackend;
     exports2.getDebugBackend = getDebugBackend;
     exports2.getStructuredBackend = getStructuredBackend;
@@ -60578,18 +60765,18 @@ var require_logging_utils = __commonJS({
     var process2 = __importStar(require("process"));
     var util = __importStar(require("util"));
     var colours_1 = require_colours();
-    var LogSeverity;
-    (function(LogSeverity2) {
-      LogSeverity2["DEFAULT"] = "DEFAULT";
-      LogSeverity2["DEBUG"] = "DEBUG";
-      LogSeverity2["INFO"] = "INFO";
-      LogSeverity2["WARNING"] = "WARNING";
-      LogSeverity2["ERROR"] = "ERROR";
-    })(LogSeverity || (exports2.LogSeverity = LogSeverity = {}));
+    var types_1 = require_types2();
     var AdhocDebugLogger = class extends events_1.EventEmitter {
+      // Our namespace (system/subsystem/etc)
+      namespace;
+      // The function we'll call with new log lines.
+      // Should be built in Node util stuff, or the "debug" package, or whatever.
+      upstream;
+      // Self-referential function wrapper that calls invoke() on us.
+      func;
       /**
        * @param upstream The backend will pass a function that will be
-       *   called whenever our logger function is invoked.
+       * called whenever our logger function is invoked.
        */
       constructor(namespace, upstream) {
         super();
@@ -60601,10 +60788,10 @@ var require_logging_utils = __commonJS({
           // And pull over the EventEmitter functionality.
           on: (event, listener) => this.on(event, listener)
         });
-        this.func.debug = (...args) => this.invokeSeverity(LogSeverity.DEBUG, ...args);
-        this.func.info = (...args) => this.invokeSeverity(LogSeverity.INFO, ...args);
-        this.func.warn = (...args) => this.invokeSeverity(LogSeverity.WARNING, ...args);
-        this.func.error = (...args) => this.invokeSeverity(LogSeverity.ERROR, ...args);
+        this.func.debug = (...args) => this.invokeSeverity(types_1.LogSeverity.DEBUG, ...args);
+        this.func.info = (...args) => this.invokeSeverity(types_1.LogSeverity.INFO, ...args);
+        this.func.warn = (...args) => this.invokeSeverity(types_1.LogSeverity.WARNING, ...args);
+        this.func.error = (...args) => this.invokeSeverity(types_1.LogSeverity.ERROR, ...args);
         this.func.sublog = (namespace2) => log(namespace2, this.func);
       }
       invoke(fields, ...args) {
@@ -60627,12 +60814,11 @@ var require_logging_utils = __commonJS({
     exports2.placeholder = new AdhocDebugLogger("", () => {
     }).func;
     var DebugLogBackendBase = class {
+      cached = /* @__PURE__ */ new Map();
+      filters = [];
+      filtersSet = false;
       constructor() {
-        var _a;
-        this.cached = /* @__PURE__ */ new Map();
-        this.filters = [];
-        this.filtersSet = false;
-        let nodeFlag = (_a = process2.env[exports2.env.nodeEnables]) !== null && _a !== void 0 ? _a : "*";
+        let nodeFlag = process2.env[exports2.env.nodeEnables] ?? "*";
         if (nodeFlag === "all") {
           nodeFlag = "*";
         }
@@ -60657,10 +60843,9 @@ var require_logging_utils = __commonJS({
     };
     exports2.DebugLogBackendBase = DebugLogBackendBase;
     var NodeBackend = class extends DebugLogBackendBase {
-      constructor() {
-        super(...arguments);
-        this.enabledRegexp = /.*/g;
-      }
+      // Default to allowing all systems, since we gate earlier based on whether the
+      // variable is empty.
+      enabledRegexp = /.*/g;
       isEnabled(namespace) {
         return this.enabledRegexp.test(namespace);
       }
@@ -60670,22 +60855,21 @@ var require_logging_utils = __commonJS({
           };
         }
         return (fields, ...args) => {
-          var _a;
           const nscolour = `${colours_1.Colours.green}${namespace}${colours_1.Colours.reset}`;
           const pid = `${colours_1.Colours.yellow}${process2.pid}${colours_1.Colours.reset}`;
           let level;
           switch (fields.severity) {
-            case LogSeverity.ERROR:
+            case types_1.LogSeverity.ERROR:
               level = `${colours_1.Colours.red}${fields.severity}${colours_1.Colours.reset}`;
               break;
-            case LogSeverity.INFO:
+            case types_1.LogSeverity.INFO:
               level = `${colours_1.Colours.magenta}${fields.severity}${colours_1.Colours.reset}`;
               break;
-            case LogSeverity.WARNING:
+            case types_1.LogSeverity.WARNING:
               level = `${colours_1.Colours.yellow}${fields.severity}${colours_1.Colours.reset}`;
               break;
             default:
-              level = (_a = fields.severity) !== null && _a !== void 0 ? _a : LogSeverity.DEFAULT;
+              level = fields.severity ?? types_1.LogSeverity.DEFAULT;
               break;
           }
           const msg = util.formatWithOptions({ colors: colours_1.Colours.enabled }, ...args);
@@ -60708,6 +60892,7 @@ var require_logging_utils = __commonJS({
       return new NodeBackend();
     }
     var DebugBackend = class extends DebugLogBackendBase {
+      debugPkg;
       constructor(pkg) {
         super();
         this.debugPkg = pkg;
@@ -60719,8 +60904,7 @@ var require_logging_utils = __commonJS({
         };
       }
       setFilters() {
-        var _a;
-        const existingFilters = (_a = process2.env["NODE_DEBUG"]) !== null && _a !== void 0 ? _a : "";
+        const existingFilters = process2.env["NODE_DEBUG"] ?? "";
         process2.env["NODE_DEBUG"] = `${existingFilters}${existingFilters ? "," : ""}${this.filters.join(",")}`;
       }
     };
@@ -60728,17 +60912,15 @@ var require_logging_utils = __commonJS({
       return new DebugBackend(debugPkg);
     }
     var StructuredBackend = class extends DebugLogBackendBase {
+      upstream;
       constructor(upstream) {
-        var _a;
         super();
-        this.upstream = (_a = upstream) !== null && _a !== void 0 ? _a : void 0;
+        this.upstream = upstream ?? void 0;
       }
       makeLogger(namespace) {
-        var _a;
-        const debugLogger = (_a = this.upstream) === null || _a === void 0 ? void 0 : _a.makeLogger(namespace);
+        const debugLogger = this.upstream?.makeLogger(namespace);
         return (fields, ...args) => {
-          var _a2;
-          const severity = (_a2 = fields.severity) !== null && _a2 !== void 0 ? _a2 : LogSeverity.INFO;
+          const severity = fields.severity ?? types_1.LogSeverity.INFO;
           const json = Object.assign({
             severity,
             message: util.format(...args)
@@ -60752,8 +60934,7 @@ var require_logging_utils = __commonJS({
         };
       }
       setFilters() {
-        var _a;
-        (_a = this.upstream) === null || _a === void 0 ? void 0 : _a.setFilters();
+        this.upstream?.setFilters();
       }
     };
     function getStructuredBackend(upstream) {
@@ -60805,7 +60986,7 @@ var require_logging_utils = __commonJS({
             }
             previousBackend = cachedBackend;
           }
-          cachedBackend === null || cachedBackend === void 0 ? void 0 : cachedBackend.log(namespace, fields, ...args);
+          cachedBackend?.log(namespace, fields, ...args);
         });
         return newLogger;
       })();
@@ -60840,9 +61021,9 @@ var require_src6 = __commonJS({
   }
 });
 
-// node_modules/gcp-metadata/build/src/index.js
+// node_modules/google-auth-library/node_modules/gcp-metadata/build/src/index.js
 var require_src7 = __commonJS({
-  "node_modules/gcp-metadata/build/src/index.js"(exports2) {
+  "node_modules/google-auth-library/node_modules/gcp-metadata/build/src/index.js"(exports2) {
     "use strict";
     var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -61034,46 +61215,65 @@ var require_src7 = __commonJS({
       }
       try {
         if (cachedIsAvailableResponse === void 0) {
-          cachedIsAvailableResponse = metadataAccessor(
-            "instance",
-            void 0,
-            detectGCPAvailableRetries(),
-            // If the default HOST_ADDRESS has been overridden, we should not
-            // make an effort to try SECONDARY_HOST_ADDRESS (as we are likely in
-            // a non-GCP environment):
-            !(process.env.GCE_METADATA_IP || process.env.GCE_METADATA_HOST)
-          );
+          cachedIsAvailableResponse = (async () => {
+            try {
+              await metadataAccessor(
+                "instance",
+                void 0,
+                detectGCPAvailableRetries(),
+                // If the default HOST_ADDRESS has been overridden, we should not
+                // make an effort to try SECONDARY_HOST_ADDRESS (as we are likely in
+                // a non-GCP environment):
+                !(process.env.GCE_METADATA_IP || process.env.GCE_METADATA_HOST)
+              );
+              return true;
+            } catch (e2) {
+              const err = e2;
+              if (process.env.DEBUG_AUTH) {
+                console.info(err);
+              }
+              if (err.type === "request-timeout") {
+                return false;
+              }
+              if (err.response && err.response.status === 404) {
+                return false;
+              } else {
+                const errObj = e2;
+                const getErrorCodes = (err2) => {
+                  if (!err2)
+                    return ["UNKNOWN"];
+                  if (err2.name === "AggregateError" && Array.isArray(err2.errors)) {
+                    return err2.errors.flatMap(getErrorCodes);
+                  }
+                  if (err2.code) {
+                    return [err2.code.toString()];
+                  }
+                  if (err2.cause) {
+                    return getErrorCodes(err2.cause);
+                  }
+                  return ["UNKNOWN"];
+                };
+                const codes = getErrorCodes(errObj);
+                const isExpected = codes.every((code) => [
+                  "EHOSTDOWN",
+                  "EHOSTUNREACH",
+                  "ENETUNREACH",
+                  "ENOENT",
+                  "ENOTFOUND",
+                  "ECONNREFUSED"
+                ].includes(code));
+                if (!isExpected) {
+                  const code = err.code ? err.code.toString() : "UNKNOWN";
+                  process.emitWarning(`received unexpected error = ${err.message} code = ${code}`, "MetadataLookupWarning");
+                }
+                return false;
+              }
+            }
+          })();
         }
-        await cachedIsAvailableResponse;
-        return true;
+        return await cachedIsAvailableResponse;
       } catch (e2) {
-        const err = e2;
-        if (process.env.DEBUG_AUTH) {
-          console.info(err);
-        }
-        if (err.type === "request-timeout") {
-          return false;
-        }
-        if (err.response && err.response.status === 404) {
-          return false;
-        } else {
-          if (!(err.response && err.response.status === 404) && // A warning is emitted if we see an unexpected err.code, or err.code
-          // is not populated:
-          (!err.code || ![
-            "EHOSTDOWN",
-            "EHOSTUNREACH",
-            "ENETUNREACH",
-            "ENOENT",
-            "ENOTFOUND",
-            "ECONNREFUSED"
-          ].includes(err.code.toString()))) {
-            let code = "UNKNOWN";
-            if (err.code)
-              code = err.code.toString();
-            process.emitWarning(`received unexpected error = ${err.message} code = ${code}`, "MetadataLookupWarning");
-          }
-          return false;
-        }
+        return false;
       }
     }
     function resetIsAvailableCache() {
@@ -61197,9 +61397,9 @@ var require_base64_js = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/crypto/shared.js
+// node_modules/google-auth-library/build/src/crypto/shared.js
 var require_shared = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/crypto/shared.js"(exports2) {
+  "node_modules/google-auth-library/build/src/crypto/shared.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.fromArrayBufferToHex = fromArrayBufferToHex;
@@ -61212,9 +61412,9 @@ var require_shared = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/crypto/browser/crypto.js
+// node_modules/google-auth-library/build/src/crypto/browser/crypto.js
 var require_crypto = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/crypto/browser/crypto.js"(exports2) {
+  "node_modules/google-auth-library/build/src/crypto/browser/crypto.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.BrowserCrypto = void 0;
@@ -61308,9 +61508,9 @@ var require_crypto = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/crypto/node/crypto.js
+// node_modules/google-auth-library/build/src/crypto/node/crypto.js
 var require_crypto2 = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/crypto/node/crypto.js"(exports2) {
+  "node_modules/google-auth-library/build/src/crypto/node/crypto.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.NodeCrypto = void 0;
@@ -61377,9 +61577,9 @@ var require_crypto2 = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/crypto/crypto.js
+// node_modules/google-auth-library/build/src/crypto/crypto.js
 var require_crypto3 = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/crypto/crypto.js"(exports2) {
+  "node_modules/google-auth-library/build/src/crypto/crypto.js"(exports2) {
     "use strict";
     var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -61637,9 +61837,9 @@ var require_ecdsa_sig_formatter = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/util.js
+// node_modules/google-auth-library/build/src/util.js
 var require_util12 = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/util.js"(exports2) {
+  "node_modules/google-auth-library/build/src/util.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.LRUCache = void 0;
@@ -61752,16 +61952,16 @@ var require_util12 = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/package.json
+// node_modules/google-auth-library/package.json
 var require_package3 = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/package.json"(exports2, module2) {
+  "node_modules/google-auth-library/package.json"(exports2, module2) {
     module2.exports = {
       name: "google-auth-library",
-      version: "10.9.1",
+      version: "11.0.1",
       author: "Google Inc.",
       description: "Google APIs Authentication Client Library for Node.js",
       engines: {
-        node: ">=18"
+        node: ">=22"
       },
       main: "./build/src/index.js",
       types: "./build/src/index.d.ts",
@@ -61781,8 +61981,8 @@ var require_package3 = __commonJS({
         "base64-js": "^1.3.0",
         "ecdsa-sig-formatter": "^1.0.11",
         gaxios: "^7.1.4",
-        "gcp-metadata": "8.1.2",
-        "google-logging-utils": "1.1.3",
+        "gcp-metadata": "^9.0.0",
+        "google-logging-utils": "^2.0.0",
         jws: "^4.0.0"
       },
       devDependencies: {
@@ -61799,8 +61999,8 @@ var require_package3 = __commonJS({
         gts: "^6.0.2",
         "is-docker": "^3.0.0",
         jsdoc: "^4.0.4",
-        "jsdoc-fresh": "^5.0.0",
-        "jsdoc-region-tag": "^4.0.0",
+        "jsdoc-fresh": "^6.0.0",
+        "jsdoc-region-tag": "^5.0.0",
         karma: "^6.0.0",
         "karma-chrome-launcher": "^3.0.0",
         "karma-coverage": "^2.0.0",
@@ -61848,9 +62048,9 @@ var require_package3 = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/shared.cjs
+// node_modules/google-auth-library/build/src/shared.cjs
 var require_shared2 = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/shared.cjs"(exports2) {
+  "node_modules/google-auth-library/build/src/shared.cjs"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.USER_AGENT = exports2.PRODUCT_NAME = exports2.pkg = void 0;
@@ -61863,9 +62063,9 @@ var require_shared2 = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/authclient.js
+// node_modules/google-auth-library/build/src/auth/authclient.js
 var require_authclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/authclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/authclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AuthClient = exports2.DEFAULT_EAGER_REFRESH_THRESHOLD_MILLIS = exports2.DEFAULT_UNIVERSE = void 0;
@@ -62098,9 +62298,9 @@ var require_authclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/loginticket.js
+// node_modules/google-auth-library/build/src/auth/loginticket.js
 var require_loginticket = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/loginticket.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/loginticket.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.LoginTicket = void 0;
@@ -62150,9 +62350,9 @@ var require_loginticket = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/oauth2client.js
+// node_modules/google-auth-library/build/src/auth/oauth2client.js
 var require_oauth2client = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/oauth2client.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/oauth2client.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.OAuth2Client = exports2.ClientAuthentication = exports2.CertificateFormat = exports2.CodeChallengeMethod = void 0;
@@ -62831,9 +63031,9 @@ var require_oauth2client = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/computeclient.js
+// node_modules/google-auth-library/build/src/auth/computeclient.js
 var require_computeclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/computeclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/computeclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Compute = void 0;
@@ -62923,9 +63123,9 @@ var require_computeclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/idtokenclient.js
+// node_modules/google-auth-library/build/src/auth/idtokenclient.js
 var require_idtokenclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/idtokenclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/idtokenclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.IdTokenClient = void 0;
@@ -62969,9 +63169,9 @@ var require_idtokenclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/envDetect.js
+// node_modules/google-auth-library/build/src/auth/envDetect.js
 var require_envDetect = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/envDetect.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/envDetect.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GCPEnv = void 0;
@@ -63589,9 +63789,9 @@ var require_jws = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/jwsSign.js
+// node_modules/google-auth-library/build/src/gtoken/jwsSign.js
 var require_jwsSign = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/jwsSign.js"(exports2) {
+  "node_modules/google-auth-library/build/src/gtoken/jwsSign.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.buildPayloadForJwsSign = buildPayloadForJwsSign;
@@ -63623,9 +63823,9 @@ var require_jwsSign = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/getToken.js
+// node_modules/google-auth-library/build/src/gtoken/getToken.js
 var require_getToken = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/getToken.js"(exports2) {
+  "node_modules/google-auth-library/build/src/gtoken/getToken.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getToken = getToken;
@@ -63667,9 +63867,9 @@ var require_getToken = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/errorWithCode.js
+// node_modules/google-auth-library/build/src/gtoken/errorWithCode.js
 var require_errorWithCode = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/errorWithCode.js"(exports2) {
+  "node_modules/google-auth-library/build/src/gtoken/errorWithCode.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ErrorWithCode = void 0;
@@ -63684,9 +63884,9 @@ var require_errorWithCode = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/getCredentials.js
+// node_modules/google-auth-library/build/src/gtoken/getCredentials.js
 var require_getCredentials = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/getCredentials.js"(exports2) {
+  "node_modules/google-auth-library/build/src/gtoken/getCredentials.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getCredentials = getCredentials;
@@ -63785,9 +63985,9 @@ var require_getCredentials = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/tokenHandler.js
+// node_modules/google-auth-library/build/src/gtoken/tokenHandler.js
 var require_tokenHandler = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/tokenHandler.js"(exports2) {
+  "node_modules/google-auth-library/build/src/gtoken/tokenHandler.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.TokenHandler = void 0;
@@ -63876,9 +64076,9 @@ var require_tokenHandler = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/revokeToken.js
+// node_modules/google-auth-library/build/src/gtoken/revokeToken.js
 var require_revokeToken = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/revokeToken.js"(exports2) {
+  "node_modules/google-auth-library/build/src/gtoken/revokeToken.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.revokeToken = revokeToken;
@@ -63894,9 +64094,9 @@ var require_revokeToken = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/googleToken.js
+// node_modules/google-auth-library/build/src/gtoken/googleToken.js
 var require_googleToken = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/gtoken/googleToken.js"(exports2) {
+  "node_modules/google-auth-library/build/src/gtoken/googleToken.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GoogleToken = void 0;
@@ -64000,9 +64200,9 @@ var require_googleToken = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/jwtaccess.js
+// node_modules/google-auth-library/build/src/auth/jwtaccess.js
 var require_jwtaccess = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/jwtaccess.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/jwtaccess.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.JWTAccess = void 0;
@@ -64170,9 +64370,9 @@ var require_jwtaccess = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/jwtclient.js
+// node_modules/google-auth-library/build/src/auth/jwtclient.js
 var require_jwtclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/jwtclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/jwtclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.JWT = void 0;
@@ -64442,9 +64642,9 @@ var require_jwtclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/refreshclient.js
+// node_modules/google-auth-library/build/src/auth/refreshclient.js
 var require_refreshclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/refreshclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/refreshclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.UserRefreshClient = exports2.USER_REFRESH_ACCOUNT_TYPE = void 0;
@@ -64570,9 +64770,9 @@ var require_refreshclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/impersonated.js
+// node_modules/google-auth-library/build/src/auth/impersonated.js
 var require_impersonated = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/impersonated.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/impersonated.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Impersonated = exports2.IMPERSONATED_ACCOUNT_TYPE = void 0;
@@ -64749,9 +64949,9 @@ var require_impersonated = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/oauth2common.js
+// node_modules/google-auth-library/build/src/auth/oauth2common.js
 var require_oauth2common = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/oauth2common.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/oauth2common.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.OAuthClientAuthHandler = void 0;
@@ -64897,9 +65097,9 @@ var require_oauth2common = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/stscredentials.js
+// node_modules/google-auth-library/build/src/auth/stscredentials.js
 var require_stscredentials = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/stscredentials.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/stscredentials.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.StsCredentials = void 0;
@@ -64985,9 +65185,9 @@ var require_stscredentials = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/baseexternalclient.js
+// node_modules/google-auth-library/build/src/auth/baseexternalclient.js
 var require_baseexternalclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/baseexternalclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/baseexternalclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.BaseExternalAccountClient = exports2.CLOUD_RESOURCE_MANAGER = exports2.EXTERNAL_ACCOUNT_TYPE = exports2.EXPIRATION_TIME_OFFSET = void 0;
@@ -65364,9 +65564,9 @@ var require_baseexternalclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js
+// node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js
 var require_filesubjecttokensupplier = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.FileSubjectTokenSupplier = void 0;
@@ -65429,9 +65629,9 @@ var require_filesubjecttokensupplier = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js
+// node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js
 var require_urlsubjecttokensupplier = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.UrlSubjectTokenSupplier = void 0;
@@ -65487,9 +65687,9 @@ var require_urlsubjecttokensupplier = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js
+// node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js
 var require_certificatesubjecttokensupplier = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CertificateSubjectTokenSupplier = exports2.InvalidConfigurationError = exports2.CertificateSourceUnavailableError = exports2.CERTIFICATE_CONFIGURATION_ENV_VARIABLE = void 0;
@@ -65671,9 +65871,9 @@ var require_certificatesubjecttokensupplier = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/identitypoolclient.js
+// node_modules/google-auth-library/build/src/auth/identitypoolclient.js
 var require_identitypoolclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/identitypoolclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/identitypoolclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.IdentityPoolClient = void 0;
@@ -65783,9 +65983,9 @@ var require_identitypoolclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/awsrequestsigner.js
+// node_modules/google-auth-library/build/src/auth/awsrequestsigner.js
 var require_awsrequestsigner = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/awsrequestsigner.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/awsrequestsigner.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AwsRequestSigner = void 0;
@@ -65933,9 +66133,9 @@ ${credentialScope}
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js
+// node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js
 var require_defaultawssecuritycredentialssupplier = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DefaultAwsSecurityCredentialsSupplier = void 0;
@@ -66088,9 +66288,9 @@ var require_defaultawssecuritycredentialssupplier = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/awsclient.js
+// node_modules/google-auth-library/build/src/auth/awsclient.js
 var require_awsclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/awsclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/awsclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AwsClient = void 0;
@@ -66202,9 +66402,9 @@ var require_awsclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/executable-response.js
+// node_modules/google-auth-library/build/src/auth/executable-response.js
 var require_executable_response = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/executable-response.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/executable-response.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.InvalidSubjectTokenError = exports2.InvalidMessageFieldError = exports2.InvalidCodeFieldError = exports2.InvalidTokenTypeFieldError = exports2.InvalidExpirationTimeFieldError = exports2.InvalidSuccessFieldError = exports2.InvalidVersionFieldError = exports2.ExecutableResponseError = exports2.ExecutableResponse = void 0;
@@ -66333,9 +66533,9 @@ var require_executable_response = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js
+// node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js
 var require_pluggable_auth_handler = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.PluggableAuthHandler = exports2.ExecutableError = void 0;
@@ -66474,9 +66674,9 @@ var require_pluggable_auth_handler = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js
+// node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js
 var require_pluggable_auth_client = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.PluggableAuthClient = exports2.ExecutableError = void 0;
@@ -66601,9 +66801,9 @@ var require_pluggable_auth_client = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/externalclient.js
+// node_modules/google-auth-library/build/src/auth/externalclient.js
 var require_externalclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/externalclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/externalclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ExternalAccountClient = void 0;
@@ -66650,9 +66850,9 @@ var require_externalclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js
+// node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js
 var require_externalAccountAuthorizedUserClient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ExternalAccountAuthorizedUserClient = exports2.EXTERNAL_ACCOUNT_AUTHORIZED_USER_TYPE = void 0;
@@ -66837,9 +67037,9 @@ var require_externalAccountAuthorizedUserClient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/gdchclient.js
+// node_modules/google-auth-library/build/src/auth/gdchclient.js
 var require_gdchclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/gdchclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/gdchclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GdchClient = exports2.GDCH_SERVICE_ACCOUNT_TYPE = void 0;
@@ -67120,9 +67320,9 @@ var require_gdchclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/googleauth.js
+// node_modules/google-auth-library/build/src/auth/googleauth.js
 var require_googleauth = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/googleauth.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/googleauth.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GoogleAuth = exports2.GoogleAuthExceptionMessages = void 0;
@@ -67928,9 +68128,9 @@ var require_googleauth = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/iam.js
+// node_modules/google-auth-library/build/src/auth/iam.js
 var require_iam = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/iam.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/iam.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.IAMAuth = void 0;
@@ -67964,9 +68164,9 @@ var require_iam = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/downscopedclient.js
+// node_modules/google-auth-library/build/src/auth/downscopedclient.js
 var require_downscopedclient = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/downscopedclient.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/downscopedclient.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DownscopedClient = exports2.EXPIRATION_TIME_OFFSET = exports2.MAX_ACCESS_BOUNDARY_RULES_COUNT = void 0;
@@ -68149,9 +68349,9 @@ var require_downscopedclient = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/auth/passthrough.js
+// node_modules/google-auth-library/build/src/auth/passthrough.js
 var require_passthrough = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/auth/passthrough.js"(exports2) {
+  "node_modules/google-auth-library/build/src/auth/passthrough.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.PassThroughClient = void 0;
@@ -68194,9 +68394,9 @@ var require_passthrough = __commonJS({
   }
 });
 
-// node_modules/google-gax/node_modules/google-auth-library/build/src/index.js
+// node_modules/google-auth-library/build/src/index.js
 var require_src8 = __commonJS({
-  "node_modules/google-gax/node_modules/google-auth-library/build/src/index.js"(exports2) {
+  "node_modules/google-auth-library/build/src/index.js"(exports2) {
     "use strict";
     var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -79378,7 +79578,7 @@ var require_any = __commonJS({
         };
       }
       const uint8array = type.encode(valueMessage).finish();
-      const buffer = Buffer.from(uint8array, 0, uint8array.byteLength);
+      const buffer = Buffer.from(uint8array);
       const base64 = buffer.toString("base64");
       return {
         type_url: typeUrl,
@@ -80159,7 +80359,7 @@ var require_fallbackServiceStub = __commonJS({
           let response204Ok = false;
           const fetchRequest = {
             headers,
-            body: fetchParameters.body,
+            body: typeof fetchParameters.body === "string" ? fetchParameters.body : Buffer.from(fetchParameters.body),
             method: fetchParameters.method,
             signal: cancelSignal,
             responseType: "stream",
@@ -84073,7 +84273,7 @@ var require_package4 = __commonJS({
   "node_modules/google-gax/package.json"(exports2, module2) {
     module2.exports = {
       name: "google-gax",
-      version: "5.0.6",
+      version: "6.0.2",
       description: "Google API Extensions",
       main: "build/src/index.js",
       types: "build/src/index.d.ts",
@@ -84086,36 +84286,34 @@ var require_package4 = __commonJS({
         "@grpc/grpc-js": "^1.12.6",
         "@grpc/proto-loader": "^0.8.0",
         duplexify: "^4.1.3",
-        "google-auth-library": "^10.1.0",
-        "google-logging-utils": "^1.1.1",
+        "google-auth-library": "^11.0.0",
+        "google-logging-utils": "^2.0.0",
         "node-fetch": "^3.3.2",
         "object-hash": "^3.0.0",
-        "proto3-json-serializer": "^3.0.0",
-        protobufjs: "^7.5.3",
-        "retry-request": "^8.0.0",
-        rimraf: "^5.0.1"
+        "proto3-json-serializer": "^4.0.0",
+        protobufjs: "^7.5.4",
+        "retry-request": "^9.0.0"
       },
       devDependencies: {
         "@babel/plugin-proposal-private-methods": "^7.18.6",
         "@types/mocha": "^10.0.10",
         "@types/ncp": "^2.0.8",
-        "@types/node": "^22.0.0",
+        "@types/node": "^24.0.0",
         "@types/object-hash": "^3.0.6",
         "@types/proxyquire": "^1.3.31",
         "@types/pumpify": "^1.4.4",
-        "@types/sinon": "^17.0.3",
+        "@types/sinon": "^21.0.0",
         "@types/uglify-js": "^3.17.5",
         c8: "^10.1.3",
         codecov: "^3.8.3",
         execa: "^5.0.0",
-        glob: "10.4.5",
-        "google-proto-files": "^5.0.0",
+        glob: "10.5.0",
+        "google-proto-files": "^6.0.0",
         gts: "^6.0.2",
         jackspeak: "^3.0.2",
         jsdoc: "^4.0.4",
-        "jsdoc-fresh": "^5.0.0",
-        "jsdoc-region-tag": "^4.0.0",
-        linkinator: "^6.1.2",
+        "jsdoc-fresh": "^6.0.0",
+        "jsdoc-region-tag": "^5.0.0",
         long: "^5.2.4",
         "lru-cache": "^10.0.0",
         mkdirp: "^3.0.1",
@@ -84125,10 +84323,10 @@ var require_package4 = __commonJS({
         pdfmake: "^0.2.18",
         proxyquire: "^2.1.3",
         pumpify: "^2.0.1",
-        sinon: "^21.0.0",
+        sinon: "21.0.3",
         "stream-events": "^1.0.5",
-        "ts-loader": "^8.0.0",
-        typescript: "5.7.3",
+        "ts-loader": "^9.5.2",
+        typescript: "5.8.3",
         "uglify-js": "^3.19.3",
         walkdir: "^0.4.1",
         webpack: "^5.97.1",
@@ -84151,13 +84349,11 @@ var require_package4 = __commonJS({
         prepare: "npm run compile && cd ../tools && npm i && npm run compile && cd ../gax && pwd && node ../tools/build/src/prepublish.js . && mkdirp build/protos && cp -r protos/* build/protos/ && npm run minify-proto-json",
         "system-test": "c8 mocha build/test/system-test --timeout 600000 && npm run test-application",
         "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
-        "docs-test": "linkinator docs",
-        "predocs-test": "npm run docs",
         "browser-test": "cd test/browser-test && npm run prefetch && npm install && npm test",
         "test-application": "cd test/test-application && npm run prefetch && npm install && npm start",
         prelint: "cd samples; npm link ../; npm install",
         precompile: "gts clean",
-        "update-protos": "cd ../tools && npm i && npm run compile && cd ../gax && node ../tools/build/src/listProtos.js .",
+        "update-protos": "cd ../tools && rm -rf node_modules build && npm i && npm run compile && cd ../gax && node ../tools/build/src/listProtos.js .",
         "minify-proto-json": "cd ../tools && npm i && npm run compile && cd ../gax && node ../tools/build/src/minify.js"
       },
       keywords: [
@@ -84172,17 +84368,17 @@ var require_package4 = __commonJS({
       },
       repository: {
         type: "git",
-        directory: "packages/gax",
-        url: "https://github.com/googleapis/google-cloud-node-core.git"
+        directory: "core/packages/gax",
+        url: "https://github.com/googleapis/google-cloud-node.git"
       },
       author: "Google API Authors",
       license: "Apache-2.0",
       bugs: {
-        url: "https://github.com/googleapis/google-cloud-node-core/issues"
+        url: "https://github.com/googleapis/google-cloud-node/issues"
       },
-      homepage: "https://github.com/googleapis/google-cloud-node-core/tree/main/packages/gax",
+      homepage: "https://github.com/googleapis/google-cloud-node/tree/main/core/packages/gax",
       engines: {
-        node: ">=18"
+        node: ">=22"
       },
       browser: "build/src/fallback.js"
     };
@@ -87988,11 +88184,11 @@ var require_package5 = __commonJS({
     module2.exports = {
       name: "@google-cloud/kms",
       description: "Google Cloud Key Management Service (KMS) API client for Node.js",
-      version: "5.7.0",
+      version: "6.0.0",
       license: "Apache-2.0",
       author: "Google LLC",
       engines: {
-        node: ">=18"
+        node: ">=22"
       },
       repository: {
         type: "git",
@@ -88033,21 +88229,21 @@ var require_package5 = __commonJS({
         test: "c8 mocha --config ../../.mocharc.cjs build/test"
       },
       dependencies: {
-        "google-gax": "^5.0.0"
+        "google-gax": "^6.0.0"
       },
       devDependencies: {
         "@types/mocha": "^10.0.10",
         "@types/node": "^22.13.9",
         "@types/sinon": "^17.0.4",
         c8: "^10.1.3",
-        "gapic-tools": "^1.0.0",
+        "gapic-tools": "^2.0.0",
         gts: "^6.0.2",
         jsdoc: "^4.0.4",
-        "jsdoc-fresh": "^4.0.0",
-        "jsdoc-region-tag": "^3.0.0",
+        "jsdoc-fresh": "^6.0.0",
+        "jsdoc-region-tag": "^5.0.0",
         long: "^5.3.1",
         mocha: "^11.1.0",
-        "pack-n-play": "^3.0.0",
+        "pack-n-play": "^5.0.0",
         sinon: "21.0.3",
         typescript: "^5.8.2"
       },
@@ -116340,12 +116536,14 @@ var require_protos2 = __commonJS({
               }
             }
             PhpSettings.prototype.common = null;
+            PhpSettings.prototype.libraryPackage = "";
             PhpSettings.create = function create(properties) {
               return new PhpSettings(properties);
             };
             PhpSettings.encode = function encode(message, writer) {
               if (!writer) writer = $Writer.create();
               if (message.common != null && Object.hasOwnProperty.call(message, "common")) $root.google.api.CommonLanguageSettings.encode(message.common, writer.uint32(10).fork()).ldelim();
+              if (message.libraryPackage != null && Object.hasOwnProperty.call(message, "libraryPackage")) writer.uint32(18).string(message.libraryPackage);
               return writer;
             };
             PhpSettings.encodeDelimited = function encodeDelimited(message, writer) {
@@ -116362,6 +116560,10 @@ var require_protos2 = __commonJS({
                 switch (tag >>> 3) {
                   case 1: {
                     message.common = $root.google.api.CommonLanguageSettings.decode(reader, reader.uint32(), void 0, long + 1);
+                    break;
+                  }
+                  case 2: {
+                    message.libraryPackage = reader.string();
                     break;
                   }
                   default:
@@ -116383,6 +116585,9 @@ var require_protos2 = __commonJS({
                 var error2 = $root.google.api.CommonLanguageSettings.verify(message.common, long + 1);
                 if (error2) return "common." + error2;
               }
+              if (message.libraryPackage != null && message.hasOwnProperty("libraryPackage")) {
+                if (!$util.isString(message.libraryPackage)) return "libraryPackage: string expected";
+              }
               return null;
             };
             PhpSettings.fromObject = function fromObject(object, long) {
@@ -116394,13 +116599,18 @@ var require_protos2 = __commonJS({
                 if (typeof object.common !== "object") throw TypeError(".google.api.PhpSettings.common: object expected");
                 message.common = $root.google.api.CommonLanguageSettings.fromObject(object.common, long + 1);
               }
+              if (object.libraryPackage != null) message.libraryPackage = String(object.libraryPackage);
               return message;
             };
             PhpSettings.toObject = function toObject(message, options) {
               if (!options) options = {};
               var object = {};
-              if (options.defaults) object.common = null;
+              if (options.defaults) {
+                object.common = null;
+                object.libraryPackage = "";
+              }
               if (message.common != null && message.hasOwnProperty("common")) object.common = $root.google.api.CommonLanguageSettings.toObject(message.common, options);
+              if (message.libraryPackage != null && message.hasOwnProperty("libraryPackage")) object.libraryPackage = message.libraryPackage;
               return object;
             };
             PhpSettings.prototype.toJSON = function toJSON() {
@@ -117163,6 +117373,7 @@ var require_protos2 = __commonJS({
             MethodSettings.prototype.selector = "";
             MethodSettings.prototype.longRunning = null;
             MethodSettings.prototype.autoPopulatedFields = $util.emptyArray;
+            MethodSettings.prototype.batching = null;
             MethodSettings.create = function create(properties) {
               return new MethodSettings(properties);
             };
@@ -117171,6 +117382,7 @@ var require_protos2 = __commonJS({
               if (message.selector != null && Object.hasOwnProperty.call(message, "selector")) writer.uint32(10).string(message.selector);
               if (message.longRunning != null && Object.hasOwnProperty.call(message, "longRunning")) $root.google.api.MethodSettings.LongRunning.encode(message.longRunning, writer.uint32(18).fork()).ldelim();
               if (message.autoPopulatedFields != null && message.autoPopulatedFields.length) for (var i2 = 0; i2 < message.autoPopulatedFields.length; ++i2) writer.uint32(26).string(message.autoPopulatedFields[i2]);
+              if (message.batching != null && Object.hasOwnProperty.call(message, "batching")) $root.google.api.BatchingConfigProto.encode(message.batching, writer.uint32(34).fork()).ldelim();
               return writer;
             };
             MethodSettings.encodeDelimited = function encodeDelimited(message, writer) {
@@ -117196,6 +117408,10 @@ var require_protos2 = __commonJS({
                   case 3: {
                     if (!(message.autoPopulatedFields && message.autoPopulatedFields.length)) message.autoPopulatedFields = [];
                     message.autoPopulatedFields.push(reader.string());
+                    break;
+                  }
+                  case 4: {
+                    message.batching = $root.google.api.BatchingConfigProto.decode(reader, reader.uint32(), void 0, long + 1);
                     break;
                   }
                   default:
@@ -117224,6 +117440,10 @@ var require_protos2 = __commonJS({
                 if (!Array.isArray(message.autoPopulatedFields)) return "autoPopulatedFields: array expected";
                 for (var i2 = 0; i2 < message.autoPopulatedFields.length; ++i2) if (!$util.isString(message.autoPopulatedFields[i2])) return "autoPopulatedFields: string[] expected";
               }
+              if (message.batching != null && message.hasOwnProperty("batching")) {
+                var error2 = $root.google.api.BatchingConfigProto.verify(message.batching, long + 1);
+                if (error2) return "batching." + error2;
+              }
               return null;
             };
             MethodSettings.fromObject = function fromObject(object, long) {
@@ -117241,6 +117461,10 @@ var require_protos2 = __commonJS({
                 message.autoPopulatedFields = [];
                 for (var i2 = 0; i2 < object.autoPopulatedFields.length; ++i2) message.autoPopulatedFields[i2] = String(object.autoPopulatedFields[i2]);
               }
+              if (object.batching != null) {
+                if (typeof object.batching !== "object") throw TypeError(".google.api.MethodSettings.batching: object expected");
+                message.batching = $root.google.api.BatchingConfigProto.fromObject(object.batching, long + 1);
+              }
               return message;
             };
             MethodSettings.toObject = function toObject(message, options) {
@@ -117250,6 +117474,7 @@ var require_protos2 = __commonJS({
               if (options.defaults) {
                 object.selector = "";
                 object.longRunning = null;
+                object.batching = null;
               }
               if (message.selector != null && message.hasOwnProperty("selector")) object.selector = message.selector;
               if (message.longRunning != null && message.hasOwnProperty("longRunning")) object.longRunning = $root.google.api.MethodSettings.LongRunning.toObject(message.longRunning, options);
@@ -117257,6 +117482,7 @@ var require_protos2 = __commonJS({
                 object.autoPopulatedFields = [];
                 for (var j = 0; j < message.autoPopulatedFields.length; ++j) object.autoPopulatedFields[j] = message.autoPopulatedFields[j];
               }
+              if (message.batching != null && message.hasOwnProperty("batching")) object.batching = $root.google.api.BatchingConfigProto.toObject(message.batching, options);
               return object;
             };
             MethodSettings.prototype.toJSON = function toJSON() {
@@ -117514,6 +117740,431 @@ var require_protos2 = __commonJS({
               return typeUrlPrefix + "/google.api.SelectiveGapicGeneration";
             };
             return SelectiveGapicGeneration;
+          })();
+          api.BatchingConfigProto = (function() {
+            function BatchingConfigProto(properties) {
+              if (properties) {
+                for (var keys = Object.keys(properties), i2 = 0; i2 < keys.length; ++i2) if (properties[keys[i2]] != null && keys[i2] !== "__proto__") this[keys[i2]] = properties[keys[i2]];
+              }
+            }
+            BatchingConfigProto.prototype.thresholds = null;
+            BatchingConfigProto.prototype.batchDescriptor = null;
+            BatchingConfigProto.create = function create(properties) {
+              return new BatchingConfigProto(properties);
+            };
+            BatchingConfigProto.encode = function encode(message, writer) {
+              if (!writer) writer = $Writer.create();
+              if (message.thresholds != null && Object.hasOwnProperty.call(message, "thresholds")) $root.google.api.BatchingSettingsProto.encode(message.thresholds, writer.uint32(10).fork()).ldelim();
+              if (message.batchDescriptor != null && Object.hasOwnProperty.call(message, "batchDescriptor")) $root.google.api.BatchingDescriptorProto.encode(message.batchDescriptor, writer.uint32(18).fork()).ldelim();
+              return writer;
+            };
+            BatchingConfigProto.encodeDelimited = function encodeDelimited(message, writer) {
+              return this.encode(message, writer).ldelim();
+            };
+            BatchingConfigProto.decode = function decode(reader, length, error2, long) {
+              if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+              if (long === void 0) long = 0;
+              if (long > $Reader.recursionLimit) throw Error("maximum nesting depth exceeded");
+              var end = length === void 0 ? reader.len : reader.pos + length, message = new $root.google.api.BatchingConfigProto();
+              while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error2) break;
+                switch (tag >>> 3) {
+                  case 1: {
+                    message.thresholds = $root.google.api.BatchingSettingsProto.decode(reader, reader.uint32(), void 0, long + 1);
+                    break;
+                  }
+                  case 2: {
+                    message.batchDescriptor = $root.google.api.BatchingDescriptorProto.decode(reader, reader.uint32(), void 0, long + 1);
+                    break;
+                  }
+                  default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+              }
+              return message;
+            };
+            BatchingConfigProto.decodeDelimited = function decodeDelimited(reader) {
+              if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+              return this.decode(reader, reader.uint32());
+            };
+            BatchingConfigProto.verify = function verify(message, long) {
+              if (typeof message !== "object" || message === null) return "object expected";
+              if (long === void 0) long = 0;
+              if (long > $util.recursionLimit) return "maximum nesting depth exceeded";
+              if (message.thresholds != null && message.hasOwnProperty("thresholds")) {
+                var error2 = $root.google.api.BatchingSettingsProto.verify(message.thresholds, long + 1);
+                if (error2) return "thresholds." + error2;
+              }
+              if (message.batchDescriptor != null && message.hasOwnProperty("batchDescriptor")) {
+                var error2 = $root.google.api.BatchingDescriptorProto.verify(message.batchDescriptor, long + 1);
+                if (error2) return "batchDescriptor." + error2;
+              }
+              return null;
+            };
+            BatchingConfigProto.fromObject = function fromObject(object, long) {
+              if (object instanceof $root.google.api.BatchingConfigProto) return object;
+              if (long === void 0) long = 0;
+              if (long > $util.recursionLimit) throw Error("maximum nesting depth exceeded");
+              var message = new $root.google.api.BatchingConfigProto();
+              if (object.thresholds != null) {
+                if (typeof object.thresholds !== "object") throw TypeError(".google.api.BatchingConfigProto.thresholds: object expected");
+                message.thresholds = $root.google.api.BatchingSettingsProto.fromObject(object.thresholds, long + 1);
+              }
+              if (object.batchDescriptor != null) {
+                if (typeof object.batchDescriptor !== "object") throw TypeError(".google.api.BatchingConfigProto.batchDescriptor: object expected");
+                message.batchDescriptor = $root.google.api.BatchingDescriptorProto.fromObject(object.batchDescriptor, long + 1);
+              }
+              return message;
+            };
+            BatchingConfigProto.toObject = function toObject(message, options) {
+              if (!options) options = {};
+              var object = {};
+              if (options.defaults) {
+                object.thresholds = null;
+                object.batchDescriptor = null;
+              }
+              if (message.thresholds != null && message.hasOwnProperty("thresholds")) object.thresholds = $root.google.api.BatchingSettingsProto.toObject(message.thresholds, options);
+              if (message.batchDescriptor != null && message.hasOwnProperty("batchDescriptor")) object.batchDescriptor = $root.google.api.BatchingDescriptorProto.toObject(message.batchDescriptor, options);
+              return object;
+            };
+            BatchingConfigProto.prototype.toJSON = function toJSON() {
+              return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            BatchingConfigProto.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+              if (typeUrlPrefix === void 0) {
+                typeUrlPrefix = "type.googleapis.com";
+              }
+              return typeUrlPrefix + "/google.api.BatchingConfigProto";
+            };
+            return BatchingConfigProto;
+          })();
+          api.BatchingSettingsProto = (function() {
+            function BatchingSettingsProto(properties) {
+              if (properties) {
+                for (var keys = Object.keys(properties), i2 = 0; i2 < keys.length; ++i2) if (properties[keys[i2]] != null && keys[i2] !== "__proto__") this[keys[i2]] = properties[keys[i2]];
+              }
+            }
+            BatchingSettingsProto.prototype.elementCountThreshold = 0;
+            BatchingSettingsProto.prototype.requestByteThreshold = $util.Long ? $util.Long.fromBits(0, 0, false) : 0;
+            BatchingSettingsProto.prototype.delayThreshold = null;
+            BatchingSettingsProto.prototype.elementCountLimit = 0;
+            BatchingSettingsProto.prototype.requestByteLimit = 0;
+            BatchingSettingsProto.prototype.flowControlElementLimit = 0;
+            BatchingSettingsProto.prototype.flowControlByteLimit = 0;
+            BatchingSettingsProto.prototype.flowControlLimitExceededBehavior = 0;
+            BatchingSettingsProto.create = function create(properties) {
+              return new BatchingSettingsProto(properties);
+            };
+            BatchingSettingsProto.encode = function encode(message, writer) {
+              if (!writer) writer = $Writer.create();
+              if (message.elementCountThreshold != null && Object.hasOwnProperty.call(message, "elementCountThreshold")) writer.uint32(8).int32(message.elementCountThreshold);
+              if (message.requestByteThreshold != null && Object.hasOwnProperty.call(message, "requestByteThreshold")) writer.uint32(16).int64(message.requestByteThreshold);
+              if (message.delayThreshold != null && Object.hasOwnProperty.call(message, "delayThreshold")) $root.google.protobuf.Duration.encode(message.delayThreshold, writer.uint32(26).fork()).ldelim();
+              if (message.elementCountLimit != null && Object.hasOwnProperty.call(message, "elementCountLimit")) writer.uint32(32).int32(message.elementCountLimit);
+              if (message.requestByteLimit != null && Object.hasOwnProperty.call(message, "requestByteLimit")) writer.uint32(40).int32(message.requestByteLimit);
+              if (message.flowControlElementLimit != null && Object.hasOwnProperty.call(message, "flowControlElementLimit")) writer.uint32(48).int32(message.flowControlElementLimit);
+              if (message.flowControlByteLimit != null && Object.hasOwnProperty.call(message, "flowControlByteLimit")) writer.uint32(56).int32(message.flowControlByteLimit);
+              if (message.flowControlLimitExceededBehavior != null && Object.hasOwnProperty.call(message, "flowControlLimitExceededBehavior")) writer.uint32(64).int32(message.flowControlLimitExceededBehavior);
+              return writer;
+            };
+            BatchingSettingsProto.encodeDelimited = function encodeDelimited(message, writer) {
+              return this.encode(message, writer).ldelim();
+            };
+            BatchingSettingsProto.decode = function decode(reader, length, error2, long) {
+              if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+              if (long === void 0) long = 0;
+              if (long > $Reader.recursionLimit) throw Error("maximum nesting depth exceeded");
+              var end = length === void 0 ? reader.len : reader.pos + length, message = new $root.google.api.BatchingSettingsProto();
+              while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error2) break;
+                switch (tag >>> 3) {
+                  case 1: {
+                    message.elementCountThreshold = reader.int32();
+                    break;
+                  }
+                  case 2: {
+                    message.requestByteThreshold = reader.int64();
+                    break;
+                  }
+                  case 3: {
+                    message.delayThreshold = $root.google.protobuf.Duration.decode(reader, reader.uint32(), void 0, long + 1);
+                    break;
+                  }
+                  case 4: {
+                    message.elementCountLimit = reader.int32();
+                    break;
+                  }
+                  case 5: {
+                    message.requestByteLimit = reader.int32();
+                    break;
+                  }
+                  case 6: {
+                    message.flowControlElementLimit = reader.int32();
+                    break;
+                  }
+                  case 7: {
+                    message.flowControlByteLimit = reader.int32();
+                    break;
+                  }
+                  case 8: {
+                    message.flowControlLimitExceededBehavior = reader.int32();
+                    break;
+                  }
+                  default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+              }
+              return message;
+            };
+            BatchingSettingsProto.decodeDelimited = function decodeDelimited(reader) {
+              if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+              return this.decode(reader, reader.uint32());
+            };
+            BatchingSettingsProto.verify = function verify(message, long) {
+              if (typeof message !== "object" || message === null) return "object expected";
+              if (long === void 0) long = 0;
+              if (long > $util.recursionLimit) return "maximum nesting depth exceeded";
+              if (message.elementCountThreshold != null && message.hasOwnProperty("elementCountThreshold")) {
+                if (!$util.isInteger(message.elementCountThreshold)) return "elementCountThreshold: integer expected";
+              }
+              if (message.requestByteThreshold != null && message.hasOwnProperty("requestByteThreshold")) {
+                if (!$util.isInteger(message.requestByteThreshold) && !(message.requestByteThreshold && $util.isInteger(message.requestByteThreshold.low) && $util.isInteger(message.requestByteThreshold.high))) return "requestByteThreshold: integer|Long expected";
+              }
+              if (message.delayThreshold != null && message.hasOwnProperty("delayThreshold")) {
+                var error2 = $root.google.protobuf.Duration.verify(message.delayThreshold, long + 1);
+                if (error2) return "delayThreshold." + error2;
+              }
+              if (message.elementCountLimit != null && message.hasOwnProperty("elementCountLimit")) {
+                if (!$util.isInteger(message.elementCountLimit)) return "elementCountLimit: integer expected";
+              }
+              if (message.requestByteLimit != null && message.hasOwnProperty("requestByteLimit")) {
+                if (!$util.isInteger(message.requestByteLimit)) return "requestByteLimit: integer expected";
+              }
+              if (message.flowControlElementLimit != null && message.hasOwnProperty("flowControlElementLimit")) {
+                if (!$util.isInteger(message.flowControlElementLimit)) return "flowControlElementLimit: integer expected";
+              }
+              if (message.flowControlByteLimit != null && message.hasOwnProperty("flowControlByteLimit")) {
+                if (!$util.isInteger(message.flowControlByteLimit)) return "flowControlByteLimit: integer expected";
+              }
+              if (message.flowControlLimitExceededBehavior != null && message.hasOwnProperty("flowControlLimitExceededBehavior")) switch (message.flowControlLimitExceededBehavior) {
+                default:
+                  return "flowControlLimitExceededBehavior: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                  break;
+              }
+              return null;
+            };
+            BatchingSettingsProto.fromObject = function fromObject(object, long) {
+              if (object instanceof $root.google.api.BatchingSettingsProto) return object;
+              if (long === void 0) long = 0;
+              if (long > $util.recursionLimit) throw Error("maximum nesting depth exceeded");
+              var message = new $root.google.api.BatchingSettingsProto();
+              if (object.elementCountThreshold != null) message.elementCountThreshold = object.elementCountThreshold | 0;
+              if (object.requestByteThreshold != null) {
+                if ($util.Long) (message.requestByteThreshold = $util.Long.fromValue(object.requestByteThreshold)).unsigned = false;
+                else if (typeof object.requestByteThreshold === "string") message.requestByteThreshold = parseInt(object.requestByteThreshold, 10);
+                else if (typeof object.requestByteThreshold === "number") message.requestByteThreshold = object.requestByteThreshold;
+                else if (typeof object.requestByteThreshold === "object") message.requestByteThreshold = new $util.LongBits(object.requestByteThreshold.low >>> 0, object.requestByteThreshold.high >>> 0).toNumber();
+              }
+              if (object.delayThreshold != null) {
+                if (typeof object.delayThreshold !== "object") throw TypeError(".google.api.BatchingSettingsProto.delayThreshold: object expected");
+                message.delayThreshold = $root.google.protobuf.Duration.fromObject(object.delayThreshold, long + 1);
+              }
+              if (object.elementCountLimit != null) message.elementCountLimit = object.elementCountLimit | 0;
+              if (object.requestByteLimit != null) message.requestByteLimit = object.requestByteLimit | 0;
+              if (object.flowControlElementLimit != null) message.flowControlElementLimit = object.flowControlElementLimit | 0;
+              if (object.flowControlByteLimit != null) message.flowControlByteLimit = object.flowControlByteLimit | 0;
+              switch (object.flowControlLimitExceededBehavior) {
+                default:
+                  if (typeof object.flowControlLimitExceededBehavior === "number") {
+                    message.flowControlLimitExceededBehavior = object.flowControlLimitExceededBehavior;
+                    break;
+                  }
+                  break;
+                case "UNSET_BEHAVIOR":
+                case 0:
+                  message.flowControlLimitExceededBehavior = 0;
+                  break;
+                case "THROW_EXCEPTION":
+                case 1:
+                  message.flowControlLimitExceededBehavior = 1;
+                  break;
+                case "BLOCK":
+                case 2:
+                  message.flowControlLimitExceededBehavior = 2;
+                  break;
+                case "IGNORE":
+                case 3:
+                  message.flowControlLimitExceededBehavior = 3;
+                  break;
+              }
+              return message;
+            };
+            BatchingSettingsProto.toObject = function toObject(message, options) {
+              if (!options) options = {};
+              var object = {};
+              if (options.defaults) {
+                object.elementCountThreshold = 0;
+                if ($util.Long) {
+                  var long = new $util.Long(0, 0, false);
+                  object.requestByteThreshold = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else object.requestByteThreshold = options.longs === String ? "0" : 0;
+                object.delayThreshold = null;
+                object.elementCountLimit = 0;
+                object.requestByteLimit = 0;
+                object.flowControlElementLimit = 0;
+                object.flowControlByteLimit = 0;
+                object.flowControlLimitExceededBehavior = options.enums === String ? "UNSET_BEHAVIOR" : 0;
+              }
+              if (message.elementCountThreshold != null && message.hasOwnProperty("elementCountThreshold")) object.elementCountThreshold = message.elementCountThreshold;
+              if (message.requestByteThreshold != null && message.hasOwnProperty("requestByteThreshold")) if (typeof message.requestByteThreshold === "number") object.requestByteThreshold = options.longs === String ? String(message.requestByteThreshold) : message.requestByteThreshold;
+              else object.requestByteThreshold = options.longs === String ? $util.Long.prototype.toString.call(message.requestByteThreshold) : options.longs === Number ? new $util.LongBits(message.requestByteThreshold.low >>> 0, message.requestByteThreshold.high >>> 0).toNumber() : message.requestByteThreshold;
+              if (message.delayThreshold != null && message.hasOwnProperty("delayThreshold")) object.delayThreshold = $root.google.protobuf.Duration.toObject(message.delayThreshold, options);
+              if (message.elementCountLimit != null && message.hasOwnProperty("elementCountLimit")) object.elementCountLimit = message.elementCountLimit;
+              if (message.requestByteLimit != null && message.hasOwnProperty("requestByteLimit")) object.requestByteLimit = message.requestByteLimit;
+              if (message.flowControlElementLimit != null && message.hasOwnProperty("flowControlElementLimit")) object.flowControlElementLimit = message.flowControlElementLimit;
+              if (message.flowControlByteLimit != null && message.hasOwnProperty("flowControlByteLimit")) object.flowControlByteLimit = message.flowControlByteLimit;
+              if (message.flowControlLimitExceededBehavior != null && message.hasOwnProperty("flowControlLimitExceededBehavior")) object.flowControlLimitExceededBehavior = options.enums === String ? $root.google.api.FlowControlLimitExceededBehaviorProto[message.flowControlLimitExceededBehavior] === void 0 ? message.flowControlLimitExceededBehavior : $root.google.api.FlowControlLimitExceededBehaviorProto[message.flowControlLimitExceededBehavior] : message.flowControlLimitExceededBehavior;
+              return object;
+            };
+            BatchingSettingsProto.prototype.toJSON = function toJSON() {
+              return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            BatchingSettingsProto.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+              if (typeUrlPrefix === void 0) {
+                typeUrlPrefix = "type.googleapis.com";
+              }
+              return typeUrlPrefix + "/google.api.BatchingSettingsProto";
+            };
+            return BatchingSettingsProto;
+          })();
+          api.FlowControlLimitExceededBehaviorProto = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNSET_BEHAVIOR"] = 0;
+            values[valuesById[1] = "THROW_EXCEPTION"] = 1;
+            values[valuesById[2] = "BLOCK"] = 2;
+            values[valuesById[3] = "IGNORE"] = 3;
+            return values;
+          })();
+          api.BatchingDescriptorProto = (function() {
+            function BatchingDescriptorProto(properties) {
+              this.discriminatorFields = [];
+              if (properties) {
+                for (var keys = Object.keys(properties), i2 = 0; i2 < keys.length; ++i2) if (properties[keys[i2]] != null && keys[i2] !== "__proto__") this[keys[i2]] = properties[keys[i2]];
+              }
+            }
+            BatchingDescriptorProto.prototype.batchedField = "";
+            BatchingDescriptorProto.prototype.discriminatorFields = $util.emptyArray;
+            BatchingDescriptorProto.prototype.subresponseField = "";
+            BatchingDescriptorProto.create = function create(properties) {
+              return new BatchingDescriptorProto(properties);
+            };
+            BatchingDescriptorProto.encode = function encode(message, writer) {
+              if (!writer) writer = $Writer.create();
+              if (message.batchedField != null && Object.hasOwnProperty.call(message, "batchedField")) writer.uint32(10).string(message.batchedField);
+              if (message.discriminatorFields != null && message.discriminatorFields.length) for (var i2 = 0; i2 < message.discriminatorFields.length; ++i2) writer.uint32(18).string(message.discriminatorFields[i2]);
+              if (message.subresponseField != null && Object.hasOwnProperty.call(message, "subresponseField")) writer.uint32(26).string(message.subresponseField);
+              return writer;
+            };
+            BatchingDescriptorProto.encodeDelimited = function encodeDelimited(message, writer) {
+              return this.encode(message, writer).ldelim();
+            };
+            BatchingDescriptorProto.decode = function decode(reader, length, error2, long) {
+              if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+              if (long === void 0) long = 0;
+              if (long > $Reader.recursionLimit) throw Error("maximum nesting depth exceeded");
+              var end = length === void 0 ? reader.len : reader.pos + length, message = new $root.google.api.BatchingDescriptorProto();
+              while (reader.pos < end) {
+                var tag = reader.uint32();
+                if (tag === error2) break;
+                switch (tag >>> 3) {
+                  case 1: {
+                    message.batchedField = reader.string();
+                    break;
+                  }
+                  case 2: {
+                    if (!(message.discriminatorFields && message.discriminatorFields.length)) message.discriminatorFields = [];
+                    message.discriminatorFields.push(reader.string());
+                    break;
+                  }
+                  case 3: {
+                    message.subresponseField = reader.string();
+                    break;
+                  }
+                  default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+              }
+              return message;
+            };
+            BatchingDescriptorProto.decodeDelimited = function decodeDelimited(reader) {
+              if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+              return this.decode(reader, reader.uint32());
+            };
+            BatchingDescriptorProto.verify = function verify(message, long) {
+              if (typeof message !== "object" || message === null) return "object expected";
+              if (long === void 0) long = 0;
+              if (long > $util.recursionLimit) return "maximum nesting depth exceeded";
+              if (message.batchedField != null && message.hasOwnProperty("batchedField")) {
+                if (!$util.isString(message.batchedField)) return "batchedField: string expected";
+              }
+              if (message.discriminatorFields != null && message.hasOwnProperty("discriminatorFields")) {
+                if (!Array.isArray(message.discriminatorFields)) return "discriminatorFields: array expected";
+                for (var i2 = 0; i2 < message.discriminatorFields.length; ++i2) if (!$util.isString(message.discriminatorFields[i2])) return "discriminatorFields: string[] expected";
+              }
+              if (message.subresponseField != null && message.hasOwnProperty("subresponseField")) {
+                if (!$util.isString(message.subresponseField)) return "subresponseField: string expected";
+              }
+              return null;
+            };
+            BatchingDescriptorProto.fromObject = function fromObject(object, long) {
+              if (object instanceof $root.google.api.BatchingDescriptorProto) return object;
+              if (long === void 0) long = 0;
+              if (long > $util.recursionLimit) throw Error("maximum nesting depth exceeded");
+              var message = new $root.google.api.BatchingDescriptorProto();
+              if (object.batchedField != null) message.batchedField = String(object.batchedField);
+              if (object.discriminatorFields) {
+                if (!Array.isArray(object.discriminatorFields)) throw TypeError(".google.api.BatchingDescriptorProto.discriminatorFields: array expected");
+                message.discriminatorFields = [];
+                for (var i2 = 0; i2 < object.discriminatorFields.length; ++i2) message.discriminatorFields[i2] = String(object.discriminatorFields[i2]);
+              }
+              if (object.subresponseField != null) message.subresponseField = String(object.subresponseField);
+              return message;
+            };
+            BatchingDescriptorProto.toObject = function toObject(message, options) {
+              if (!options) options = {};
+              var object = {};
+              if (options.arrays || options.defaults) object.discriminatorFields = [];
+              if (options.defaults) {
+                object.batchedField = "";
+                object.subresponseField = "";
+              }
+              if (message.batchedField != null && message.hasOwnProperty("batchedField")) object.batchedField = message.batchedField;
+              if (message.discriminatorFields && message.discriminatorFields.length) {
+                object.discriminatorFields = [];
+                for (var j = 0; j < message.discriminatorFields.length; ++j) object.discriminatorFields[j] = message.discriminatorFields[j];
+              }
+              if (message.subresponseField != null && message.hasOwnProperty("subresponseField")) object.subresponseField = message.subresponseField;
+              return object;
+            };
+            BatchingDescriptorProto.prototype.toJSON = function toJSON() {
+              return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+            BatchingDescriptorProto.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+              if (typeUrlPrefix === void 0) {
+                typeUrlPrefix = "type.googleapis.com";
+              }
+              return typeUrlPrefix + "/google.api.BatchingDescriptorProto";
+            };
+            return BatchingDescriptorProto;
           })();
           api.LaunchStage = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -117973,6 +118624,8 @@ var require_protos2 = __commonJS({
             values[valuesById[999] = "EDITION_PROTO3"] = 999;
             values[valuesById[1e3] = "EDITION_2023"] = 1e3;
             values[valuesById[1001] = "EDITION_2024"] = 1001;
+            values[valuesById[1002] = "EDITION_2026"] = 1002;
+            values[valuesById[9999] = "EDITION_UNSTABLE"] = 9999;
             values[valuesById[1] = "EDITION_1_TEST_ONLY"] = 1;
             values[valuesById[2] = "EDITION_2_TEST_ONLY"] = 2;
             values[valuesById[99997] = "EDITION_99997_TEST_ONLY"] = 99997;
@@ -118197,6 +118850,8 @@ var require_protos2 = __commonJS({
                 case 999:
                 case 1e3:
                 case 1001:
+                case 1002:
+                case 9999:
                 case 1:
                 case 2:
                 case 99997:
@@ -118305,6 +118960,14 @@ var require_protos2 = __commonJS({
                 case "EDITION_2024":
                 case 1001:
                   message.edition = 1001;
+                  break;
+                case "EDITION_2026":
+                case 1002:
+                  message.edition = 1002;
+                  break;
+                case "EDITION_UNSTABLE":
+                case 9999:
+                  message.edition = 9999;
                   break;
                 case "EDITION_1_TEST_ONLY":
                 case 1:
@@ -121583,6 +122246,8 @@ var require_protos2 = __commonJS({
                   case 999:
                   case 1e3:
                   case 1001:
+                  case 1002:
+                  case 9999:
                   case 1:
                   case 2:
                   case 99997:
@@ -121631,6 +122296,14 @@ var require_protos2 = __commonJS({
                   case "EDITION_2024":
                   case 1001:
                     message.edition = 1001;
+                    break;
+                  case "EDITION_2026":
+                  case 1002:
+                    message.edition = 1002;
+                    break;
+                  case "EDITION_UNSTABLE":
+                  case 9999:
+                    message.edition = 9999;
                     break;
                   case "EDITION_1_TEST_ONLY":
                   case 1:
@@ -121692,6 +122365,7 @@ var require_protos2 = __commonJS({
               FeatureSupport.prototype.editionDeprecated = 0;
               FeatureSupport.prototype.deprecationWarning = "";
               FeatureSupport.prototype.editionRemoved = 0;
+              FeatureSupport.prototype.removalError = "";
               FeatureSupport.create = function create(properties) {
                 return new FeatureSupport(properties);
               };
@@ -121701,6 +122375,7 @@ var require_protos2 = __commonJS({
                 if (message.editionDeprecated != null && Object.hasOwnProperty.call(message, "editionDeprecated")) writer.uint32(16).int32(message.editionDeprecated);
                 if (message.deprecationWarning != null && Object.hasOwnProperty.call(message, "deprecationWarning")) writer.uint32(26).string(message.deprecationWarning);
                 if (message.editionRemoved != null && Object.hasOwnProperty.call(message, "editionRemoved")) writer.uint32(32).int32(message.editionRemoved);
+                if (message.removalError != null && Object.hasOwnProperty.call(message, "removalError")) writer.uint32(42).string(message.removalError);
                 return writer;
               };
               FeatureSupport.encodeDelimited = function encodeDelimited(message, writer) {
@@ -121731,6 +122406,10 @@ var require_protos2 = __commonJS({
                       message.editionRemoved = reader.int32();
                       break;
                     }
+                    case 5: {
+                      message.removalError = reader.string();
+                      break;
+                    }
                     default:
                       reader.skipType(tag & 7, long);
                       break;
@@ -121755,6 +122434,8 @@ var require_protos2 = __commonJS({
                   case 999:
                   case 1e3:
                   case 1001:
+                  case 1002:
+                  case 9999:
                   case 1:
                   case 2:
                   case 99997:
@@ -121772,6 +122453,8 @@ var require_protos2 = __commonJS({
                   case 999:
                   case 1e3:
                   case 1001:
+                  case 1002:
+                  case 9999:
                   case 1:
                   case 2:
                   case 99997:
@@ -121792,6 +122475,8 @@ var require_protos2 = __commonJS({
                   case 999:
                   case 1e3:
                   case 1001:
+                  case 1002:
+                  case 9999:
                   case 1:
                   case 2:
                   case 99997:
@@ -121799,6 +122484,9 @@ var require_protos2 = __commonJS({
                   case 99999:
                   case 2147483647:
                     break;
+                }
+                if (message.removalError != null && message.hasOwnProperty("removalError")) {
+                  if (!$util.isString(message.removalError)) return "removalError: string expected";
                 }
                 return null;
               };
@@ -121837,6 +122525,14 @@ var require_protos2 = __commonJS({
                   case "EDITION_2024":
                   case 1001:
                     message.editionIntroduced = 1001;
+                    break;
+                  case "EDITION_2026":
+                  case 1002:
+                    message.editionIntroduced = 1002;
+                    break;
+                  case "EDITION_UNSTABLE":
+                  case 9999:
+                    message.editionIntroduced = 9999;
                     break;
                   case "EDITION_1_TEST_ONLY":
                   case 1:
@@ -121893,6 +122589,14 @@ var require_protos2 = __commonJS({
                   case "EDITION_2024":
                   case 1001:
                     message.editionDeprecated = 1001;
+                    break;
+                  case "EDITION_2026":
+                  case 1002:
+                    message.editionDeprecated = 1002;
+                    break;
+                  case "EDITION_UNSTABLE":
+                  case 9999:
+                    message.editionDeprecated = 9999;
                     break;
                   case "EDITION_1_TEST_ONLY":
                   case 1:
@@ -121951,6 +122655,14 @@ var require_protos2 = __commonJS({
                   case 1001:
                     message.editionRemoved = 1001;
                     break;
+                  case "EDITION_2026":
+                  case 1002:
+                    message.editionRemoved = 1002;
+                    break;
+                  case "EDITION_UNSTABLE":
+                  case 9999:
+                    message.editionRemoved = 9999;
+                    break;
                   case "EDITION_1_TEST_ONLY":
                   case 1:
                     message.editionRemoved = 1;
@@ -121976,6 +122688,7 @@ var require_protos2 = __commonJS({
                     message.editionRemoved = 2147483647;
                     break;
                 }
+                if (object.removalError != null) message.removalError = String(object.removalError);
                 return message;
               };
               FeatureSupport.toObject = function toObject(message, options) {
@@ -121986,11 +122699,13 @@ var require_protos2 = __commonJS({
                   object.editionDeprecated = options.enums === String ? "EDITION_UNKNOWN" : 0;
                   object.deprecationWarning = "";
                   object.editionRemoved = options.enums === String ? "EDITION_UNKNOWN" : 0;
+                  object.removalError = "";
                 }
                 if (message.editionIntroduced != null && message.hasOwnProperty("editionIntroduced")) object.editionIntroduced = options.enums === String ? $root.google.protobuf.Edition[message.editionIntroduced] === void 0 ? message.editionIntroduced : $root.google.protobuf.Edition[message.editionIntroduced] : message.editionIntroduced;
                 if (message.editionDeprecated != null && message.hasOwnProperty("editionDeprecated")) object.editionDeprecated = options.enums === String ? $root.google.protobuf.Edition[message.editionDeprecated] === void 0 ? message.editionDeprecated : $root.google.protobuf.Edition[message.editionDeprecated] : message.editionDeprecated;
                 if (message.deprecationWarning != null && message.hasOwnProperty("deprecationWarning")) object.deprecationWarning = message.deprecationWarning;
                 if (message.editionRemoved != null && message.hasOwnProperty("editionRemoved")) object.editionRemoved = options.enums === String ? $root.google.protobuf.Edition[message.editionRemoved] === void 0 ? message.editionRemoved : $root.google.protobuf.Edition[message.editionRemoved] : message.editionRemoved;
+                if (message.removalError != null && message.hasOwnProperty("removalError")) object.removalError = message.removalError;
                 return object;
               };
               FeatureSupport.prototype.toJSON = function toJSON() {
@@ -123089,6 +123804,7 @@ var require_protos2 = __commonJS({
             FeatureSet.prototype.jsonFormat = 0;
             FeatureSet.prototype.enforceNamingStyle = 0;
             FeatureSet.prototype.defaultSymbolVisibility = 0;
+            FeatureSet.prototype.enforceProtoLimits = 0;
             FeatureSet.create = function create(properties) {
               return new FeatureSet(properties);
             };
@@ -123102,6 +123818,7 @@ var require_protos2 = __commonJS({
               if (message.jsonFormat != null && Object.hasOwnProperty.call(message, "jsonFormat")) writer.uint32(48).int32(message.jsonFormat);
               if (message.enforceNamingStyle != null && Object.hasOwnProperty.call(message, "enforceNamingStyle")) writer.uint32(56).int32(message.enforceNamingStyle);
               if (message.defaultSymbolVisibility != null && Object.hasOwnProperty.call(message, "defaultSymbolVisibility")) writer.uint32(64).int32(message.defaultSymbolVisibility);
+              if (message.enforceProtoLimits != null && Object.hasOwnProperty.call(message, "enforceProtoLimits")) writer.uint32(72).int32(message.enforceProtoLimits);
               return writer;
             };
             FeatureSet.encodeDelimited = function encodeDelimited(message, writer) {
@@ -123146,6 +123863,10 @@ var require_protos2 = __commonJS({
                   }
                   case 8: {
                     message.defaultSymbolVisibility = reader.int32();
+                    break;
+                  }
+                  case 9: {
+                    message.enforceProtoLimits = reader.int32();
                     break;
                   }
                   default:
@@ -123218,6 +123939,7 @@ var require_protos2 = __commonJS({
                 case 0:
                 case 1:
                 case 2:
+                case 3:
                   break;
               }
               if (message.defaultSymbolVisibility != null && message.hasOwnProperty("defaultSymbolVisibility")) switch (message.defaultSymbolVisibility) {
@@ -123228,6 +123950,14 @@ var require_protos2 = __commonJS({
                 case 2:
                 case 3:
                 case 4:
+                  break;
+              }
+              if (message.enforceProtoLimits != null && message.hasOwnProperty("enforceProtoLimits")) switch (message.enforceProtoLimits) {
+                default:
+                  return "enforceProtoLimits: enum value expected";
+                case 0:
+                case 1:
+                case 2:
                   break;
               }
               return null;
@@ -123380,6 +124110,10 @@ var require_protos2 = __commonJS({
                 case 2:
                   message.enforceNamingStyle = 2;
                   break;
+                case "STYLE2026":
+                case 3:
+                  message.enforceNamingStyle = 3;
+                  break;
               }
               switch (object.defaultSymbolVisibility) {
                 default:
@@ -123409,6 +124143,26 @@ var require_protos2 = __commonJS({
                   message.defaultSymbolVisibility = 4;
                   break;
               }
+              switch (object.enforceProtoLimits) {
+                default:
+                  if (typeof object.enforceProtoLimits === "number") {
+                    message.enforceProtoLimits = object.enforceProtoLimits;
+                    break;
+                  }
+                  break;
+                case "PROTO_LIMITS_UNKNOWN":
+                case 0:
+                  message.enforceProtoLimits = 0;
+                  break;
+                case "LEGACY_NO_EXPLICIT_LIMITS":
+                case 1:
+                  message.enforceProtoLimits = 1;
+                  break;
+                case "PROTO_LIMITS2026":
+                case 2:
+                  message.enforceProtoLimits = 2;
+                  break;
+              }
               return message;
             };
             FeatureSet.toObject = function toObject(message, options) {
@@ -123423,6 +124177,7 @@ var require_protos2 = __commonJS({
                 object.jsonFormat = options.enums === String ? "JSON_FORMAT_UNKNOWN" : 0;
                 object.enforceNamingStyle = options.enums === String ? "ENFORCE_NAMING_STYLE_UNKNOWN" : 0;
                 object.defaultSymbolVisibility = options.enums === String ? "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN" : 0;
+                object.enforceProtoLimits = options.enums === String ? "PROTO_LIMITS_UNKNOWN" : 0;
               }
               if (message.fieldPresence != null && message.hasOwnProperty("fieldPresence")) object.fieldPresence = options.enums === String ? $root.google.protobuf.FeatureSet.FieldPresence[message.fieldPresence] === void 0 ? message.fieldPresence : $root.google.protobuf.FeatureSet.FieldPresence[message.fieldPresence] : message.fieldPresence;
               if (message.enumType != null && message.hasOwnProperty("enumType")) object.enumType = options.enums === String ? $root.google.protobuf.FeatureSet.EnumType[message.enumType] === void 0 ? message.enumType : $root.google.protobuf.FeatureSet.EnumType[message.enumType] : message.enumType;
@@ -123432,6 +124187,7 @@ var require_protos2 = __commonJS({
               if (message.jsonFormat != null && message.hasOwnProperty("jsonFormat")) object.jsonFormat = options.enums === String ? $root.google.protobuf.FeatureSet.JsonFormat[message.jsonFormat] === void 0 ? message.jsonFormat : $root.google.protobuf.FeatureSet.JsonFormat[message.jsonFormat] : message.jsonFormat;
               if (message.enforceNamingStyle != null && message.hasOwnProperty("enforceNamingStyle")) object.enforceNamingStyle = options.enums === String ? $root.google.protobuf.FeatureSet.EnforceNamingStyle[message.enforceNamingStyle] === void 0 ? message.enforceNamingStyle : $root.google.protobuf.FeatureSet.EnforceNamingStyle[message.enforceNamingStyle] : message.enforceNamingStyle;
               if (message.defaultSymbolVisibility != null && message.hasOwnProperty("defaultSymbolVisibility")) object.defaultSymbolVisibility = options.enums === String ? $root.google.protobuf.FeatureSet.VisibilityFeature.DefaultSymbolVisibility[message.defaultSymbolVisibility] === void 0 ? message.defaultSymbolVisibility : $root.google.protobuf.FeatureSet.VisibilityFeature.DefaultSymbolVisibility[message.defaultSymbolVisibility] : message.defaultSymbolVisibility;
+              if (message.enforceProtoLimits != null && message.hasOwnProperty("enforceProtoLimits")) object.enforceProtoLimits = options.enums === String ? $root.google.protobuf.FeatureSet.ProtoLimitsFeature.EnforceProtoLimits[message.enforceProtoLimits] === void 0 ? message.enforceProtoLimits : $root.google.protobuf.FeatureSet.ProtoLimitsFeature.EnforceProtoLimits[message.enforceProtoLimits] : message.enforceProtoLimits;
               return object;
             };
             FeatureSet.prototype.toJSON = function toJSON() {
@@ -123491,6 +124247,7 @@ var require_protos2 = __commonJS({
               values[valuesById[0] = "ENFORCE_NAMING_STYLE_UNKNOWN"] = 0;
               values[valuesById[1] = "STYLE2024"] = 1;
               values[valuesById[2] = "STYLE_LEGACY"] = 2;
+              values[valuesById[3] = "STYLE2026"] = 3;
               return values;
             })();
             FeatureSet.VisibilityFeature = (function() {
@@ -123563,6 +124320,75 @@ var require_protos2 = __commonJS({
                 return values;
               })();
               return VisibilityFeature;
+            })();
+            FeatureSet.ProtoLimitsFeature = (function() {
+              function ProtoLimitsFeature(properties) {
+                if (properties) {
+                  for (var keys = Object.keys(properties), i2 = 0; i2 < keys.length; ++i2) if (properties[keys[i2]] != null && keys[i2] !== "__proto__") this[keys[i2]] = properties[keys[i2]];
+                }
+              }
+              ProtoLimitsFeature.create = function create(properties) {
+                return new ProtoLimitsFeature(properties);
+              };
+              ProtoLimitsFeature.encode = function encode(message, writer) {
+                if (!writer) writer = $Writer.create();
+                return writer;
+              };
+              ProtoLimitsFeature.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+              };
+              ProtoLimitsFeature.decode = function decode(reader, length, error2, long) {
+                if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+                if (long === void 0) long = 0;
+                if (long > $Reader.recursionLimit) throw Error("maximum nesting depth exceeded");
+                var end = length === void 0 ? reader.len : reader.pos + length, message = new $root.google.protobuf.FeatureSet.ProtoLimitsFeature();
+                while (reader.pos < end) {
+                  var tag = reader.uint32();
+                  if (tag === error2) break;
+                  switch (tag >>> 3) {
+                    default:
+                      reader.skipType(tag & 7, long);
+                      break;
+                  }
+                }
+                return message;
+              };
+              ProtoLimitsFeature.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+              };
+              ProtoLimitsFeature.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null) return "object expected";
+                if (long === void 0) long = 0;
+                if (long > $util.recursionLimit) return "maximum nesting depth exceeded";
+                return null;
+              };
+              ProtoLimitsFeature.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.google.protobuf.FeatureSet.ProtoLimitsFeature) return object;
+                if (long === void 0) long = 0;
+                if (long > $util.recursionLimit) throw Error("maximum nesting depth exceeded");
+                return new $root.google.protobuf.FeatureSet.ProtoLimitsFeature();
+              };
+              ProtoLimitsFeature.toObject = function toObject() {
+                return {};
+              };
+              ProtoLimitsFeature.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+              };
+              ProtoLimitsFeature.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === void 0) {
+                  typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/google.protobuf.FeatureSet.ProtoLimitsFeature";
+              };
+              ProtoLimitsFeature.EnforceProtoLimits = (function() {
+                var valuesById = {}, values = Object.create(valuesById);
+                values[valuesById[0] = "PROTO_LIMITS_UNKNOWN"] = 0;
+                values[valuesById[1] = "LEGACY_NO_EXPLICIT_LIMITS"] = 1;
+                values[valuesById[2] = "PROTO_LIMITS2026"] = 2;
+                return values;
+              })();
+              return ProtoLimitsFeature;
             })();
             return FeatureSet;
           })();
@@ -123642,6 +124468,8 @@ var require_protos2 = __commonJS({
                 case 999:
                 case 1e3:
                 case 1001:
+                case 1002:
+                case 9999:
                 case 1:
                 case 2:
                 case 99997:
@@ -123659,6 +124487,8 @@ var require_protos2 = __commonJS({
                 case 999:
                 case 1e3:
                 case 1001:
+                case 1002:
+                case 9999:
                 case 1:
                 case 2:
                 case 99997:
@@ -123712,6 +124542,14 @@ var require_protos2 = __commonJS({
                 case "EDITION_2024":
                 case 1001:
                   message.minimumEdition = 1001;
+                  break;
+                case "EDITION_2026":
+                case 1002:
+                  message.minimumEdition = 1002;
+                  break;
+                case "EDITION_UNSTABLE":
+                case 9999:
+                  message.minimumEdition = 9999;
                   break;
                 case "EDITION_1_TEST_ONLY":
                 case 1:
@@ -123768,6 +124606,14 @@ var require_protos2 = __commonJS({
                 case "EDITION_2024":
                 case 1001:
                   message.maximumEdition = 1001;
+                  break;
+                case "EDITION_2026":
+                case 1002:
+                  message.maximumEdition = 1002;
+                  break;
+                case "EDITION_UNSTABLE":
+                case 9999:
+                  message.maximumEdition = 9999;
                   break;
                 case "EDITION_1_TEST_ONLY":
                 case 1:
@@ -123888,6 +124734,8 @@ var require_protos2 = __commonJS({
                   case 999:
                   case 1e3:
                   case 1001:
+                  case 1002:
+                  case 9999:
                   case 1:
                   case 2:
                   case 99997:
@@ -123941,6 +124789,14 @@ var require_protos2 = __commonJS({
                   case "EDITION_2024":
                   case 1001:
                     message.edition = 1001;
+                    break;
+                  case "EDITION_2026":
+                  case 1002:
+                    message.edition = 1002;
+                    break;
+                  case "EDITION_UNSTABLE":
+                  case 9999:
+                    message.edition = 9999;
                     break;
                   case "EDITION_1_TEST_ONLY":
                   case 1:
@@ -125978,6 +126834,7 @@ var require_protos2 = __commonJS({
             ListOperationsRequest.prototype.filter = "";
             ListOperationsRequest.prototype.pageSize = 0;
             ListOperationsRequest.prototype.pageToken = "";
+            ListOperationsRequest.prototype.returnPartialSuccess = false;
             ListOperationsRequest.create = function create(properties) {
               return new ListOperationsRequest(properties);
             };
@@ -125987,6 +126844,7 @@ var require_protos2 = __commonJS({
               if (message.pageSize != null && Object.hasOwnProperty.call(message, "pageSize")) writer.uint32(16).int32(message.pageSize);
               if (message.pageToken != null && Object.hasOwnProperty.call(message, "pageToken")) writer.uint32(26).string(message.pageToken);
               if (message.name != null && Object.hasOwnProperty.call(message, "name")) writer.uint32(34).string(message.name);
+              if (message.returnPartialSuccess != null && Object.hasOwnProperty.call(message, "returnPartialSuccess")) writer.uint32(40).bool(message.returnPartialSuccess);
               return writer;
             };
             ListOperationsRequest.encodeDelimited = function encodeDelimited(message, writer) {
@@ -126017,6 +126875,10 @@ var require_protos2 = __commonJS({
                     message.pageToken = reader.string();
                     break;
                   }
+                  case 5: {
+                    message.returnPartialSuccess = reader.bool();
+                    break;
+                  }
                   default:
                     reader.skipType(tag & 7, long);
                     break;
@@ -126044,6 +126906,9 @@ var require_protos2 = __commonJS({
               if (message.pageToken != null && message.hasOwnProperty("pageToken")) {
                 if (!$util.isString(message.pageToken)) return "pageToken: string expected";
               }
+              if (message.returnPartialSuccess != null && message.hasOwnProperty("returnPartialSuccess")) {
+                if (typeof message.returnPartialSuccess !== "boolean") return "returnPartialSuccess: boolean expected";
+              }
               return null;
             };
             ListOperationsRequest.fromObject = function fromObject(object, long) {
@@ -126055,6 +126920,7 @@ var require_protos2 = __commonJS({
               if (object.filter != null) message.filter = String(object.filter);
               if (object.pageSize != null) message.pageSize = object.pageSize | 0;
               if (object.pageToken != null) message.pageToken = String(object.pageToken);
+              if (object.returnPartialSuccess != null) message.returnPartialSuccess = Boolean(object.returnPartialSuccess);
               return message;
             };
             ListOperationsRequest.toObject = function toObject(message, options) {
@@ -126065,11 +126931,13 @@ var require_protos2 = __commonJS({
                 object.pageSize = 0;
                 object.pageToken = "";
                 object.name = "";
+                object.returnPartialSuccess = false;
               }
               if (message.filter != null && message.hasOwnProperty("filter")) object.filter = message.filter;
               if (message.pageSize != null && message.hasOwnProperty("pageSize")) object.pageSize = message.pageSize;
               if (message.pageToken != null && message.hasOwnProperty("pageToken")) object.pageToken = message.pageToken;
               if (message.name != null && message.hasOwnProperty("name")) object.name = message.name;
+              if (message.returnPartialSuccess != null && message.hasOwnProperty("returnPartialSuccess")) object.returnPartialSuccess = message.returnPartialSuccess;
               return object;
             };
             ListOperationsRequest.prototype.toJSON = function toJSON() {
@@ -126086,12 +126954,14 @@ var require_protos2 = __commonJS({
           longrunning.ListOperationsResponse = (function() {
             function ListOperationsResponse(properties) {
               this.operations = [];
+              this.unreachable = [];
               if (properties) {
                 for (var keys = Object.keys(properties), i2 = 0; i2 < keys.length; ++i2) if (properties[keys[i2]] != null && keys[i2] !== "__proto__") this[keys[i2]] = properties[keys[i2]];
               }
             }
             ListOperationsResponse.prototype.operations = $util.emptyArray;
             ListOperationsResponse.prototype.nextPageToken = "";
+            ListOperationsResponse.prototype.unreachable = $util.emptyArray;
             ListOperationsResponse.create = function create(properties) {
               return new ListOperationsResponse(properties);
             };
@@ -126099,6 +126969,7 @@ var require_protos2 = __commonJS({
               if (!writer) writer = $Writer.create();
               if (message.operations != null && message.operations.length) for (var i2 = 0; i2 < message.operations.length; ++i2) $root.google.longrunning.Operation.encode(message.operations[i2], writer.uint32(10).fork()).ldelim();
               if (message.nextPageToken != null && Object.hasOwnProperty.call(message, "nextPageToken")) writer.uint32(18).string(message.nextPageToken);
+              if (message.unreachable != null && message.unreachable.length) for (var i2 = 0; i2 < message.unreachable.length; ++i2) writer.uint32(26).string(message.unreachable[i2]);
               return writer;
             };
             ListOperationsResponse.encodeDelimited = function encodeDelimited(message, writer) {
@@ -126120,6 +126991,11 @@ var require_protos2 = __commonJS({
                   }
                   case 2: {
                     message.nextPageToken = reader.string();
+                    break;
+                  }
+                  case 3: {
+                    if (!(message.unreachable && message.unreachable.length)) message.unreachable = [];
+                    message.unreachable.push(reader.string());
                     break;
                   }
                   default:
@@ -126147,6 +127023,10 @@ var require_protos2 = __commonJS({
               if (message.nextPageToken != null && message.hasOwnProperty("nextPageToken")) {
                 if (!$util.isString(message.nextPageToken)) return "nextPageToken: string expected";
               }
+              if (message.unreachable != null && message.hasOwnProperty("unreachable")) {
+                if (!Array.isArray(message.unreachable)) return "unreachable: array expected";
+                for (var i2 = 0; i2 < message.unreachable.length; ++i2) if (!$util.isString(message.unreachable[i2])) return "unreachable: string[] expected";
+              }
               return null;
             };
             ListOperationsResponse.fromObject = function fromObject(object, long) {
@@ -126163,18 +127043,30 @@ var require_protos2 = __commonJS({
                 }
               }
               if (object.nextPageToken != null) message.nextPageToken = String(object.nextPageToken);
+              if (object.unreachable) {
+                if (!Array.isArray(object.unreachable)) throw TypeError(".google.longrunning.ListOperationsResponse.unreachable: array expected");
+                message.unreachable = [];
+                for (var i2 = 0; i2 < object.unreachable.length; ++i2) message.unreachable[i2] = String(object.unreachable[i2]);
+              }
               return message;
             };
             ListOperationsResponse.toObject = function toObject(message, options) {
               if (!options) options = {};
               var object = {};
-              if (options.arrays || options.defaults) object.operations = [];
+              if (options.arrays || options.defaults) {
+                object.operations = [];
+                object.unreachable = [];
+              }
               if (options.defaults) object.nextPageToken = "";
               if (message.operations && message.operations.length) {
                 object.operations = [];
                 for (var j = 0; j < message.operations.length; ++j) object.operations[j] = $root.google.longrunning.Operation.toObject(message.operations[j], options);
               }
               if (message.nextPageToken != null && message.hasOwnProperty("nextPageToken")) object.nextPageToken = message.nextPageToken;
+              if (message.unreachable && message.unreachable.length) {
+                object.unreachable = [];
+                for (var j = 0; j < message.unreachable.length; ++j) object.unreachable[j] = message.unreachable[j];
+              }
               return object;
             };
             ListOperationsResponse.prototype.toJSON = function toJSON() {
@@ -126665,20 +127557,20 @@ var require_src11 = __commonJS({
   "node_modules/@google-cloud/kms/build/src/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.protos = exports2.KeyManagementServiceClient = exports2.HsmManagementClient = exports2.EkmServiceClient = exports2.AutokeyAdminClient = exports2.AutokeyClient = exports2.v1 = void 0;
+    exports2.protos = exports2.KeyManagementServiceClient = exports2.HsmManagementClient = exports2.EkmServiceClient = exports2.AutokeyClient = exports2.AutokeyAdminClient = exports2.v1 = void 0;
     var v1 = require_v1();
     exports2.v1 = v1;
-    var AutokeyClient = v1.AutokeyClient;
-    exports2.AutokeyClient = AutokeyClient;
     var AutokeyAdminClient = v1.AutokeyAdminClient;
     exports2.AutokeyAdminClient = AutokeyAdminClient;
+    var AutokeyClient = v1.AutokeyClient;
+    exports2.AutokeyClient = AutokeyClient;
     var EkmServiceClient = v1.EkmServiceClient;
     exports2.EkmServiceClient = EkmServiceClient;
     var HsmManagementClient = v1.HsmManagementClient;
     exports2.HsmManagementClient = HsmManagementClient;
     var KeyManagementServiceClient2 = v1.KeyManagementServiceClient;
     exports2.KeyManagementServiceClient = KeyManagementServiceClient2;
-    exports2.default = { v1, AutokeyClient, AutokeyAdminClient, EkmServiceClient, HsmManagementClient, KeyManagementServiceClient: KeyManagementServiceClient2 };
+    exports2.default = { v1, AutokeyAdminClient, AutokeyClient, EkmServiceClient, HsmManagementClient, KeyManagementServiceClient: KeyManagementServiceClient2 };
     var protos = require_protos2();
     exports2.protos = protos;
   }
