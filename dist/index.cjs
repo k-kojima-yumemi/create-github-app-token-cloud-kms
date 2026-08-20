@@ -61957,7 +61957,7 @@ var require_package3 = __commonJS({
   "node_modules/google-auth-library/package.json"(exports2, module2) {
     module2.exports = {
       name: "google-auth-library",
-      version: "11.0.1",
+      version: "11.0.2",
       author: "Google Inc.",
       description: "Google APIs Authentication Client Library for Node.js",
       engines: {
@@ -62007,7 +62007,7 @@ var require_package3 = __commonJS({
         "karma-firefox-launcher": "^2.0.0",
         "karma-mocha": "^2.0.0",
         "karma-sourcemap-loader": "^0.4.0",
-        "karma-webpack": "^5.0.1",
+        "karma-webpack": "^5.0.0",
         keypair: "^1.0.4",
         mocha: "^11.1.0",
         mv: "^2.1.1",
