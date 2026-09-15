@@ -88184,7 +88184,7 @@ var require_package5 = __commonJS({
     module2.exports = {
       name: "@google-cloud/kms",
       description: "Google Cloud Key Management Service (KMS) API client for Node.js",
-      version: "6.0.0",
+      version: "6.1.0",
       license: "Apache-2.0",
       author: "Google LLC",
       engines: {
