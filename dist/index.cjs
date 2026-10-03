@@ -21253,11 +21253,25 @@ var require_protos = __commonJS({
                           fields: {
                             externalKeyUri: {
                               type: "string",
-                              id: 1
+                              id: 1,
+                              options: {
+                                "(google.api.field_behavior)": "OPTIONAL"
+                              }
                             },
                             ekmConnectionKeyPath: {
                               type: "string",
-                              id: 2
+                              id: 2,
+                              options: {
+                                "(google.api.field_behavior)": "OPTIONAL"
+                              }
+                            },
+                            ekmConnectionBackendOverride: {
+                              type: "string",
+                              id: 3,
+                              options: {
+                                "(google.api.field_behavior)": "OPTIONAL",
+                                "(google.api.resource_reference).type": "cloudkms.googleapis.com/EkmConnection"
+                              }
                             }
                           }
                         },
@@ -88184,7 +88198,7 @@ var require_package5 = __commonJS({
     module2.exports = {
       name: "@google-cloud/kms",
       description: "Google Cloud Key Management Service (KMS) API client for Node.js",
-      version: "6.1.0",
+      version: "6.2.1",
       license: "Apache-2.0",
       author: "Google LLC",
       engines: {
@@ -88250,11 +88264,6 @@ var require_package5 = __commonJS({
       homepage: "https://github.com/googleapis/google-cloud-node/tree/main/packages/google-cloud-kms",
       overrides: {
         "@sinonjs/fake-timers": "15.2.1"
-      },
-      pnpm: {
-        overrides: {
-          "@sinonjs/fake-timers": "15.2.1"
-        }
       }
     };
   }
@@ -107145,6 +107154,7 @@ var require_protos2 = __commonJS({
                 }
                 ExternalProtectionLevelOptions.prototype.externalKeyUri = "";
                 ExternalProtectionLevelOptions.prototype.ekmConnectionKeyPath = "";
+                ExternalProtectionLevelOptions.prototype.ekmConnectionBackendOverride = "";
                 ExternalProtectionLevelOptions.create = function create(properties) {
                   return new ExternalProtectionLevelOptions(properties);
                 };
@@ -107152,6 +107162,7 @@ var require_protos2 = __commonJS({
                   if (!writer) writer = $Writer.create();
                   if (message.externalKeyUri != null && Object.hasOwnProperty.call(message, "externalKeyUri")) writer.uint32(10).string(message.externalKeyUri);
                   if (message.ekmConnectionKeyPath != null && Object.hasOwnProperty.call(message, "ekmConnectionKeyPath")) writer.uint32(18).string(message.ekmConnectionKeyPath);
+                  if (message.ekmConnectionBackendOverride != null && Object.hasOwnProperty.call(message, "ekmConnectionBackendOverride")) writer.uint32(26).string(message.ekmConnectionBackendOverride);
                   return writer;
                 };
                 ExternalProtectionLevelOptions.encodeDelimited = function encodeDelimited(message, writer) {
@@ -107172,6 +107183,10 @@ var require_protos2 = __commonJS({
                       }
                       case 2: {
                         message.ekmConnectionKeyPath = reader.string();
+                        break;
+                      }
+                      case 3: {
+                        message.ekmConnectionBackendOverride = reader.string();
                         break;
                       }
                       default:
@@ -107195,6 +107210,9 @@ var require_protos2 = __commonJS({
                   if (message.ekmConnectionKeyPath != null && message.hasOwnProperty("ekmConnectionKeyPath")) {
                     if (!$util.isString(message.ekmConnectionKeyPath)) return "ekmConnectionKeyPath: string expected";
                   }
+                  if (message.ekmConnectionBackendOverride != null && message.hasOwnProperty("ekmConnectionBackendOverride")) {
+                    if (!$util.isString(message.ekmConnectionBackendOverride)) return "ekmConnectionBackendOverride: string expected";
+                  }
                   return null;
                 };
                 ExternalProtectionLevelOptions.fromObject = function fromObject(object, long) {
@@ -107204,6 +107222,7 @@ var require_protos2 = __commonJS({
                   var message = new $root.google.cloud.kms.v1.ExternalProtectionLevelOptions();
                   if (object.externalKeyUri != null) message.externalKeyUri = String(object.externalKeyUri);
                   if (object.ekmConnectionKeyPath != null) message.ekmConnectionKeyPath = String(object.ekmConnectionKeyPath);
+                  if (object.ekmConnectionBackendOverride != null) message.ekmConnectionBackendOverride = String(object.ekmConnectionBackendOverride);
                   return message;
                 };
                 ExternalProtectionLevelOptions.toObject = function toObject(message, options) {
@@ -107212,9 +107231,11 @@ var require_protos2 = __commonJS({
                   if (options.defaults) {
                     object.externalKeyUri = "";
                     object.ekmConnectionKeyPath = "";
+                    object.ekmConnectionBackendOverride = "";
                   }
                   if (message.externalKeyUri != null && message.hasOwnProperty("externalKeyUri")) object.externalKeyUri = message.externalKeyUri;
                   if (message.ekmConnectionKeyPath != null && message.hasOwnProperty("ekmConnectionKeyPath")) object.ekmConnectionKeyPath = message.ekmConnectionKeyPath;
+                  if (message.ekmConnectionBackendOverride != null && message.hasOwnProperty("ekmConnectionBackendOverride")) object.ekmConnectionBackendOverride = message.ekmConnectionBackendOverride;
                   return object;
                 };
                 ExternalProtectionLevelOptions.prototype.toJSON = function toJSON() {
