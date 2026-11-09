@@ -92,7 +92,7 @@ action-test2:
         kms-key-name: ${{ secrets.KMS_KEY_NAME }}
         workload-identity-provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
     - run: |
-        curl -sS -H "Authorization: Bearer ${TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${repo}/contents/.terraform-version" \
+        curl -sS -H "Authorization: Bearer ${TOKEN}" -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/${repo}/contents/README.md" \
           | jq -r '.content | @base64d'
       env:
         TOKEN: ${{ steps.create-token.outputs.token }}
