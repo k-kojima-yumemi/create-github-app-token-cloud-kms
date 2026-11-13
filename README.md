@@ -74,10 +74,12 @@ It has fewer dependencies than the original action.
 The action gets a Google Cloud access token by itself using a GitHub OIDC token, so `google-github-actions/auth` is not required.
 
 **When to use the minimal action:**
+
 - You are setting up a new Google Cloud project dedicated to this action, with no existing Google Cloud authentication in your CI.
 - You want to avoid introducing `google-github-actions/auth` into your workflow at all.
 
 **When to use the original action instead:**
+
 - You are already using `google-github-actions/auth` in your CI. You can reuse the existing authentication and add the KMS key, keeping your workflow simpler.
 
 ```yaml
