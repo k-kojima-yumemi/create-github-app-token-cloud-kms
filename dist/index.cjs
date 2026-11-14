@@ -62739,7 +62739,7 @@ var require_package3 = __commonJS({
   "node_modules/google-auth-library/package.json"(exports2, module2) {
     module2.exports = {
       name: "google-auth-library",
-      version: "11.3.3",
+      version: "11.3.4",
       author: "Google Inc.",
       description: "Google APIs Authentication Client Library for Node.js",
       engines: {
@@ -64801,6 +64801,7 @@ var require_tokenHandler = __commonJS({
           const credentials = await (0, getCredentials_1.getCredentials)(this.tokenOptions.keyFile);
           this.tokenOptions.key = credentials.privateKey;
           this.tokenOptions.email = credentials.clientEmail;
+          this.tokenOptions.iss = this.tokenOptions.iss || credentials.clientEmail;
         }
       }
       /**
@@ -64821,10 +64822,9 @@ var require_tokenHandler = __commonJS({
        * @returns true if the token has expired, false otherwise.
        */
       hasExpired() {
-        const now = (/* @__PURE__ */ new Date()).getTime();
         if (this.token && this.tokenExpiresAt) {
-          const now2 = (/* @__PURE__ */ new Date()).getTime();
-          return now2 >= this.tokenExpiresAt;
+          const now = (/* @__PURE__ */ new Date()).getTime();
+          return now >= this.tokenExpiresAt;
         }
         return true;
       }
